@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from database import db
 from routes.user import user_bp
 from routes.analysis import analysis_bp
+from routes.pdf_generator import pdf_bp
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -26,6 +27,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-default-secret-key-that-sh
 # Registrar blueprints
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(analysis_bp, url_prefix='/api')
+app.register_blueprint(pdf_bp, url_prefix='/api')
 
 # Configuração do banco de dados usando suas variáveis
 database_url = os.getenv('DATABASE_URL')
@@ -102,7 +104,9 @@ def health_check():
             'Real-time Internet Research',
             'Ultra-detailed Avatar Analysis',
             'Advanced Market Intelligence',
-            'Comprehensive Competitor Analysis'
+            'Comprehensive Competitor Analysis',
+            'PDF Report Generation',
+            'Interactive Charts & Infographics'
         ]
     })
 
