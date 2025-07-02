@@ -31,10 +31,10 @@ class GeminiClient:
             self.model = genai.GenerativeModel(
                 model_name="gemini-2.0-flash-exp",
                 generation_config={
-                    "temperature": 0.3,
+                    "temperature": 0.6,
                     "top_p": 0.8,
                     "top_k": 40,
-                    "max_output_tokens": 8192,
+                    "max_output_tokens": 18192,
                     "response_mime_type": "application/json"
                 },
                 safety_settings=[
@@ -109,7 +109,7 @@ class GeminiClient:
     def research_segment_comprehensive(self, segmento: str) -> Dict:
         """Pesquisa abrangente sobre o segmento"""
         research_queries = [
-            f"{segmento} mercado brasileiro 2024 2025",
+            f"{segmento} mercado brasileiro 2023 2025",
             f"{segmento} tendências consumidor comportamento",
             f"{segmento} concorrentes principais Brasil",
             f"{segmento} preços produtos serviços",
@@ -215,7 +215,7 @@ DADOS DO PRODUTO/SERVIÇO:
 - Objetivo de Receita: R$ {objetivo_receita}
 - Orçamento Marketing: R$ {orcamento_marketing}
 
-DADOS DE PESQUISA NA INTERNET (2024-2025):
+DADOS DE PESQUISA NA INTERNET (2023-2025):
 {research_summary}
 
 Com base nos dados de pesquisa atualizados e sua expertise, crie uma análise ULTRA-DETALHADA do avatar ideal para este segmento no mercado brasileiro.
@@ -736,7 +736,7 @@ INSTRUÇÕES CRÍTICAS:
                     {
                         "tendencia": "Digitalização acelerada pós-pandemia",
                         "impacto": "Alto",
-                        "timeline": "2024-2026",
+                        "timeline": "2023-2026",
                         "oportunidade": "Maior demanda por soluções digitais"
                     }
                 ],
@@ -744,7 +744,7 @@ INSTRUÇÕES CRÍTICAS:
                     {
                         "tendencia": "Métodos tradicionais offline",
                         "impacto": "Médio",
-                        "timeline": "2024-2025",
+                        "timeline": "2023-2025",
                         "mitigacao": "Hibridização de metodologias"
                     }
                 ],
