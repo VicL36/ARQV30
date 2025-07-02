@@ -4,22 +4,22 @@ import json
 from datetime import datetime, timedelta
 import logging
 from supabase import create_client, Client
-from services.deepseek_client import DeepSeekClient
+from services.gemini_client import GeminiClient
 import requests
 import re
 from typing import Dict, List, Optional, Tuple
 import concurrent.futures
 from functools import lru_cache
 
-# Configure logging PRIMEIRO
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 analysis_bp = Blueprint('analysis', __name__)
 
-# Configure Supabase com suas variáveis exatas
-supabase_url = os.getenv('SUPABASE_URL')  # https://albyamqjdopihijsderu.supabase.co
-supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')  # Sua service role key
+# Configure Supabase
+supabase_url = os.getenv('SUPABASE_URL')
+supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
 supabase: Client = None
 
 if supabase_url and supabase_key:
@@ -29,26 +29,28 @@ if supabase_url and supabase_key:
     except Exception as e:
         logger.error(f"❌ Erro ao configurar Supabase: {e}")
 
-# Initialize DeepSeek client
+# Initialize Gemini client
 try:
-    deepseek_client = DeepSeekClient()
-    logger.info("✅ Cliente DeepSeek configurado com sucesso")
+    gemini_client = GeminiClient()
+    logger.info("✅ Cliente Gemini Pro 2.5 configurado com sucesso")
 except Exception as e:
-    logger.error(f"❌ Erro ao inicializar DeepSeek: {e}")
-    deepseek_client = None
+    logger.error(f"❌ Erro ao inicializar Gemini: {e}")
+    gemini_client = None
 
 @analysis_bp.route('/analyze', methods=['POST'])
 def analyze_market():
-    """Análise completa de mercado com DeepSeek"""
+    """Análise ultra-detalhada de mercado com Gemini Pro 2.5 e pesquisa na internet"""
     try:
         data = request.get_json()
         
-        if not data or not data.get('nicho'):
-            return jsonify({'error': 'Nicho é obrigatório'}), 400
+        # Aceitar tanto 'segmento' quanto 'nicho' para compatibilidade
+        segmento = data.get('segmento') or data.get('nicho')
+        if not segmento:
+            return jsonify({'error': 'Segmento é obrigatório'}), 400
         
-        # Extract and validate form data with safe conversion
+        # Extract and validate form data
         analysis_data = {
-            'nicho': data.get('nicho', '').strip(),
+            'segmento': segmento.strip(),
             'produto': data.get('produto', '').strip(),
             'descricao': data.get('descricao', '').strip(),
             'preco': data.get('preco', ''),
@@ -60,9 +62,8 @@ def analyze_market():
             'orcamento_marketing': data.get('orcamentoMarketing', '')
         }
         
-        # Validate and convert numeric fields with safe handling
+        # Safe numeric conversion
         def safe_float_conversion(value, default=None):
-            """Converte valor para float de forma segura"""
             if value is None or value == '':
                 return default
             try:
@@ -74,17 +75,17 @@ def analyze_market():
         analysis_data['objetivo_receita_float'] = safe_float_conversion(analysis_data['objetivo_receita'], 100000.0)
         analysis_data['orcamento_marketing_float'] = safe_float_conversion(analysis_data['orcamento_marketing'], 50000.0)
         
-        logger.info(f"🔍 Iniciando análise para nicho: {analysis_data['nicho']}")
+        logger.info(f"🔍 Iniciando análise ultra-detalhada para segmento: {analysis_data['segmento']}")
         
         # Save initial analysis record
         analysis_id = save_initial_analysis(analysis_data)
         
-        # Generate comprehensive analysis with DeepSeek
-        if deepseek_client:
-            logger.info("🤖 Usando DeepSeek AI para análise")
-            analysis_result = deepseek_client.analyze_avatar_comprehensive(analysis_data)
+        # Generate comprehensive analysis with Gemini Pro 2.5
+        if gemini_client:
+            logger.info("🤖 Usando Gemini Pro 2.5 com pesquisa na internet para análise")
+            analysis_result = gemini_client.analyze_avatar_ultra_detailed(analysis_data)
         else:
-            logger.warning("⚠️ DeepSeek não disponível, usando análise de fallback")
+            logger.warning("⚠️ Gemini não disponível, usando análise de fallback")
             analysis_result = create_fallback_analysis(analysis_data)
         
         # Update analysis record with results
@@ -92,7 +93,7 @@ def analyze_market():
             update_analysis_record(analysis_id, analysis_result)
             analysis_result['analysis_id'] = analysis_id
         
-        logger.info("✅ Análise concluída com sucesso")
+        logger.info("✅ Análise ultra-detalhada concluída com sucesso")
         return jsonify(analysis_result)
         
     except Exception as e:
@@ -107,7 +108,7 @@ def save_initial_analysis(data: Dict) -> Optional[int]:
     
     try:
         analysis_record = {
-            'nicho': data['nicho'],
+            'nicho': data['segmento'],  # Manter compatibilidade com schema
             'produto': data['produto'],
             'descricao': data['descricao'],
             'preco': data['preco_float'],
@@ -135,15 +136,15 @@ def update_analysis_record(analysis_id: int, results: Dict):
     """Atualiza registro da análise com resultados"""
     try:
         update_data = {
-            'avatar_data': results.get('avatar', {}),
+            'avatar_data': results.get('avatar_ultra_detalhado', {}),
             'positioning_data': results.get('escopo', {}),
-            'competition_data': results.get('concorrencia', {}),
-            'marketing_data': results.get('estrategia_aquisicao', {}),
-            'metrics_data': results.get('metricas', {}),
-            'funnel_data': results.get('projecoes', {}),
-            'market_intelligence': results.get('mercado', {}),
-            'action_plan': results.get('plano_acao', {}),
-            'comprehensive_analysis': results,  # Salva análise completa
+            'competition_data': results.get('analise_concorrencia_detalhada', {}),
+            'marketing_data': results.get('estrategia_palavras_chave', {}),
+            'metrics_data': results.get('metricas_performance_detalhadas', {}),
+            'funnel_data': results.get('projecoes_cenarios', {}),
+            'market_intelligence': results.get('inteligencia_mercado', {}),
+            'action_plan': results.get('plano_acao_detalhado', {}),
+            'comprehensive_analysis': results,  # Análise completa
             'status': 'completed',
             'updated_at': datetime.utcnow().isoformat()
         }
@@ -155,180 +156,37 @@ def update_analysis_record(analysis_id: int, results: Dict):
         logger.warning(f"⚠️ Erro ao atualizar análise no Supabase: {str(e)}")
 
 def create_fallback_analysis(data: Dict) -> Dict:
-    """Cria análise de fallback detalhada quando a IA falha"""
-    nicho = data.get('nicho', 'Produto Digital')
-    produto = data.get('produto', 'Produto Digital')
+    """Cria análise de fallback quando Gemini falha"""
+    if gemini_client:
+        return gemini_client._create_fallback_analysis(data)
     
-    # Garantir que preco seja um número válido
-    try:
-        preco = float(data.get('preco_float', 0)) if data.get('preco_float') is not None else 997.0
-    except (ValueError, TypeError):
-        preco = 997.0
-    
-    logger.info(f"🔄 Criando análise de fallback para {nicho} - Preço: R$ {preco}")
-    
+    # Fallback básico se nem o cliente Gemini estiver disponível
+    segmento = data.get('segmento', 'Produto Digital')
     return {
         "escopo": {
-            "nicho_principal": nicho,
-            "subnichos": [f"{nicho} para iniciantes", f"{nicho} avançado", f"{nicho} empresarial"],
-            "produto_ideal": produto,
-            "proposta_valor": f"A metodologia mais completa e prática para dominar {nicho} no mercado brasileiro"
+            "segmento_principal": segmento,
+            "subsegmentos": [f"{segmento} básico", f"{segmento} avançado"],
+            "produto_ideal": data.get('produto', 'Produto Digital'),
+            "proposta_valor": f"Solução completa para {segmento}"
         },
-        "avatar": {
-            "demografia": {
-                "faixa_etaria": "32-45 anos",
-                "genero": "65% mulheres, 35% homens",
-                "localizacao": "Região Sudeste (45%), Sul (25%), Nordeste (20%), Centro-Oeste (10%)",
-                "renda": "R$ 8.000 - R$ 25.000 mensais",
-                "escolaridade": "Superior completo (80%), Pós-graduação (45%)",
-                "profissoes": ["Empreendedores digitais", "Consultores", "Profissionais liberais", "Gestores", "Coaches"]
-            },
-            "psicografia": {
-                "valores": ["Crescimento pessoal contínuo", "Independência financeira", "Reconhecimento profissional"],
-                "estilo_vida": "Vida acelerada, busca por eficiência e produtividade, valoriza tempo de qualidade com família, investe em desenvolvimento pessoal",
-                "aspiracoes": ["Ser reconhecido como autoridade no nicho", "Ter liberdade geográfica e financeira"],
-                "medos": ["Ficar obsoleto no mercado", "Perder oportunidades por indecisão", "Não conseguir escalar o negócio"],
-                "frustracoes": ["Excesso de informação sem aplicação prática", "Falta de tempo para implementar estratégias"]
-            },
-            "comportamento_digital": {
-                "plataformas": ["Instagram (stories e reels)", "LinkedIn (networking profissional)"],
-                "horarios_pico": "6h-8h (manhã) e 19h-22h (noite)",
-                "conteudo_preferido": ["Vídeos educativos curtos", "Cases de sucesso com números", "Dicas práticas aplicáveis"],
-                "influenciadores": ["Especialistas reconhecidos no nicho", "Empreendedores de sucesso com transparência"]
+        "avatar_ultra_detalhado": {
+            "persona_principal": {
+                "nome": "Avatar Padrão",
+                "idade": "35 anos",
+                "profissao": f"Profissional de {segmento}",
+                "renda_mensal": "R$ 10.000 - R$ 20.000",
+                "localizacao": "São Paulo, SP",
+                "estado_civil": "Casado",
+                "escolaridade": "Superior completo"
             }
         },
-        "dores_desejos": {
-            "principais_dores": [
-                {
-                    "descricao": f"Dificuldade para se posicionar como autoridade em {nicho}",
-                    "impacto": "Baixo reconhecimento profissional e dificuldade para precificar serviços adequadamente",
-                    "urgencia": "Alta"
-                },
-                {
-                    "descricao": "Falta de metodologia estruturada e comprovada",
-                    "impacto": "Resultados inconsistentes e desperdício de tempo e recursos",
-                    "urgencia": "Alta"
-                },
-                {
-                    "descricao": "Concorrência acirrada e commoditização do mercado",
-                    "impacto": "Guerra de preços e dificuldade para se diferenciar",
-                    "urgencia": "Média"
-                }
-            ],
-            "estado_atual": "Profissional competente com conhecimento técnico, mas sem estratégia clara de posicionamento e crescimento",
-            "estado_desejado": "Autoridade reconhecida no nicho com negócio escalável e lucrativo, trabalhando com propósito e impacto",
-            "obstaculos": ["Falta de método estruturado", "Dispersão de foco em múltiplas estratégias", "Recursos limitados para investimento"],
-            "sonho_secreto": "Ser reconhecido como o maior especialista do nicho no Brasil e ter um negócio que funcione sem sua presença constante"
-        },
-        "concorrencia": {
-            "diretos": [
-                {
-                    "nome": f"Academia Premium {nicho}",
-                    "preco": f"R$ {int(preco * 1.8):,}".replace(',', '.'),
-                    "usp": "Metodologia exclusiva com certificação",
-                    "forcas": ["Marca estabelecida há 5+ anos", "Comunidade ativa de 10k+ membros"],
-                    "fraquezas": ["Preço elevado", "Suporte limitado", "Conteúdo muito teórico"]
-                }
-            ],
-            "indiretos": [
-                {
-                    "nome": "Cursos gratuitos no YouTube",
-                    "tipo": "Conteúdo educacional gratuito"
-                }
-            ],
-            "gaps_mercado": [
-                "Falta de metodologia prática com implementação assistida",
-                "Ausência de suporte contínuo pós-compra",
-                "Preços inacessíveis para profissionais em início de carreira"
-            ]
-        },
-        "mercado": {
-            "tam": "R$ 3,2 bilhões",
-            "sam": "R$ 480 milhões",
-            "som": "R$ 24 milhões",
-            "volume_busca": "67.000 buscas/mês",
-            "tendencias_alta": ["IA aplicada ao nicho", "Automação de processos", "Sustentabilidade e ESG"],
-            "tendencias_baixa": ["Métodos tradicionais offline", "Processos manuais repetitivos"],
-            "sazonalidade": {
-                "melhores_meses": ["Janeiro", "Março", "Setembro"],
-                "piores_meses": ["Dezembro", "Julho"]
-            }
-        },
-        "palavras_chave": {
-            "principais": [
-                {
-                    "termo": f"curso {nicho}",
-                    "volume": "12.100",
-                    "cpc": "R$ 4,20",
-                    "dificuldade": "Média",
-                    "intencao": "Comercial"
-                }
-            ],
-            "custos_plataforma": {
-                "facebook": {"cpm": "R$ 18", "cpc": "R$ 1,45", "cpl": "R$ 28", "conversao": "2,8%"},
-                "google": {"cpm": "R$ 32", "cpc": "R$ 3,20", "cpl": "R$ 52", "conversao": "3,5%"},
-                "youtube": {"cpm": "R$ 12", "cpc": "R$ 0,80", "cpl": "R$ 20", "conversao": "1,8%"},
-                "tiktok": {"cpm": "R$ 8", "cpc": "R$ 0,60", "cpl": "R$ 18", "conversao": "1,5%"}
-            }
-        },
-        "metricas": {
-            "cac_medio": "R$ 420",
-            "funil_conversao": ["100% visitantes", "18% leads", "3,2% vendas"],
-            "ltv_medio": "R$ 1.680",
-            "ltv_cac_ratio": "4,0:1",
-            "roi_canais": {
-                "facebook": "320%",
-                "google": "380%",
-                "youtube": "250%",
-                "tiktok": "180%"
-            }
-        },
-        "voz_mercado": {
-            "objecoes": [
-                {
-                    "objecao": "Não tenho tempo para mais um curso",
-                    "contorno": "Metodologia de implementação em 15 minutos diários com resultados em 30 dias"
-                }
-            ],
-            "linguagem": {
-                "termos": ["Metodologia", "Sistema", "Framework", "Estratégia", "Resultados"],
-                "girias": ["Game changer", "Virada de chave", "Next level"],
-                "gatilhos": ["Comprovado cientificamente", "Resultados garantidos", "Método exclusivo"]
-            },
-            "crencas_limitantes": [
-                "Preciso trabalhar mais horas para ganhar mais dinheiro",
-                "Só quem tem muito dinheiro consegue se destacar no mercado"
-            ]
-        },
-        "projecoes": {
-            "conservador": {
-                "conversao": "2,0%",
-                "faturamento": f"R$ {int(preco * 200):,}".replace(',', '.'),
-                "roi": "240%"
-            },
-            "realista": {
-                "conversao": "3,2%",
-                "faturamento": f"R$ {int(preco * 320):,}".replace(',', '.'),
-                "roi": "380%"
-            },
-            "otimista": {
-                "conversao": "5,0%",
-                "faturamento": f"R$ {int(preco * 500):,}".replace(',', '.'),
-                "roi": "580%"
-            }
-        },
-        "plano_acao": [
-            {"passo": 1, "acao": "Validar proposta de valor com pesquisa qualitativa (50 entrevistas)", "prazo": "2 semanas"},
-            {"passo": 2, "acao": "Criar landing page otimizada com copy baseado na pesquisa", "prazo": "1 semana"},
-            {"passo": 3, "acao": "Configurar campanhas de tráfego pago (Facebook e Google)", "prazo": "1 semana"},
-            {"passo": 4, "acao": "Produzir conteúdo de aquecimento (webinar + sequência de e-mails)", "prazo": "2 semanas"},
-            {"passo": 5, "acao": "Executar campanha de pré-lançamento com early bird", "prazo": "1 semana"},
-            {"passo": 6, "acao": "Lançamento oficial com live de abertura", "prazo": "1 semana"},
-            {"passo": 7, "acao": "Otimizar campanhas baseado em dados e escalar investimento", "prazo": "Contínuo"}
+        "insights_exclusivos": [
+            f"Análise básica para o segmento {segmento}",
+            "Recomenda-se análise mais detalhada com Gemini Pro 2.5"
         ]
     }
 
-# Rotas existentes mantidas
+# Rotas existentes mantidas com adaptações para 'segmento'
 @analysis_bp.route('/analyses', methods=['GET'])
 def get_analyses():
     """Get list of recent analyses"""
@@ -337,12 +195,12 @@ def get_analyses():
             return jsonify({'error': 'Banco de dados não configurado'}), 500
         
         limit = request.args.get('limit', 10, type=int)
-        nicho = request.args.get('nicho')
+        segmento = request.args.get('segmento') or request.args.get('nicho')  # Compatibilidade
         
         query = supabase.table('analyses').select('*').order('created_at', desc=True)
         
-        if nicho:
-            query = query.eq('nicho', nicho)
+        if segmento:
+            query = query.eq('nicho', segmento)  # Campo no DB ainda é 'nicho'
         
         result = query.limit(limit).execute()
         
@@ -376,16 +234,16 @@ def get_analysis(analysis_id):
         # Fallback para estrutura antiga
         structured_analysis = {
             'id': analysis['id'],
-            'nicho': analysis['nicho'],
+            'segmento': analysis['nicho'],  # Mapear nicho para segmento
             'produto': analysis['produto'],
-            'avatar': analysis['avatar_data'],
-            'positioning': analysis['positioning_data'],
-            'competition': analysis['competition_data'],
-            'marketing': analysis['marketing_data'],
-            'metrics': analysis['metrics_data'],
-            'funnel': analysis['funnel_data'],
-            'market_intelligence': analysis.get('market_intelligence', {}),
-            'action_plan': analysis.get('action_plan', {}),
+            'avatar_ultra_detalhado': analysis['avatar_data'],
+            'escopo': analysis['positioning_data'],
+            'analise_concorrencia_detalhada': analysis['competition_data'],
+            'estrategia_palavras_chave': analysis['marketing_data'],
+            'metricas_performance_detalhadas': analysis['metrics_data'],
+            'projecoes_cenarios': analysis['funnel_data'],
+            'inteligencia_mercado': analysis.get('market_intelligence', {}),
+            'plano_acao_detalhado': analysis.get('action_plan', {}),
             'created_at': analysis['created_at'],
             'status': analysis['status']
         }
@@ -396,23 +254,29 @@ def get_analysis(analysis_id):
         logger.error(f"Erro ao buscar análise: {str(e)}")
         return jsonify({'error': 'Erro interno do servidor'}), 500
 
-@analysis_bp.route('/nichos', methods=['GET'])
-def get_nichos():
-    """Get list of unique niches from analyses"""
+@analysis_bp.route('/segmentos', methods=['GET'])
+def get_segmentos():
+    """Get list of unique segments from analyses"""
     try:
         if not supabase:
             return jsonify({'error': 'Banco de dados não configurado'}), 500
         
         result = supabase.table('analyses').select('nicho').execute()
         
-        nichos = list(set([item['nicho'] for item in result.data if item['nicho']]))
-        nichos.sort()
+        segmentos = list(set([item['nicho'] for item in result.data if item['nicho']]))
+        segmentos.sort()
         
         return jsonify({
-            'nichos': nichos,
-            'count': len(nichos)
+            'segmentos': segmentos,
+            'count': len(segmentos)
         })
         
     except Exception as e:
-        logger.error(f"Erro ao buscar nichos: {str(e)}")
+        logger.error(f"Erro ao buscar segmentos: {str(e)}")
         return jsonify({'error': 'Erro interno do servidor'}), 500
+
+# Manter rota antiga para compatibilidade
+@analysis_bp.route('/nichos', methods=['GET'])
+def get_nichos():
+    """Get list of unique niches (compatibility route)"""
+    return get_segmentos()

@@ -43,7 +43,7 @@ if database_url:
             'connect_args': {
                 'sslmode': 'require',
                 'connect_timeout': 60,
-                'application_name': 'ARQV2_DeepSeek_App',
+                'application_name': 'ARQV2_Gemini_App',
                 'keepalives_idle': 600,
                 'keepalives_interval': 30,
                 'keepalives_count': 3
@@ -72,7 +72,7 @@ else:
 @app.route('/health')
 def health_check():
     # Verificar status das APIs e banco
-    deepseek_status = 'configured' if os.getenv('DEEPSEEK_API_KEY') else 'not_configured'
+    gemini_status = 'configured' if os.getenv('GEMINI_API_KEY') else 'not_configured'
     supabase_status = 'configured' if os.getenv('SUPABASE_URL') else 'not_configured'
     database_status = 'configured' if database_url else 'not_configured'
     
@@ -89,14 +89,21 @@ def health_check():
     
     return jsonify({
         'status': 'healthy',
-        'message': 'UP Lançamentos - Arqueologia do Avatar com DeepSeek AI',
+        'message': 'UP Lançamentos - Arqueologia do Avatar com Gemini Pro 2.5',
         'services': {
-            'deepseek_ai': deepseek_status,
+            'gemini_ai': gemini_status,
             'supabase': supabase_status,
             'database': database_status,
             'db_connection': db_connection
         },
-        'version': '2.0.0'
+        'version': '3.0.0',
+        'features': [
+            'Gemini Pro 2.5 Integration',
+            'Real-time Internet Research',
+            'Ultra-detailed Avatar Analysis',
+            'Advanced Market Intelligence',
+            'Comprehensive Competitor Analysis'
+        ]
     })
 
 # Rota para servir arquivos estáticos e SPA
