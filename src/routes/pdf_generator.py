@@ -186,7 +186,7 @@ class PDFReportGenerator:
         # Title
         story.append(Spacer(1, 2*inch))
         story.append(Paragraph("ARQUEOLOGIA DO AVATAR", self.styles['CustomTitle']))
-        story.append(Paragraph("Análise Ultra-Detalhada com Gemini Pro 2.5", self.styles['Heading2']))
+        story.append(Paragraph("Análise Ultra-Detalhada com IA", self.styles['Heading2']))
         
         story.append(Spacer(1, 1*inch))
         
@@ -232,7 +232,7 @@ class PDFReportGenerator:
         
         # Generation info
         story.append(Paragraph(f"<b>Gerado em:</b> {datetime.now().strftime('%d/%m/%Y às %H:%M')}", self.styles['BodyText']))
-        story.append(Paragraph("<b>Powered by:</b> Gemini Pro 2.5 + Pesquisa em Tempo Real", self.styles['BodyText']))
+        story.append(Paragraph("<b>Powered by:</b> IA + Pesquisa em Tempo Real", self.styles['BodyText']))
         
         return story
 
@@ -590,7 +590,7 @@ class PDFReportGenerator:
         story.append(Spacer(1, 1*inch))
         story.append(HRFlowable(width="100%", thickness=1, color=HexColor('#1e40af')))
         story.append(Spacer(1, 10))
-        story.append(Paragraph("Relatório gerado pela Arqueologia do Avatar com Gemini Pro 2.5", self.styles['BodyText']))
+        story.append(Paragraph("Relatório gerado pela Arqueologia do Avatar com IA", self.styles['BodyText']))
         story.append(Paragraph(f"Data: {datetime.now().strftime('%d/%m/%Y às %H:%M')}", self.styles['BodyText']))
         
         return story
