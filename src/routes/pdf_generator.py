@@ -57,7 +57,7 @@ class PDFReportGenerator:
         
         # Body text style
         self.styles.add(ParagraphStyle(
-            name='BodyText',
+            name='CustomBodyText',
             parent=self.styles['Normal'],
             fontSize=11,
             spaceAfter=6,
