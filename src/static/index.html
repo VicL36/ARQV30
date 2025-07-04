@@ -8,10 +8,104 @@
     <link rel="icon" href="logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="description" content="Análise ultra-detalhada de avatar com pesquisa na internet. Descubra insights profundos sobre seu cliente ideal usando IA de última geração.">
+    
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+    <!-- Login Screen -->
+    <section id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="logo.png" alt="UP Lançamentos" class="login-logo">
+                    <h1>UP LANÇAMENTOS</h1>
+                    <p>Arqueologia do Avatar com IA</p>
+                </div>
+                
+                <div class="login-content">
+                    <h2>Bem-vindo de volta!</h2>
+                    <p>Faça login para acessar análises ultra-detalhadas de avatar com inteligência artificial.</p>
+                    
+                    <div class="login-features">
+                        <div class="feature-item">
+                            <i class="fas fa-brain"></i>
+                            <span>IA Gemini Pro 2.5</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-globe"></i>
+                            <span>Pesquisa Real-Time</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Análise Ultra-Detalhada</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Relatórios PDF</span>
+                        </div>
+                    </div>
+                    
+                    <div class="google-signin-container">
+                        <div id="g_id_onload"
+                             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                             data-context="signin"
+                             data-ux_mode="popup"
+                             data-callback="handleCredentialResponse"
+                             data-auto_prompt="false">
+                        </div>
+                        
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-shape="rectangular"
+                             data-theme="outline"
+                             data-text="signin_with"
+                             data-size="large"
+                             data-logo_alignment="left">
+                        </div>
+                        
+                        <!-- Fallback button -->
+                        <button class="google-signin-btn" onclick="initiateGoogleSignIn()">
+                            <i class="fab fa-google"></i>
+                            <span>Entrar com Google</span>
+                        </button>
+                    </div>
+                    
+                    <div class="login-footer">
+                        <p>Ao fazer login, você concorda com nossos <a href="#" class="link">Termos de Uso</a> e <a href="#" class="link">Política de Privacidade</a>.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-visual">
+                <div class="floating-elements">
+                    <div class="floating-card">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Avatar Detalhado</h3>
+                        <p>Persona completa com psicografia profunda</p>
+                    </div>
+                    <div class="floating-card">
+                        <i class="fas fa-target"></i>
+                        <h3>Dores Mapeadas</h3>
+                        <p>3 níveis de dores com intensidade</p>
+                    </div>
+                    <div class="floating-card">
+                        <i class="fas fa-chess"></i>
+                        <h3>Análise Competitiva</h3>
+                        <p>Concorrentes e gaps de mercado</p>
+                    </div>
+                    <div class="floating-card">
+                        <i class="fas fa-rocket"></i>
+                        <h3>Plano de Ação</h3>
+                        <p>Estratégia detalhada por fases</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Header -->
-    <header class="neo-header" id="header">
+    <header class="neo-header" id="header" style="display: none;">
         <div class="container">
             <div class="header-content">
                 <div class="logo-section">
@@ -37,16 +131,38 @@
                     </a>
                 </nav>
                 
-                <div class="neo-search-container">
-                    <i class="fas fa-search neo-search-icon"></i>
-                    <input type="text" class="neo-search-input" placeholder="Buscar segmento...">
+                <div class="user-menu">
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <img id="userAvatar" src="" alt="User" class="user-avatar">
+                        <span id="userName">Usuário</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Perfil</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-history"></i>
+                            <span>Histórico</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                        <hr class="dropdown-divider">
+                        <a href="#" class="dropdown-item" onclick="signOut()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Sair</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main id="mainContent" style="display: none;">
         <!-- Home Section -->
         <section id="home" class="neo-hero">
             <div class="container">
@@ -55,7 +171,7 @@
                         <h1 class="neo-hero-title">Desvende o DNA do Seu Avatar</h1>
                         <p class="neo-hero-subtitle">
                             Utilize a mais avançada inteligência artificial para análises ultra-detalhadas de mercado. 
-                            Nossa plataforma Inteligencia Artificial, pesquisa em tempo real na internet, neurociência e 
+                            Nossa plataforma combina IA, pesquisa em tempo real na internet, neurociência e 
                             psicologia comportamental para criar o perfil mais preciso e acionável do seu cliente ideal.
                         </p>
                         
