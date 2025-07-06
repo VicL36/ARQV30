@@ -43,9 +43,9 @@ class PDFReportGenerator:
             spaceAfter=30
         ))
         
-        # Estilos de cabeçalho
+        # Estilos de cabeçalho customizados
         self.styles.add(ParagraphStyle(
-            name='Heading1',
+            name='CustomHeading1',
             fontSize=16,
             leading=20,
             textColor=HexColor('#0056b3'),
@@ -55,7 +55,7 @@ class PDFReportGenerator:
         ))
         
         self.styles.add(ParagraphStyle(
-            name='Heading2',
+            name='CustomHeading2',
             fontSize=14,
             leading=18,
             textColor=HexColor('#007bff'),
@@ -65,7 +65,7 @@ class PDFReportGenerator:
         ))
         
         self.styles.add(ParagraphStyle(
-            name='Heading3',
+            name='CustomHeading3',
             fontSize=12,
             leading=16,
             textColor=HexColor('#0056b3'),
@@ -232,7 +232,7 @@ class PDFReportGenerator:
             story.append(PageBreak())
 
             # Sumário executivo
-            story.append(Paragraph("Sumário Executivo", self.styles['Heading1']))
+            story.append(Paragraph("Sumário Executivo", self.styles['CustomHeading1']))
             story.append(Paragraph("Este relatório apresenta uma análise detalhada do avatar identificado através da metodologia de Arqueologia de Avatar, utilizando técnicas avançadas de Inteligência Artificial para revelar insights profundos sobre comportamentos, motivações e características do público-alvo.", self.styles['BodyText']))
             story.append(Spacer(1, 0.2 * inch))
             
@@ -243,54 +243,54 @@ class PDFReportGenerator:
 
             # Análise inicial
             if data.get('initial_analysis'):
-                story.append(Paragraph("1. Análise Inicial", self.styles['Heading1']))
+                story.append(Paragraph("1. Análise Inicial", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['initial_analysis'], self.styles['BodyText']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Contexto cultural
             if data.get('cultural_context'):
-                story.append(Paragraph("2. Contexto Cultural", self.styles['Heading1']))
+                story.append(Paragraph("2. Contexto Cultural", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['cultural_context'], self.styles['BodyText']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Arquétipos e símbolos
             if data.get('archetypes_symbols'):
-                story.append(Paragraph("3. Arquétipos e Símbolos", self.styles['Heading1']))
+                story.append(Paragraph("3. Arquétipos e Símbolos", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['archetypes_symbols'], self.styles['BodyText']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Padrões comportamentais
             if data.get('behavioral_patterns'):
-                story.append(Paragraph("4. Padrões Comportamentais", self.styles['Heading1']))
+                story.append(Paragraph("4. Padrões Comportamentais", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['behavioral_patterns'], self.styles['BodyText']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Narrativa do avatar
             if data.get('avatar_narrative'):
-                story.append(Paragraph("5. Narrativa do Avatar", self.styles['Heading1']))
+                story.append(Paragraph("5. Narrativa do Avatar", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['avatar_narrative'], self.styles['Quote']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Descrição visual
             if data.get('visual_description'):
-                story.append(Paragraph("6. Descrição Visual", self.styles['Heading1']))
+                story.append(Paragraph("6. Descrição Visual", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['visual_description'], self.styles['BodyText']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Insights de marketing
             if data.get('marketing_insights'):
-                story.append(Paragraph("7. Insights de Marketing", self.styles['Heading1']))
+                story.append(Paragraph("7. Insights de Marketing", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['marketing_insights'], self.styles['Highlight']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Análise de concorrentes
             if data.get('competitor_analysis'):
-                story.append(Paragraph("8. Análise de Concorrentes", self.styles['Heading1']))
+                story.append(Paragraph("8. Análise de Concorrentes", self.styles['CustomHeading1']))
                 story.append(self._safe_paragraph(data['competitor_analysis'], self.styles['BodyText']))
                 story.append(Spacer(1, 0.2 * inch))
 
             # Conclusões e recomendações
-            story.append(Paragraph("9. Conclusões e Recomendações", self.styles['Heading1']))
+            story.append(Paragraph("9. Conclusões e Recomendações", self.styles['CustomHeading1']))
             story.append(Paragraph("Com base na análise realizada, recomendamos:", self.styles['BodyText']))
             story.append(Paragraph("• Implementar estratégias de marketing personalizadas baseadas nos insights identificados", self.styles['ListText']))
             story.append(Paragraph("• Desenvolver conteúdo que ressoe com os arquétipos e símbolos identificados", self.styles['ListText']))
