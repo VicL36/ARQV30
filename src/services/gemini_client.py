@@ -938,7 +938,7 @@ INSTRUÇÕES CRÍTICAS:
                     "duracao": "3 semanas",
                     "acoes": [
                         {
-                            "acao": "Criar landing page otimizada",
+                            "acao": "Criar landing page otimizada,detalhar dobras",
                             "responsavel": "Equipe de marketing",
                             "prazo": "7 dias",
                             "recursos_necessarios": ["Designer", "Copywriter", "Desenvolvedor"],
@@ -952,5 +952,6 @@ INSTRUÇÕES CRÍTICAS:
                 f"O segmento {segmento} está passando por uma transformação digital acelerada",
                 "Há uma lacuna significativa entre oferta premium e básica no mercado",
                 "O público valoriza mais implementação prática do que teoria extensiva"
+                "Maneira ou metodo irresistivel de convencer a compra"
             ]
         }
