@@ -1,12 +1,13 @@
 import os
 import logging
+import time
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from database import db
-from routes.user import user_bp
-from routes.analysis import analysis_bp
-from routes.pdf_generator import pdf_bp
+from .database import db
+from .routes.user import user_bp
+from .routes.analysis import analysis_bp
+from .routes.pdf_generator import pdf_bp
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -44,8 +45,8 @@ if database_url:
             'pool_pre_ping': True,
             'pool_recycle': 300,
             'pool_timeout': 120,  # Increased timeout
-            'pool_size': 5,       # Increased pool size
-            'max_overflow': 10,   # Increased overflow
+            'pool_size': 5,      # Increased pool size
+            'max_overflow': 10,  # Increased overflow
             'connect_args': {
                 'sslmode': 'require',
                 'connect_timeout': 120,  # Increased connection timeout
@@ -71,12 +72,11 @@ if database_url:
                 except Exception as e:
                     if attempt < max_retries - 1:
                         logger.warning(f"⚠️ Tentativa {attempt + 1} falhou, tentando novamente... Erro: {str(e)[:100]}...")
-                        import time
                         time.sleep(2)  # Wait 2 seconds before retry
                     else:
                         logger.warning(f"⚠️ Conexão com banco não disponível após {max_retries} tentativas: {str(e)[:100]}...")
                         logger.info("📱 Aplicação funcionará com funcionalidades limitadas")
-                
+                        
     except Exception as e:
         logger.warning(f"⚠️ Erro na configuração do banco de dados: {str(e)[:100]}...")
         logger.info("📱 Aplicação funcionará sem persistência de dados")
