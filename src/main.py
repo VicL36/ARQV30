@@ -1,51 +1,135 @@
 import os
 import logging
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
-from supabase import create_client, Client
-
-# Blueprints
+from dotenv import load_dotenv
+from database import db
 from routes.user import user_bp
 from routes.analysis import analysis_bp
 from routes.pdf_generator import pdf_bp
 
-# Configure logging
+# Configurar logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__, static_folder=\'static\', static_url_path=\'/static\')
-CORS(app) # Enable CORS for all routes
+# Carrega as variáveis de ambiente
+load_dotenv()
 
-# Supabase Configuration
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+# Criar aplicação Flask
+app = Flask(__name__, static_folder='static')
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    logger.error("SUPABASE_URL and SUPABASE_KEY environment variables must be set.")
-    # Fallback for local development if .env is not used
-    # SUPABASE_URL = "YOUR_SUPABASE_URL"
-    # SUPABASE_KEY = "YOUR_SUPABASE_KEY"
+# Configurar CORS para permitir todas as origens
+CORS(app, origins=os.getenv('CORS_ORIGINS', '*'))
 
-try:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    logger.info("Conectado ao Supabase com sucesso.")
-except Exception as e:
-    logger.error(f"Erro ao conectar ao Supabase: {e}")
+# Configuração da aplicação
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-default-secret-key-that-should-be-changed')
 
-# Register Blueprints
-app.register_blueprint(user_bp, url_prefix=\'/api/user\')
-app.register_blueprint(analysis_bp, url_prefix=\'/api/archeology\') # Corrected prefix
-app.register_blueprint(pdf_bp, url_prefix=\'/api/pdf\')
+# Registrar blueprints
+app.register_blueprint(user_bp, url_prefix='/api')
+app.register_blueprint(analysis_bp, url_prefix='/api')
+app.register_blueprint(pdf_bp, url_prefix='/api')
 
-@app.route(\'/\')
-def index():
-    return send_from_directory(app.static_folder, \'index.html\')
+# Configuração do banco de dados usando suas variáveis
+database_url = os.getenv('DATABASE_URL')
+if database_url:
+    try:
+        # Configuração otimizada para Supabase
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+            'pool_pre_ping': True,
+            'pool_recycle': 300,
+            'pool_timeout': 60,
+            'pool_size': 3,
+            'max_overflow': 5,
+            'connect_args': {
+                'sslmode': 'require',
+                'connect_timeout': 60,
+                'application_name': 'ARQV2_Gemini_App',
+                'keepalives_idle': 600,
+                'keepalives_interval': 30,
+                'keepalives_count': 3
+            }
+        }
+        
+        db.init_app(app)
+        
+        # Teste de conexão opcional - não bloqueia a aplicação
+        with app.app_context():
+            try:
+                from sqlalchemy import text
+                result = db.session.execute(text('SELECT 1'))
+                logger.info("✅ Conexão com Supabase estabelecida com sucesso!")
+            except Exception as e:
+                logger.warning(f"⚠️ Conexão com banco não disponível no momento: {str(e)[:100]}...")
+                logger.info("📱 Aplicação funcionará com funcionalidades limitadas")
+                
+    except Exception as e:
+        logger.warning(f"⚠️ Erro na configuração do banco de dados: {str(e)[:100]}...")
+        logger.info("📱 Aplicação funcionará sem persistência de dados")
+else:
+    logger.warning("📋 DATABASE_URL não encontrada. Executando sem funcionalidades de banco de dados.")
 
-@app.route(\'/health\')
+# Rota de health check
+@app.route('/health')
 def health_check():
-    return jsonify({"status": "ok", "message": "ARQV30 API is running!"}), 200
+    # Verificar status das APIs e banco
+    gemini_status = 'configured' if os.getenv('GEMINI_API_KEY') else 'not_configured'
+    supabase_status = 'configured' if os.getenv('SUPABASE_URL') else 'not_configured'
+    database_status = 'configured' if database_url else 'not_configured'
+    
+    # Teste rápido de conexão com banco
+    db_connection = 'disconnected'
+    if database_url:
+        try:
+            with app.app_context():
+                from sqlalchemy import text
+                db.session.execute(text('SELECT 1'))
+                db_connection = 'connected'
+        except:
+            db_connection = 'error'
+    
+    return jsonify({
+        'status': 'healthy',
+        'message': 'UP Lançamentos - Arqueologia do Avatar com Gemini Pro 2.5',
+        'services': {
+            'gemini_ai': gemini_status,
+            'supabase': supabase_status,
+            'database': database_status,
+            'db_connection': db_connection
+        },
+        'version': '3.0.0',
+        'features': [
+            'Gemini Pro 2.5 Integration',
+            'Real-time Internet Research',
+            'Ultra-detailed Avatar Analysis',
+            'Advanced Market Intelligence',
+            'Comprehensive Competitor Analysis',
+            'PDF Report Generation',
+            'Interactive Charts & Infographics'
+        ]
+    })
 
-if __name__ == \'__main__\':
-    app.run(debug=True, host=\'0.0.0.0\', port=5000)
+# Rota para servir arquivos estáticos e SPA
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
+# Tratamento de erros
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Recurso não encontrado'}), 404
 
+@app.errorhandler(500)
+def internal_error(error):
+    logger.error(f"Erro interno: {error}")
+    return jsonify({'error': 'Erro interno do servidor'}), 500
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.getenv('FLASK_ENV') != 'production'
+    app.run(host='0.0.0.0', port=port, debug=debug)
