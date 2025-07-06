@@ -6,7 +6,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch, cm
 from reportlab.lib.colors import HexColor, white, black, blue, orange
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 from reportlab.platypus.flowables import HRFlowable
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
 import logging
@@ -95,6 +95,7 @@ class PDFReportGenerator:
             fontName='Helvetica'
         ))
         
+        # Fixed Quote style - removed unsupported properties
         self.styles.add(ParagraphStyle(
             name='Quote',
             fontSize=10,
@@ -104,10 +105,7 @@ class PDFReportGenerator:
             rightIndent=30,
             spaceBefore=10,
             spaceAfter=10,
-            backColor=HexColor('#f7fafc'),
-            borderPadding=10,
-            borderColor=HexColor('#e2e8f0'),
-            borderWidth=1
+            fontName='Helvetica-Oblique'
         ))
         
         self.styles.add(ParagraphStyle(
@@ -120,15 +118,17 @@ class PDFReportGenerator:
             fontName='Helvetica'
         ))
         
+        # Fixed Highlight style - removed unsupported properties
         self.styles.add(ParagraphStyle(
             name='Highlight',
             fontSize=11,
             leading=14,
             textColor=HexColor('#2d3748'),
-            backColor=HexColor('#e6fffa'),
-            borderPadding=8,
+            leftIndent=10,
+            rightIndent=10,
+            spaceBefore=8,
             spaceAfter=8,
-            fontName='Helvetica'
+            fontName='Helvetica-Bold'
         ))
 
     def _add_header_and_footer(self, canvas, doc):
@@ -158,12 +158,18 @@ class PDFReportGenerator:
 
     def _create_summary_table(self, data):
         """Cria tabela resumo com dados principais"""
+        # Safe text truncation
+        def safe_truncate(text, max_length=100):
+            if not text or not isinstance(text, str):
+                return 'Não informado'
+            return text[:max_length] + '...' if len(text) > max_length else text
+        
         table_data = [
             ['Elemento', 'Descrição'],
-            ['Avatar Principal', data.get('avatar_name', 'Não informado')],
-            ['Contexto Cultural', data.get('cultural_context', 'Não informado')[:100] + '...'],
-            ['Arquétipo Principal', data.get('main_archetype', 'Não informado')],
-            ['Padrão Comportamental', data.get('behavioral_pattern', 'Não informado')[:100] + '...'],
+            ['Avatar Principal', safe_truncate(data.get('avatar_name', 'Não informado'), 50)],
+            ['Contexto Cultural', safe_truncate(data.get('cultural_context', 'Não informado'))],
+            ['Arquétipo Principal', safe_truncate(data.get('main_archetype', 'Não informado'), 50)],
+            ['Padrão Comportamental', safe_truncate(data.get('behavioral_pattern', 'Não informado'))],
         ]
         
         table = Table(table_data, colWidths=[3*inch, 4*inch])
@@ -187,6 +193,18 @@ class PDFReportGenerator:
         
         return table
 
+    def _safe_paragraph(self, text, style):
+        """Safely create paragraph with text sanitization"""
+        if not text or not isinstance(text, str):
+            return Paragraph("Não informado", style)
+        
+        # Basic HTML escaping for ReportLab
+        text = text.replace('&', '&amp;')
+        text = text.replace('<', '&lt;')
+        text = text.replace('>', '&gt;')
+        
+        return Paragraph(text, style)
+
     def generate_pdf_report(self, data: dict, filename: str = None):
         """Gera relatório PDF completo"""
         if not filename:
@@ -197,97 +215,98 @@ class PDFReportGenerator:
         doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=inch, bottomMargin=inch)
         story = []
 
-        # Página de título
-        story.append(Paragraph("Relatório de Arqueologia de Avatar", self.styles['TitleStyle']))
-        story.append(Spacer(1, 0.3 * inch))
-        story.append(Paragraph("Análise Profunda de Persona com Inteligência Artificial", self.styles['SubtitleStyle']))
-        story.append(Spacer(1, 0.5 * inch))
-        
-        # Informações do relatório
-        story.append(Paragraph(f"<b>Data de Geração:</b> {datetime.now().strftime('%d de %B de %Y')}", self.styles['BodyText']))
-        story.append(Paragraph(f"<b>Hora:</b> {datetime.now().strftime('%H:%M:%S')}", self.styles['BodyText']))
-        story.append(Spacer(1, 0.3 * inch))
-        
-        # Linha decorativa
-        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#0056b3')))
-        story.append(PageBreak())
-
-        # Sumário executivo
-        story.append(Paragraph("Sumário Executivo", self.styles['Heading1']))
-        story.append(Paragraph("Este relatório apresenta uma análise detalhada do avatar identificado através da metodologia de Arqueologia de Avatar, utilizando técnicas avançadas de Inteligência Artificial para revelar insights profundos sobre comportamentos, motivações e características do público-alvo.", self.styles['BodyText']))
-        story.append(Spacer(1, 0.2 * inch))
-        
-        # Tabela resumo
-        if data:
-            story.append(self._create_summary_table(data))
-        story.append(PageBreak())
-
-        # Análise inicial
-        if data.get('initial_analysis'):
-            story.append(Paragraph("1. Análise Inicial", self.styles['Heading1']))
-            story.append(Paragraph(data['initial_analysis'], self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Contexto cultural
-        if data.get('cultural_context'):
-            story.append(Paragraph("2. Contexto Cultural", self.styles['Heading1']))
-            story.append(Paragraph(data['cultural_context'], self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Arquétipos e símbolos
-        if data.get('archetypes_symbols'):
-            story.append(Paragraph("3. Arquétipos e Símbolos", self.styles['Heading1']))
-            story.append(Paragraph(data['archetypes_symbols'], self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Padrões comportamentais
-        if data.get('behavioral_patterns'):
-            story.append(Paragraph("4. Padrões Comportamentais", self.styles['Heading1']))
-            story.append(Paragraph(data['behavioral_patterns'], self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Narrativa do avatar
-        if data.get('avatar_narrative'):
-            story.append(Paragraph("5. Narrativa do Avatar", self.styles['Heading1']))
-            story.append(Paragraph(data['avatar_narrative'], self.styles['Quote']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Descrição visual
-        if data.get('visual_description'):
-            story.append(Paragraph("6. Descrição Visual", self.styles['Heading1']))
-            story.append(Paragraph(data['visual_description'], self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Insights de marketing
-        if data.get('marketing_insights'):
-            story.append(Paragraph("7. Insights de Marketing", self.styles['Heading1']))
-            story.append(Paragraph(data['marketing_insights'], self.styles['Highlight']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Análise de concorrentes
-        if data.get('competitor_analysis'):
-            story.append(Paragraph("8. Análise de Concorrentes", self.styles['Heading1']))
-            story.append(Paragraph(data['competitor_analysis'], self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
-
-        # Conclusões e recomendações
-        story.append(Paragraph("9. Conclusões e Recomendações", self.styles['Heading1']))
-        story.append(Paragraph("Com base na análise realizada, recomendamos:", self.styles['BodyText']))
-        story.append(Paragraph("• Implementar estratégias de marketing personalizadas baseadas nos insights identificados", self.styles['ListText']))
-        story.append(Paragraph("• Desenvolver conteúdo que ressoe com os arquétipos e símbolos identificados", self.styles['ListText']))
-        story.append(Paragraph("• Monitorar continuamente o comportamento do avatar para refinamento das estratégias", self.styles['ListText']))
-        story.append(Paragraph("• Utilizar a descrição visual para criar materiais de marketing mais eficazes", self.styles['ListText']))
-
-        # Rodapé final
-        story.append(Spacer(1, 0.5 * inch))
-        story.append(HRFlowable(width="100%", thickness=1, color=HexColor('#e2e8f0')))
-        story.append(Paragraph("Relatório gerado pelo sistema ARQV30 - Arqueologia de Avatar", self.styles['Caption']))
-
         try:
+            # Página de título
+            story.append(Paragraph("Relatório de Arqueologia de Avatar", self.styles['TitleStyle']))
+            story.append(Spacer(1, 0.3 * inch))
+            story.append(Paragraph("Análise Profunda de Persona com Inteligência Artificial", self.styles['SubtitleStyle']))
+            story.append(Spacer(1, 0.5 * inch))
+            
+            # Informações do relatório
+            story.append(Paragraph(f"<b>Data de Geração:</b> {datetime.now().strftime('%d de %B de %Y')}", self.styles['BodyText']))
+            story.append(Paragraph(f"<b>Hora:</b> {datetime.now().strftime('%H:%M:%S')}", self.styles['BodyText']))
+            story.append(Spacer(1, 0.3 * inch))
+            
+            # Linha decorativa
+            story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#0056b3')))
+            story.append(PageBreak())
+
+            # Sumário executivo
+            story.append(Paragraph("Sumário Executivo", self.styles['Heading1']))
+            story.append(Paragraph("Este relatório apresenta uma análise detalhada do avatar identificado através da metodologia de Arqueologia de Avatar, utilizando técnicas avançadas de Inteligência Artificial para revelar insights profundos sobre comportamentos, motivações e características do público-alvo.", self.styles['BodyText']))
+            story.append(Spacer(1, 0.2 * inch))
+            
+            # Tabela resumo
+            if data:
+                story.append(self._create_summary_table(data))
+            story.append(PageBreak())
+
+            # Análise inicial
+            if data.get('initial_analysis'):
+                story.append(Paragraph("1. Análise Inicial", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['initial_analysis'], self.styles['BodyText']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Contexto cultural
+            if data.get('cultural_context'):
+                story.append(Paragraph("2. Contexto Cultural", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['cultural_context'], self.styles['BodyText']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Arquétipos e símbolos
+            if data.get('archetypes_symbols'):
+                story.append(Paragraph("3. Arquétipos e Símbolos", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['archetypes_symbols'], self.styles['BodyText']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Padrões comportamentais
+            if data.get('behavioral_patterns'):
+                story.append(Paragraph("4. Padrões Comportamentais", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['behavioral_patterns'], self.styles['BodyText']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Narrativa do avatar
+            if data.get('avatar_narrative'):
+                story.append(Paragraph("5. Narrativa do Avatar", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['avatar_narrative'], self.styles['Quote']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Descrição visual
+            if data.get('visual_description'):
+                story.append(Paragraph("6. Descrição Visual", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['visual_description'], self.styles['BodyText']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Insights de marketing
+            if data.get('marketing_insights'):
+                story.append(Paragraph("7. Insights de Marketing", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['marketing_insights'], self.styles['Highlight']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Análise de concorrentes
+            if data.get('competitor_analysis'):
+                story.append(Paragraph("8. Análise de Concorrentes", self.styles['Heading1']))
+                story.append(self._safe_paragraph(data['competitor_analysis'], self.styles['BodyText']))
+                story.append(Spacer(1, 0.2 * inch))
+
+            # Conclusões e recomendações
+            story.append(Paragraph("9. Conclusões e Recomendações", self.styles['Heading1']))
+            story.append(Paragraph("Com base na análise realizada, recomendamos:", self.styles['BodyText']))
+            story.append(Paragraph("• Implementar estratégias de marketing personalizadas baseadas nos insights identificados", self.styles['ListText']))
+            story.append(Paragraph("• Desenvolver conteúdo que ressoe com os arquétipos e símbolos identificados", self.styles['ListText']))
+            story.append(Paragraph("• Monitorar continuamente o comportamento do avatar para refinamento das estratégias", self.styles['ListText']))
+            story.append(Paragraph("• Utilizar a descrição visual para criar materiais de marketing mais eficazes", self.styles['ListText']))
+
+            # Rodapé final
+            story.append(Spacer(1, 0.5 * inch))
+            story.append(HRFlowable(width="100%", thickness=1, color=HexColor('#e2e8f0')))
+            story.append(Paragraph("Relatório gerado pelo sistema ARQV30 - Arqueologia de Avatar", self.styles['Caption']))
+
             doc.build(story, onFirstPage=self._add_header_and_footer, onLaterPages=self._add_header_and_footer)
             buffer.seek(0)
             logger.info(f"Relatório PDF gerado com sucesso")
             return buffer
+            
         except Exception as e:
             logger.error(f"Erro ao gerar o relatório PDF: {e}")
             raise
