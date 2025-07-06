@@ -18,25 +18,25 @@ pdf_bp = Blueprint("pdf", __name__)
 class PDFReportGenerator:
     def __init__(self):
         self.styles = getSampleStyleSheet()
-        self.styles.add(ParagraphStyle(name=\'TitleStyle\', fontSize=24, leading=28, alignment=TA_CENTER, textColor=HexColor(\'#333333\')))
-        self.styles.add(ParagraphStyle(name=\'SubtitleStyle\', fontSize=18, leading=22, alignment=TA_CENTER, textColor=HexColor(\'#666666\')))
-        self.styles.add(ParagraphStyle(name=\'Heading1\', fontSize=16, leading=20, textColor=HexColor(\'#0056b3\'), spaceAfter=12, fontName=\'Helvetica-Bold\'))
-        self.styles.add(ParagraphStyle(name=\'Heading2\', fontSize=14, leading=18, textColor=HexColor(\'#007bff\'), spaceAfter=10, fontName=\'Helvetica-Bold\'))
-        self.styles.add(ParagraphStyle(name=\'BodyText\', fontSize=10, leading=14, textColor=HexColor(\'#333333\'), spaceAfter=6, alignment=TA_JUSTIFY))
-        self.styles.add(ParagraphStyle(name=\'Caption\', fontSize=8, leading=10, textColor=HexColor(\'#999999\'), alignment=TA_CENTER, spaceAfter=6))
-        self.styles.add(ParagraphStyle(name=\'ListText\', fontSize=10, leading=14, textColor=HexColor(\'#333333\'), leftIndent=20))
-        self.styles.add(ParagraphStyle(name=\'Quote\', fontSize=10, leading=14, textColor=HexColor(\'#555555\'), leftIndent=20, rightIndent=20, spaceBefore=10, spaceAfter=10, backColor=HexColor(\'#f0f0f0\'), borderPadding=5))
+        self.styles.add(ParagraphStyle(name='TitleStyle', fontSize=24, leading=28, alignment=TA_CENTER, textColor=HexColor('#333333')))
+        self.styles.add(ParagraphStyle(name='SubtitleStyle', fontSize=18, leading=22, alignment=TA_CENTER, textColor=HexColor('#666666')))
+        self.styles.add(ParagraphStyle(name='Heading1', fontSize=16, leading=20, textColor=HexColor('#0056b3'), spaceAfter=12, fontName='Helvetica-Bold'))
+        self.styles.add(ParagraphStyle(name='Heading2', fontSize=14, leading=18, textColor=HexColor('#007bff'), spaceAfter=10, fontName='Helvetica-Bold'))
+        self.styles.add(ParagraphStyle(name='BodyText', fontSize=10, leading=14, textColor=HexColor('#333333'), spaceAfter=6, alignment=TA_JUSTIFY))
+        self.styles.add(ParagraphStyle(name='Caption', fontSize=8, leading=10, textColor=HexColor('#999999'), alignment=TA_CENTER, spaceAfter=6))
+        self.styles.add(ParagraphStyle(name='ListText', fontSize=10, leading=14, textColor=HexColor('#333333'), leftIndent=20))
+        self.styles.add(ParagraphStyle(name='Quote', fontSize=10, leading=14, textColor=HexColor('#555555'), leftIndent=20, rightIndent=20, spaceBefore=10, spaceAfter=10, backColor=HexColor('#f0f0f0'), borderPadding=5))
 
     def _add_header_and_footer(self, canvas, doc):
         canvas.saveState()
         # Header
-        canvas.setFont(\'Helvetica-Bold\', 10)
-        canvas.setFillColor(HexColor(\'#0056b3\'))
+        canvas.setFont('Helvetica-Bold', 10)
+        canvas.setFillColor(HexColor('#0056b3'))
         canvas.drawString(inch, A4[1] - 0.75 * inch, "Relatório de Arqueologia de Avatar - ARQV30")
 
         # Footer
-        canvas.setFont(\'Helvetica\', 9)
-        canvas.setFillColor(HexColor(\'#666666\'))
+        canvas.setFont('Helvetica', 9)
+        canvas.setFillColor(HexColor('#666666'))
         canvas.drawString(A4[0] / 2, 0.75 * inch, f"Página {doc.page}")
         canvas.restoreState()
 
@@ -49,7 +49,7 @@ class PDFReportGenerator:
         story.append(Spacer(1, 0.2 * inch))
         story.append(Paragraph("Desvendando a Essência do Seu Público com IA", self.styles["SubtitleStyle"])))
         story.append(Spacer(1, 0.5 * inch))
-        story.append(Paragraph(f"Gerado em: {datetime.now().strftime(\'%d/%m/%Y %H:%M\')}", self.styles["Caption"])))
+        story.append(Paragraph(f"Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M')}", self.styles["Caption"])))
         story.append(PageBreak())
 
         # Table of Contents (Placeholder - would be generated dynamically in a real app)
@@ -244,7 +244,7 @@ def generate_pdf():
 
     try:
         generator = PDFReportGenerator()
-        filename = f"relatorio_arqueologia_{user_id}_{datetime.now().strftime(\'%Y%m%d%H%M%S\')}.pdf"
+        filename = f"relatorio_arqueologia_{user_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
         success = generator.generate_pdf_report(report_data, filename)
 
         if success:
@@ -254,6 +254,8 @@ def generate_pdf():
     except Exception as e:
         logger.error(f"Erro na rota de geração de PDF: {e}")
         return jsonify({"error": str(e)}), 500
+
+
 
 
 
