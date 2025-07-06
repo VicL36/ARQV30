@@ -136,7 +136,7 @@ class PDFReportGenerator:
         canvas.setFillColor(HexColor('#666666'))
         page_num = canvas.getPageNumber()
         report_name = "Relatório de Arqueologia de Avatar"
-        user_name = "Manus"
+        user_name = "Up"
         current_date = datetime.now().strftime('%d/%m/%Y')
         
         # Left footer: Report Name and User
