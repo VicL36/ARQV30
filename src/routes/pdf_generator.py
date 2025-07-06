@@ -8,373 +8,619 @@ from reportlab.lib.units import inch, cm
 from reportlab.lib.colors import HexColor, white, black, blue, orange
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 from reportlab.platypus.flowables import HRFlowable
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
 import logging
 
 logger = logging.getLogger(__name__)
 
-pdf_bp = Blueprint("pdf", __name__)
+pdf_bp = Blueprint('pdf', __name__)
 
 class PDFReportGenerator:
     def __init__(self):
         self.styles = getSampleStyleSheet()
-        self._setup_custom_styles()
-
-    def _setup_custom_styles(self):
-        """Configure estilos personalizados para o PDF"""
-        # Estilos de título
+        self.setup_custom_styles()
+        
+    def setup_custom_styles(self):
+        """Setup custom styles for the PDF"""
+        # Title style
         self.styles.add(ParagraphStyle(
-            name='TitleStyle',
-            fontSize=28,
-            leading=34,
+            name='CustomTitle',
+            parent=self.styles['Title'],
+            fontSize=24,
+            spaceAfter=30,
+            textColor=HexColor('#1e40af'),
             alignment=TA_CENTER,
-            textColor=HexColor('#1a365d'),
-            fontName='Helvetica-Bold',
-            spaceAfter=20
+            fontName='Helvetica-Bold'
         ))
         
+        # Section header style
         self.styles.add(ParagraphStyle(
-            name='SubtitleStyle',
-            fontSize=18,
-            leading=22,
-            alignment=TA_CENTER,
-            textColor=HexColor('#2d3748'),
-            fontName='Helvetica',
-            spaceAfter=30
-        ))
-        
-        # Estilos de cabeçalho customizados
-        self.styles.add(ParagraphStyle(
-            name='CustomHeading1',
+            name='SectionHeader',
+            parent=self.styles['Heading1'],
             fontSize=16,
-            leading=20,
-            textColor=HexColor('#0056b3'),
             spaceAfter=12,
             spaceBefore=20,
+            textColor=HexColor('#ea580c'),
             fontName='Helvetica-Bold'
         ))
         
+        # Subsection header style
         self.styles.add(ParagraphStyle(
-            name='CustomHeading2',
+            name='SubsectionHeader',
+            parent=self.styles['Heading2'],
             fontSize=14,
-            leading=18,
-            textColor=HexColor('#007bff'),
-            spaceAfter=10,
-            spaceBefore=15,
-            fontName='Helvetica-Bold'
-        ))
-        
-        self.styles.add(ParagraphStyle(
-            name='CustomHeading3',
-            fontSize=12,
-            leading=16,
-            textColor=HexColor('#0056b3'),
             spaceAfter=8,
             spaceBefore=12,
+            textColor=HexColor('#1e40af'),
             fontName='Helvetica-Bold'
         ))
         
-        # Estilos de texto
+        # Body text style
         self.styles.add(ParagraphStyle(
-            name='BodyText',
+            name='CustomBodyText',
+            parent=self.styles['Normal'],
             fontSize=11,
-            leading=14,
-            textColor=HexColor('#2d3748'),
-            spaceAfter=8,
-            alignment=TA_JUSTIFY,
-            fontName='Helvetica'
-        ))
-        
-        self.styles.add(ParagraphStyle(
-            name='ListText',
-            fontSize=11,
-            leading=14,
-            textColor=HexColor('#2d3748'),
-            leftIndent=20,
             spaceAfter=6,
-            fontName='Helvetica'
+            textColor=black,
+            fontName='Helvetica',
+            alignment=TA_JUSTIFY
         ))
         
-        # Fixed Quote style - removed unsupported properties
-        self.styles.add(ParagraphStyle(
-            name='Quote',
-            fontSize=10,
-            leading=14,
-            textColor=HexColor('#4a5568'),
-            leftIndent=30,
-            rightIndent=30,
-            spaceBefore=10,
-            spaceAfter=10,
-            fontName='Helvetica-Oblique'
-        ))
-        
-        self.styles.add(ParagraphStyle(
-            name='Caption',
-            fontSize=9,
-            leading=12,
-            textColor=HexColor('#718096'),
-            alignment=TA_CENTER,
-            spaceAfter=6,
-            fontName='Helvetica'
-        ))
-        
-        # Fixed Highlight style - removed unsupported properties
+        # Highlight style
         self.styles.add(ParagraphStyle(
             name='Highlight',
-            fontSize=11,
-            leading=14,
-            textColor=HexColor('#2d3748'),
-            leftIndent=10,
-            rightIndent=10,
-            spaceBefore=8,
+            parent=self.styles['Normal'],
+            fontSize=12,
             spaceAfter=8,
-            fontName='Helvetica-Bold'
+            textColor=HexColor('#dc2626'),
+            fontName='Helvetica-Bold',
+            backColor=HexColor('#f8fafc')
+        ))
+        
+        # Metric style
+        self.styles.add(ParagraphStyle(
+            name='Metric',
+            parent=self.styles['Normal'],
+            fontSize=14,
+            spaceAfter=4,
+            textColor=HexColor('#1e40af'),
+            fontName='Helvetica-Bold',
+            alignment=TA_CENTER
         ))
 
-    def _add_header_and_footer(self, canvas, doc):
-        """Adiciona cabeçalho e rodapé às páginas"""
-        canvas.saveState()
-        
-        # Cabeçalho
-        canvas.setFont('Helvetica-Bold', 10)
-        canvas.setFillColor(HexColor('#0056b3'))
-        canvas.drawString(inch, A4[1] - 0.75 * inch, "Relatório de Arqueologia de Avatar - ARQV30")
-        
-        # Linha do cabeçalho
-        canvas.setStrokeColor(HexColor('#e2e8f0'))
-        canvas.setLineWidth(1)
-        canvas.line(inch, A4[1] - 0.85 * inch, A4[0] - inch, A4[1] - 0.85 * inch)
-        
-        # Rodapé
-        canvas.setFont('Helvetica', 9)
-        canvas.setFillColor(HexColor('#718096'))
-        canvas.drawCentredText(A4[0] / 2, 0.75 * inch, f"Página {doc.page}")
-        canvas.drawString(inch, 0.75 * inch, f"Gerado em {datetime.now().strftime('%d/%m/%Y às %H:%M')}")
-        
-        # Linha do rodapé
-        canvas.line(inch, 0.85 * inch, A4[0] - inch, 0.85 * inch)
-        
-        canvas.restoreState()
-
-    def _create_summary_table(self, data):
-        """Cria tabela resumo com dados principais"""
-        # Safe text truncation
-        def safe_truncate(text, max_length=100):
-            if not text or not isinstance(text, str):
-                return 'Não informado'
-            return text[:max_length] + '...' if len(text) > max_length else text
-        
-        table_data = [
-            ['Elemento', 'Descrição'],
-            ['Avatar Principal', safe_truncate(data.get('avatar_name', 'Não informado'), 50)],
-            ['Contexto Cultural', safe_truncate(data.get('cultural_context', 'Não informado'))],
-            ['Arquétipo Principal', safe_truncate(data.get('main_archetype', 'Não informado'), 50)],
-            ['Padrão Comportamental', safe_truncate(data.get('behavioral_pattern', 'Não informado'))],
-        ]
-        
-        table = Table(table_data, colWidths=[3*inch, 4*inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), HexColor('#0056b3')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), white),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 11),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f7fafc')),
-            ('GRID', (0, 0), (-1, -1), 1, HexColor('#e2e8f0')),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 10),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 10),
-            ('TOPPADDING', (0, 0), (-1, -1), 8),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-        ]))
-        
-        return table
-
-    def _safe_paragraph(self, text, style):
-        """Safely create paragraph with text sanitization"""
-        if not text or not isinstance(text, str):
-            return Paragraph("Não informado", style)
-        
-        # Basic HTML escaping for ReportLab
-        text = text.replace('&', '&amp;')
-        text = text.replace('<', '&lt;')
-        text = text.replace('>', '&gt;')
-        
-        return Paragraph(text, style)
-
-    def generate_pdf_report(self, data: dict, filename: str = None):
-        """Gera relatório PDF completo"""
-        if not filename:
-            filename = f"relatorio_arqueologia_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        
-        # Usar BytesIO para criar PDF em memória
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=inch, bottomMargin=inch)
-        story = []
-
+    def generate_report(self, analysis_data):
+        """Generate complete PDF report"""
         try:
-            # Página de título
-            story.append(Paragraph("Relatório de Arqueologia de Avatar", self.styles['TitleStyle']))
-            story.append(Spacer(1, 0.3 * inch))
-            story.append(Paragraph("Análise Profunda de Persona com Inteligência Artificial", self.styles['SubtitleStyle']))
-            story.append(Spacer(1, 0.5 * inch))
+            buffer = io.BytesIO()
+            doc = SimpleDocTemplate(
+                buffer,
+                pagesize=A4,
+                rightMargin=2*cm,
+                leftMargin=2*cm,
+                topMargin=2*cm,
+                bottomMargin=2*cm
+            )
             
-            # Informações do relatório
-            story.append(Paragraph(f"<b>Data de Geração:</b> {datetime.now().strftime('%d de %B de %Y')}", self.styles['BodyText']))
-            story.append(Paragraph(f"<b>Hora:</b> {datetime.now().strftime('%H:%M:%S')}", self.styles['BodyText']))
-            story.append(Spacer(1, 0.3 * inch))
+            story = []
             
-            # Linha decorativa
-            story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#0056b3')))
+            # Cover page
+            story.extend(self.create_cover_page(analysis_data))
             story.append(PageBreak())
-
-            # Sumário executivo
-            story.append(Paragraph("Sumário Executivo", self.styles['CustomHeading1']))
-            story.append(Paragraph("Este relatório apresenta uma análise detalhada do avatar identificado através da metodologia de Arqueologia de Avatar, utilizando técnicas avançadas de Inteligência Artificial para revelar insights profundos sobre comportamentos, motivações e características do público-alvo.", self.styles['BodyText']))
-            story.append(Spacer(1, 0.2 * inch))
             
-            # Tabela resumo
-            if data:
-                story.append(self._create_summary_table(data))
+            # Executive summary
+            story.extend(self.create_executive_summary(analysis_data))
             story.append(PageBreak())
-
-            # Análise inicial
-            if data.get('initial_analysis'):
-                story.append(Paragraph("1. Análise Inicial", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['initial_analysis'], self.styles['BodyText']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Contexto cultural
-            if data.get('cultural_context'):
-                story.append(Paragraph("2. Contexto Cultural", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['cultural_context'], self.styles['BodyText']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Arquétipos e símbolos
-            if data.get('archetypes_symbols'):
-                story.append(Paragraph("3. Arquétipos e Símbolos", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['archetypes_symbols'], self.styles['BodyText']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Padrões comportamentais
-            if data.get('behavioral_patterns'):
-                story.append(Paragraph("4. Padrões Comportamentais", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['behavioral_patterns'], self.styles['BodyText']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Narrativa do avatar
-            if data.get('avatar_narrative'):
-                story.append(Paragraph("5. Narrativa do Avatar", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['avatar_narrative'], self.styles['Quote']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Descrição visual
-            if data.get('visual_description'):
-                story.append(Paragraph("6. Descrição Visual", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['visual_description'], self.styles['BodyText']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Insights de marketing
-            if data.get('marketing_insights'):
-                story.append(Paragraph("7. Insights de Marketing", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['marketing_insights'], self.styles['Highlight']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Análise de concorrentes
-            if data.get('competitor_analysis'):
-                story.append(Paragraph("8. Análise de Concorrentes", self.styles['CustomHeading1']))
-                story.append(self._safe_paragraph(data['competitor_analysis'], self.styles['BodyText']))
-                story.append(Spacer(1, 0.2 * inch))
-
-            # Conclusões e recomendações
-            story.append(Paragraph("9. Conclusões e Recomendações", self.styles['CustomHeading1']))
-            story.append(Paragraph("Com base na análise realizada, recomendamos:", self.styles['BodyText']))
-            story.append(Paragraph("• Implementar estratégias de marketing personalizadas baseadas nos insights identificados", self.styles['ListText']))
-            story.append(Paragraph("• Desenvolver conteúdo que ressoe com os arquétipos e símbolos identificados", self.styles['ListText']))
-            story.append(Paragraph("• Monitorar continuamente o comportamento do avatar para refinamento das estratégias", self.styles['ListText']))
-            story.append(Paragraph("• Utilizar a descrição visual para criar materiais de marketing mais eficazes", self.styles['ListText']))
-
-            # Rodapé final
-            story.append(Spacer(1, 0.5 * inch))
-            story.append(HRFlowable(width="100%", thickness=1, color=HexColor('#e2e8f0')))
-            story.append(Paragraph("Relatório gerado pelo sistema ARQV30 - Arqueologia de Avatar", self.styles['Caption']))
-
-            doc.build(story, onFirstPage=self._add_header_and_footer, onLaterPages=self._add_header_and_footer)
+            
+            # Scope section
+            escopo = analysis_data.get('escopo', {})
+            if escopo:
+                story.extend(self.create_scope_section(escopo))
+                story.append(PageBreak())
+            
+            # Avatar section
+            avatar = analysis_data.get('avatar_ultra_detalhado', {})
+            if avatar:
+                story.extend(self.create_avatar_section(avatar))
+                story.append(PageBreak())
+            
+            # Pain mapping section
+            dores = analysis_data.get('mapeamento_dores_ultra_detalhado', {})
+            if dores:
+                story.extend(self.create_pain_section(dores))
+                story.append(PageBreak())
+            
+            # Competition section
+            concorrencia = analysis_data.get('analise_concorrencia_detalhada', {})
+            if concorrencia:
+                story.extend(self.create_competition_section(concorrencia))
+                story.append(PageBreak())
+            
+            # Market intelligence section
+            mercado = analysis_data.get('inteligencia_mercado', {})
+            if mercado:
+                story.extend(self.create_market_section(mercado))
+                story.append(PageBreak())
+            
+            # Keywords strategy section
+            palavras = analysis_data.get('estrategia_palavras_chave', {})
+            if palavras:
+                story.extend(self.create_keywords_section(palavras))
+                story.append(PageBreak())
+            
+            # Performance metrics section
+            metricas = analysis_data.get('metricas_performance_detalhadas', {})
+            if metricas:
+                story.extend(self.create_metrics_section(metricas))
+                story.append(PageBreak())
+            
+            # Projections section
+            projecoes = analysis_data.get('projecoes_cenarios', {})
+            if projecoes:
+                story.extend(self.create_projections_section(projecoes))
+                story.append(PageBreak())
+            
+            # Action plan section
+            plano = analysis_data.get('plano_acao_detalhado', [])
+            if plano:
+                story.extend(self.create_action_plan_section(plano))
+                story.append(PageBreak())
+            
+            # Insights section
+            insights = analysis_data.get('insights_exclusivos', [])
+            if insights:
+                story.extend(self.create_insights_section(insights))
+            
+            # Build PDF
+            doc.build(story)
             buffer.seek(0)
-            logger.info(f"Relatório PDF gerado com sucesso")
             return buffer
             
         except Exception as e:
-            logger.error(f"Erro ao gerar o relatório PDF: {e}")
+            logger.error(f"Erro na geração do PDF: {str(e)}")
             raise
 
-@pdf_bp.route("/generate-pdf", methods=["POST"])
+    def create_cover_page(self, analysis_data):
+        """Create cover page"""
+        story = []
+        
+        # Title
+        story.append(Spacer(1, 2*inch))
+        story.append(Paragraph("ARQUEOLOGIA DO AVATAR", self.styles['CustomTitle']))
+        story.append(Paragraph("Análise Ultra-Detalhada com IA", self.styles['Heading2']))
+        
+        story.append(Spacer(1, 1*inch))
+        
+        # Segment info
+        escopo = analysis_data.get('escopo', {})
+        if escopo.get('segmento_principal'):
+            story.append(Paragraph(f"<b>Segmento:</b> {escopo['segmento_principal']}", self.styles['Highlight']))
+        
+        if escopo.get('produto_ideal'):
+            story.append(Paragraph(f"<b>Produto:</b> {escopo['produto_ideal']}", self.styles['BodyText']))
+        
+        story.append(Spacer(1, 1*inch))
+        
+        # Key metrics overview
+        projecoes = analysis_data.get('projecoes_cenarios', {})
+        realista = projecoes.get('cenario_realista', {})
+        
+        if realista:
+            story.append(Paragraph("MÉTRICAS PRINCIPAIS", self.styles['SectionHeader']))
+            
+            metrics_data = [
+                ['Métrica', 'Valor'],
+                ['ROI Projetado', str(realista.get('roi', 'N/A'))],
+                ['Taxa de Conversão', str(realista.get('taxa_conversao', 'N/A'))],
+                ['Faturamento Mensal', str(realista.get('faturamento_mensal', 'N/A'))],
+                ['Break Even', str(realista.get('break_even', 'N/A'))]
+            ]
+            
+            table = Table(metrics_data, colWidths=[3*inch, 2*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#1e40af')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), white),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f8fafc')),
+                ('GRID', (0, 0), (-1, -1), 1, black)
+            ]))
+            story.append(table)
+        
+        story.append(Spacer(1, 1*inch))
+        
+        # Generation info
+        story.append(Paragraph(f"<b>Gerado em:</b> {datetime.now().strftime('%d/%m/%Y às %H:%M')}", self.styles['BodyText']))
+        story.append(Paragraph("<b>Powered by:</b> IA + Pesquisa em Tempo Real", self.styles['BodyText']))
+        
+        return story
+
+    def create_executive_summary(self, analysis_data):
+        """Create executive summary"""
+        story = []
+        
+        story.append(Paragraph("SUMÁRIO EXECUTIVO", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Overview
+        escopo = analysis_data.get('escopo', {})
+        if escopo.get('proposta_valor'):
+            story.append(Paragraph("PROPOSTA DE VALOR", self.styles['SectionHeader']))
+            story.append(Paragraph(str(escopo['proposta_valor']), self.styles['BodyText']))
+            story.append(Spacer(1, 15))
+        
+        # Market size
+        tamanho_mercado = escopo.get('tamanho_mercado', {})
+        if tamanho_mercado:
+            story.append(Paragraph("TAMANHO DO MERCADO", self.styles['SectionHeader']))
+            
+            market_data = [
+                ['Métrica', 'Valor'],
+                ['TAM (Total Addressable Market)', str(tamanho_mercado.get('tam', 'N/A'))],
+                ['SAM (Serviceable Addressable Market)', str(tamanho_mercado.get('sam', 'N/A'))],
+                ['SOM (Serviceable Obtainable Market)', str(tamanho_mercado.get('som', 'N/A'))]
+            ]
+            
+            table = Table(market_data, colWidths=[3*inch, 2*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#ea580c')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), white),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f8fafc')),
+                ('GRID', (0, 0), (-1, -1), 1, black)
+            ]))
+            story.append(table)
+            story.append(Spacer(1, 15))
+        
+        # Key insights
+        insights = analysis_data.get('insights_exclusivos', [])
+        if insights:
+            story.append(Paragraph("PRINCIPAIS INSIGHTS", self.styles['SectionHeader']))
+            for i, insight in enumerate(insights[:3], 1):  # Top 3 insights
+                story.append(Paragraph(f"<b>{i}.</b> {str(insight)}", self.styles['BodyText']))
+            story.append(Spacer(1, 15))
+        
+        return story
+
+    def create_scope_section(self, escopo):
+        """Create scope section"""
+        story = []
+        
+        story.append(Paragraph("DEFINIÇÃO DO ESCOPO", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        if escopo.get('segmento_principal'):
+            story.append(Paragraph("SEGMENTO PRINCIPAL", self.styles['SectionHeader']))
+            story.append(Paragraph(str(escopo['segmento_principal']), self.styles['Highlight']))
+            story.append(Spacer(1, 15))
+        
+        if escopo.get('subsegmentos'):
+            story.append(Paragraph("SUBSEGMENTOS IDENTIFICADOS", self.styles['SectionHeader']))
+            for subsegmento in escopo['subsegmentos']:
+                story.append(Paragraph(f"• {str(subsegmento)}", self.styles['BodyText']))
+            story.append(Spacer(1, 15))
+        
+        if escopo.get('produto_ideal'):
+            story.append(Paragraph("PRODUTO IDEAL", self.styles['SectionHeader']))
+            story.append(Paragraph(str(escopo['produto_ideal']), self.styles['BodyText']))
+            story.append(Spacer(1, 15))
+        
+        if escopo.get('proposta_valor'):
+            story.append(Paragraph("PROPOSTA DE VALOR", self.styles['SectionHeader']))
+            story.append(Paragraph(str(escopo['proposta_valor']), self.styles['BodyText']))
+        
+        return story
+
+    def create_avatar_section(self, avatar):
+        """Create avatar section"""
+        story = []
+        
+        story.append(Paragraph("AVATAR ULTRA-DETALHADO", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Persona principal
+        persona = avatar.get('persona_principal', {})
+        if persona:
+            story.append(Paragraph("PERSONA PRINCIPAL", self.styles['SectionHeader']))
+            
+            persona_data = [
+                ['Atributo', 'Valor'],
+                ['Nome', str(persona.get('nome', 'N/A'))],
+                ['Idade', str(persona.get('idade', 'N/A'))],
+                ['Profissão', str(persona.get('profissao', 'N/A'))],
+                ['Renda Mensal', str(persona.get('renda_mensal', 'N/A'))],
+                ['Localização', str(persona.get('localizacao', 'N/A'))],
+                ['Estado Civil', str(persona.get('estado_civil', 'N/A'))],
+                ['Escolaridade', str(persona.get('escolaridade', 'N/A'))]
+            ]
+            
+            table = Table(persona_data, colWidths=[2*inch, 3*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#1e40af')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), white),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f8fafc')),
+                ('GRID', (0, 0), (-1, -1), 1, black)
+            ]))
+            story.append(table)
+            story.append(Spacer(1, 20))
+        
+        # Demografia detalhada
+        demografia = avatar.get('demografia_detalhada', {})
+        if demografia:
+            story.append(Paragraph("DEMOGRAFIA DETALHADA", self.styles['SectionHeader']))
+            
+            for key, value in demografia.items():
+                if value:
+                    label = key.replace('_', ' ').title()
+                    story.append(Paragraph(f"<b>{label}:</b> {str(value)}", self.styles['BodyText']))
+            story.append(Spacer(1, 15))
+        
+        return story
+
+    def create_pain_section(self, dores):
+        """Create pain mapping section"""
+        story = []
+        
+        story.append(Paragraph("MAPEAMENTO DE DORES", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Dores críticas
+        nivel1 = dores.get('dores_nivel_1_criticas', [])
+        if nivel1:
+            story.append(Paragraph("DORES CRÍTICAS (NÍVEL 1)", self.styles['SectionHeader']))
+            for i, dor in enumerate(nivel1, 1):
+                if isinstance(dor, dict):
+                    story.append(Paragraph(f"<b>Dor {i}:</b> {str(dor.get('dor', 'N/A'))}", self.styles['Highlight']))
+                    story.append(Paragraph(f"<b>Intensidade:</b> {str(dor.get('intensidade', 'N/A'))} | <b>Frequência:</b> {str(dor.get('frequencia', 'N/A'))}", self.styles['BodyText']))
+                    story.append(Paragraph(f"<b>Impacto:</b> {str(dor.get('impacto_vida', 'N/A'))}", self.styles['BodyText']))
+                else:
+                    story.append(Paragraph(f"<b>Dor {i}:</b> {str(dor)}", self.styles['Highlight']))
+                story.append(Spacer(1, 10))
+        
+        return story
+
+    def create_competition_section(self, concorrencia):
+        """Create competition section"""
+        story = []
+        
+        story.append(Paragraph("ANÁLISE DA CONCORRÊNCIA", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Concorrentes diretos
+        diretos = concorrencia.get('concorrentes_diretos', [])
+        if diretos:
+            story.append(Paragraph("CONCORRENTES DIRETOS", self.styles['SectionHeader']))
+            
+            for concorrente in diretos:
+                if isinstance(concorrente, dict):
+                    story.append(Paragraph(f"<b>{str(concorrente.get('nome', 'N/A'))}</b>", self.styles['SubsectionHeader']))
+                    story.append(Paragraph(f"<b>Preço:</b> {str(concorrente.get('preco_range', 'N/A'))}", self.styles['BodyText']))
+                    story.append(Paragraph(f"<b>Proposta:</b> {str(concorrente.get('proposta_valor', 'N/A'))}", self.styles['BodyText']))
+                    story.append(Spacer(1, 15))
+        
+        return story
+
+    def create_market_section(self, mercado):
+        """Create market intelligence section"""
+        story = []
+        
+        story.append(Paragraph("INTELIGÊNCIA DE MERCADO", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Tendências em crescimento
+        tendencias = mercado.get('tendencias_crescimento', [])
+        if tendencias:
+            story.append(Paragraph("TENDÊNCIAS EM CRESCIMENTO", self.styles['SectionHeader']))
+            
+            for tendencia in tendencias:
+                if isinstance(tendencia, dict):
+                    story.append(Paragraph(f"<b>{str(tendencia.get('tendencia', 'N/A'))}</b>", self.styles['SubsectionHeader']))
+                    story.append(Paragraph(f"<b>Impacto:</b> {str(tendencia.get('impacto', 'N/A'))}", self.styles['BodyText']))
+                    story.append(Spacer(1, 10))
+        
+        return story
+
+    def create_keywords_section(self, palavras):
+        """Create keywords strategy section"""
+        story = []
+        
+        story.append(Paragraph("ESTRATÉGIA DE PALAVRAS-CHAVE", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Palavras primárias
+        primarias = palavras.get('palavras_primarias', [])
+        if primarias:
+            story.append(Paragraph("PALAVRAS-CHAVE PRIMÁRIAS", self.styles['SectionHeader']))
+            
+            kw_data = [['Termo', 'Volume/Mês', 'CPC', 'Dificuldade', 'Oportunidade']]
+            
+            for kw in primarias[:5]:  # Top 5
+                if isinstance(kw, dict):
+                    kw_data.append([
+                        str(kw.get('termo', 'N/A')),
+                        str(kw.get('volume_mensal', 'N/A')),
+                        str(kw.get('cpc_estimado', 'N/A')),
+                        str(kw.get('dificuldade', 'N/A')),
+                        str(kw.get('oportunidade', 'N/A'))
+                    ])
+            
+            if len(kw_data) > 1:
+                table = Table(kw_data, colWidths=[2*inch, 1*inch, 1*inch, 1*inch, 1*inch])
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), HexColor('#1e40af')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), white),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f8fafc')),
+                    ('GRID', (0, 0), (-1, -1), 1, black),
+                    ('FONTSIZE', (0, 1), (-1, -1), 9)
+                ]))
+                story.append(table)
+        
+        return story
+
+    def create_metrics_section(self, metricas):
+        """Create performance metrics section"""
+        story = []
+        
+        story.append(Paragraph("MÉTRICAS DE PERFORMANCE", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Benchmarks
+        benchmarks = metricas.get('benchmarks_segmento', {})
+        if benchmarks:
+            story.append(Paragraph("BENCHMARKS DO SEGMENTO", self.styles['SectionHeader']))
+            
+            bench_data = [
+                ['Métrica', 'Valor'],
+                ['CAC Médio', str(benchmarks.get('cac_medio_segmento', 'N/A'))],
+                ['LTV Médio', str(benchmarks.get('ltv_medio_segmento', 'N/A'))],
+                ['Churn Rate', str(benchmarks.get('churn_rate_medio', 'N/A'))],
+                ['Ticket Médio', str(benchmarks.get('ticket_medio_segmento', 'N/A'))]
+            ]
+            
+            table = Table(bench_data, colWidths=[3*inch, 2*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#1e40af')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), white),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f8fafc')),
+                ('GRID', (0, 0), (-1, -1), 1, black)
+            ]))
+            story.append(table)
+        
+        return story
+
+    def create_projections_section(self, projecoes):
+        """Create projections section"""
+        story = []
+        
+        story.append(Paragraph("PROJEÇÕES DE CENÁRIOS", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        # Tabela comparativa dos cenários
+        conservador = projecoes.get('cenario_conservador', {})
+        realista = projecoes.get('cenario_realista', {})
+        otimista = projecoes.get('cenario_otimista', {})
+        
+        if conservador or realista or otimista:
+            scenario_data = [
+                ['Métrica', 'Conservador', 'Realista', 'Otimista'],
+                ['Taxa de Conversão', 
+                 str(conservador.get('taxa_conversao', 'N/A')),
+                 str(realista.get('taxa_conversao', 'N/A')),
+                 str(otimista.get('taxa_conversao', 'N/A'))],
+                ['Faturamento Mensal',
+                 str(conservador.get('faturamento_mensal', 'N/A')),
+                 str(realista.get('faturamento_mensal', 'N/A')),
+                 str(otimista.get('faturamento_mensal', 'N/A'))],
+                ['ROI',
+                 str(conservador.get('roi', 'N/A')),
+                 str(realista.get('roi', 'N/A')),
+                 str(otimista.get('roi', 'N/A'))]
+            ]
+            
+            table = Table(scenario_data, colWidths=[2*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), HexColor('#1e40af')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), white),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 11),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f8fafc')),
+                ('GRID', (0, 0), (-1, -1), 1, black),
+                ('FONTSIZE', (0, 1), (-1, -1), 10)
+            ]))
+            story.append(table)
+        
+        return story
+
+    def create_action_plan_section(self, plano):
+        """Create action plan section"""
+        story = []
+        
+        story.append(Paragraph("PLANO DE AÇÃO", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        for i, fase in enumerate(plano, 1):
+            if isinstance(fase, dict):
+                story.append(Paragraph(f"FASE {i}: {str(fase.get('fase', 'N/A'))}", self.styles['SectionHeader']))
+                story.append(Paragraph(f"<b>Duração:</b> {str(fase.get('duracao', 'N/A'))}", self.styles['BodyText']))
+                story.append(Spacer(1, 15))
+        
+        return story
+
+    def create_insights_section(self, insights):
+        """Create insights section"""
+        story = []
+        
+        story.append(Paragraph("INSIGHTS EXCLUSIVOS", self.styles['CustomTitle']))
+        story.append(HRFlowable(width="100%", thickness=2, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 20))
+        
+        for i, insight in enumerate(insights, 1):
+            story.append(Paragraph(f"<b>Insight {i}:</b> {str(insight)}", self.styles['Highlight']))
+            story.append(Spacer(1, 10))
+        
+        # Footer
+        story.append(Spacer(1, 1*inch))
+        story.append(HRFlowable(width="100%", thickness=1, color=HexColor('#1e40af')))
+        story.append(Spacer(1, 10))
+        story.append(Paragraph("Relatório gerado pela Arqueologia do Avatar com IA", self.styles['BodyText']))
+        story.append(Paragraph(f"Data: {datetime.now().strftime('%d/%m/%Y às %H:%M')}", self.styles['BodyText']))
+        
+        return story
+
+@pdf_bp.route('/generate-pdf', methods=['POST'])
 def generate_pdf():
-    """Endpoint para gerar PDF"""
+    """Generate PDF report from analysis data"""
     try:
-        data = request.get_json()
+        analysis_data = request.get_json()
         
-        if not data:
-            return jsonify({"error": "Dados não fornecidos"}), 400
-
-        report_data = data.get("report_data", {})
-        user_id = data.get("user_id", "anonymous")
-
+        if not analysis_data:
+            logger.error("Dados de análise não fornecidos")
+            return jsonify({'error': 'Dados de análise não fornecidos'}), 400
+        
+        logger.info("Iniciando geração de PDF...")
+        
+        # Generate PDF
         generator = PDFReportGenerator()
-        filename = f"relatorio_arqueologia_{user_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        pdf_buffer = generator.generate_report(analysis_data)
         
-        # Gerar PDF em buffer
-        pdf_buffer = generator.generate_pdf_report(report_data, filename)
+        logger.info("PDF gerado com sucesso")
         
-        # Retornar arquivo
+        # Return PDF file
         return send_file(
             pdf_buffer,
+            mimetype='application/pdf',
             as_attachment=True,
-            download_name=filename,
-            mimetype='application/pdf'
+            download_name=f'analise-avatar-gemini-{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
         )
         
     except Exception as e:
-        logger.error(f"Erro na geração do PDF: {str(e)}")
-        return jsonify({"error": f"Erro ao gerar PDF: {str(e)}"}), 500
-
-@pdf_bp.route("/test-pdf", methods=["GET"])
-def test_pdf():
-    """Endpoint de teste para gerar PDF"""
-    try:
-        # Dados de teste
-        test_data = {
-            "avatar_name": "Avatar de Teste",
-            "initial_analysis": "Esta é uma análise inicial de teste para verificar a geração do PDF.",
-            "cultural_context": "Contexto cultural de teste com informações relevantes sobre o avatar.",
-            "archetypes_symbols": "Arquétipos e símbolos identificados durante a análise.",
-            "behavioral_patterns": "Padrões comportamentais observados no avatar analisado.",
-            "avatar_narrative": "Esta é a narrativa do avatar, contando sua história e características principais.",
-            "visual_description": "Descrição visual detalhada do avatar para criação de representações gráficas.",
-            "marketing_insights": "Insights de marketing acionáveis baseados na análise do avatar.",
-            "competitor_analysis": "Análise dos principais concorrentes e posicionamento no mercado."
-        }
-        
-        generator = PDFReportGenerator()
-        filename = f"teste_relatorio_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        
-        pdf_buffer = generator.generate_pdf_report(test_data, filename)
-        
-        return send_file(
-            pdf_buffer,
-            as_attachment=True,
-            download_name=filename,
-            mimetype='application/pdf'
-        )
-        
-    except Exception as e:
-        logger.error(f"Erro no teste do PDF: {str(e)}")
-        return jsonify({"error": f"Erro ao gerar PDF de teste: {str(e)}"}), 500
-
-@pdf_bp.route("/health", methods=["GET"])
-def health_check():
-    """Endpoint de verificação de saúde"""
-    return jsonify({"status": "ok", "service": "PDF Generator", "timestamp": datetime.now().isoformat()})
+        logger.error(f"Erro ao gerar PDF: {str(e)}")
+        return jsonify({'error': 'Erro interno ao gerar PDF', 'details': str(e)}), 500
