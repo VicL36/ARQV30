@@ -118,11 +118,16 @@ class PDFReportGenerator:
         canvas.setFillColor(HexColor('#0056b3'))
         canvas.drawString(inch, A4[1] - 0.75 * inch, "Relatório de Arqueologia de Avatar - UP Lançamentos")
 
-        # Footer
+        # Footer - Fixed method name
         canvas.setFont('Helvetica', 9)
         canvas.setFillColor(HexColor('#666666'))
         page_num = canvas.getPageNumber()
-        canvas.drawCentredText(A4[0] / 2, 0.75 * inch, f"Página {page_num}")
+        
+        # Calculate center position and draw text
+        text = f"Página {page_num}"
+        text_width = canvas.stringWidth(text, 'Helvetica', 9)
+        x_center = A4[0] / 2 - text_width / 2
+        canvas.drawString(x_center, 0.75 * inch, text)
         
         canvas.restoreState()
 
