@@ -1,45 +1,51 @@
 import os
 import logging
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
-from dotenv import load_dotenv
-from database import db
+from supabase import create_client, Client
+
+# Blueprints
 from routes.user import user_bp
 from routes.analysis import analysis_bp
 from routes.pdf_generator import pdf_bp
 
-# Configurar logging
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Carrega as variáveis de ambiente
-load_dotenv()
+app = Flask(__name__, static_folder=\'static\', static_url_path=\'/static\')
+CORS(app) # Enable CORS for all routes
 
-# Criar aplicação Flask
-app = Flask(__name__, static_folder='static')
-CORS(app)
+# Supabase Configuration
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-# Configurar o banco de dados
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+if not SUPABASE_URL or not SUPABASE_KEY:
+    logger.error("SUPABASE_URL and SUPABASE_KEY environment variables must be set.")
+    # Fallback for local development if .env is not used
+    # SUPABASE_URL = "YOUR_SUPABASE_URL"
+    # SUPABASE_KEY = "YOUR_SUPABASE_KEY"
 
-# Registrar blueprints
-app.register_blueprint(user_bp, url_prefix='/user')
-app.register_blueprint(analysis_bp, url_prefix='/analysis')
-app.register_blueprint(pdf_bp, url_prefix='/pdf')
+try:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    logger.info("Conectado ao Supabase com sucesso.")
+except Exception as e:
+    logger.error(f"Erro ao conectar ao Supabase: {e}")
 
-@app.route('/')
+# Register Blueprints
+app.register_blueprint(user_bp, url_prefix=\'/api/user\')
+app.register_blueprint(analysis_bp, url_prefix=\'/api/archeology\') # Corrected prefix
+app.register_blueprint(pdf_bp, url_prefix=\'/api/pdf\')
+
+@app.route(\'/\')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, \'index.html\')
 
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory(app.static_folder, path)
+@app.route(\'/health\')
+def health_check():
+    return jsonify({"status": "ok", "message": "ARQV30 API is running!"}), 200
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, host='0.0.0.0', port=os.getenv('PORT', 5000))
+if __name__ == \'__main__\':
+    app.run(debug=True, host=\'0.0.0.0\', port=5000)
 
 
