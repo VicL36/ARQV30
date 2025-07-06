@@ -1,42 +1,40 @@
-from flask import Blueprint, jsonify, request
-# CORREÇÃO: A importação agora é relativa ao diretório 'src'
-from models.user import User, db
+from flask import Blueprint, request, jsonify
+from ..database import SessionLocal
+from ..models.user import User
 
 user_bp = Blueprint('user', __name__)
 
-@user_bp.route('/users', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    return jsonify([user.to_dict() for user in users])
+@user_bp.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
 
-@user_bp.route('/users', methods=['POST'])
-def create_user():
-    data = request.json
-    if not data or not data.get('username') or not data.get('email'):
-        return jsonify({'error': 'username e email são obrigatórios'}), 400
+    db = SessionLocal()
+    try:
+        if db.query(User).filter(User.email == email).first():
+            return jsonify({'error': 'Email already registered'}), 400
         
-    user = User(username=data['username'], email=data['email'])
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(user.to_dict()), 201
+        new_user = User(email=email)
+        new_user.set_password(password)
+        db.add(new_user)
+        db.commit()
+        return jsonify({'message': 'User created successfully'}), 201
+    finally:
+        db.close()
 
-@user_bp.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify(user.to_dict())
+@user_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
 
-@user_bp.route('/users/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    user = User.query.get_or_404(user_id)
-    data = request.json
-    user.username = data.get('username', user.username)
-    user.email = data.get('email', user.email)
-    db.session.commit()
-    return jsonify(user.to_dict())
-
-@user_bp.route('/users/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    db.session.delete(user)
-    db.session.commit()
-    return '', 204
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.email == email).first()
+        if user and user.check_password(password):
+            return jsonify({'message': 'Login successful', 'user_id': user.id}), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+    finally:
+        db.close()
