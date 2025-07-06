@@ -3,458 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UP Lançamentos - Arqueologia do Avatar</title>
+    <title>ARQV - Análise de Avatar</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="logo.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="description" content="Análise ultra-detalhada de avatar com pesquisa na internet. Descubra insights profundos sobre seu cliente ideal usando IA de última geração.">
-    
-    <!-- Google Sign-In -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap)" rel="stylesheet">
 </head>
 <body>
-    <!-- Login Screen -->
-    <section id="loginScreen" class="login-screen">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-header">
-                    <img src="logo.png" alt="UP Lançamentos" class="login-logo">
-                    <h1>UP LANÇAMENTOS</h1>
-                    <p>Arqueologia do Avatar com IA</p>
-                </div>
-                
-                <div class="login-content">
-                    <h2>Bem-vindo de volta!</h2>
-                    <p>Faça login para acessar análises ultra-detalhadas de avatar com inteligência artificial.</p>
-                    
-                    <div class="login-features">
-                        <div class="feature-item">
-                            <i class="fas fa-brain"></i>
-                            <span>IA Gemini Pro 2.5</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-globe"></i>
-                            <span>Pesquisa Real-Time</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Análise Ultra-Detalhada</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>Relatórios PDF</span>
-                        </div>
+    <div class="container">
+        <!-- Página de Login -->
+        <div class="page" id="login-page">
+            <header>
+                <h1>ARQV</h1>
+                <p>Análise de Avatar com IA</p>
+            </header>
+            <main>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
                     </div>
-                    
-                    <div class="google-signin-container">
-                        <div id="g_id_onload"
-                             data-client_id="828718830646-jq3rrvrgia2hqrvgvc4uq66ear9a99m6.apps.googleusercontent.com"
-                             data-context="signin"
-                             data-ux_mode="popup"
-                             data-callback="handleCredentialResponse"
-                             data-auto_prompt="false">
-                        </div>
-                        
-                        <div class="g_id_signin"
-                             data-type="standard"
-                             data-shape="rectangular"
-                             data-theme="outline"
-                             data-text="signin_with"
-                             data-size="large"
-                             data-logo_alignment="left">
-                        </div>
-                    
-                    <div class="login-footer">
-                        <p>Ao fazer login, você concorda com nossos <a href="#" class="link">Termos de Uso</a> e <a href="#" class="link">Política de Privacidade</a>.</p>
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" required>
                     </div>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+                <p id="login-error" class="error-message"></p>
+                <div class="divider">
+                    <span>OU</span>
                 </div>
+                <button id="google-login" class="btn btn-secondary">
+                    <img src="[https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg](https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg)" alt="Google logo">
+                    Entrar com Google
+                </button>
+                <p class="signup-link">Não tem uma conta? <a href="#" id="show-signup">Cadastre-se</a></p>
+            </main>
+        </div>
+
+        <!-- Página de Cadastro -->
+        <div class="page hidden" id="signup-page">
+            <header>
+                <h1>Crie sua Conta</h1>
+            </header>
+            <main>
+                <form id="signup-form">
+                    <div class="input-group">
+                        <label for="signup-email">E-mail</label>
+                        <input type="email" id="signup-email" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Senha</label>
+                        <input type="password" id="signup-password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </form>
+                <p id="signup-error" class="error-message"></p>
+                <p class="login-link">Já tem uma conta? <a href="#" id="show-login">Faça login</a></p>
+            </main>
+        </div>
+
+        <!-- Página de Análise -->
+        <div class="page hidden" id="analysis-page">
+            <header>
+                <h1>Nova Análise de Avatar</h1>
+                <p>Descreva o nicho de mercado para análise</p>
+            </header>
+            <main>
+                <form id="analysis-form">
+                    <div class="input-group">
+                        <label for="niche">Nicho de Mercado</label>
+                        <textarea id="niche" name="niche" rows="4" placeholder="Ex: Advogados de família que querem atrair clientes de divórcio de alta renda"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Iniciar Análise</button>
+                </form>
+            </main>
+        </div>
+
+        <!-- Página de Carregamento -->
+        <div class="page hidden" id="loading-page">
+            <div class="loader"></div>
+            <h2>Analisando...</h2>
+            <p>Aguarde, nossa IA está processando as informações.</p>
+        </div>
+
+        <!-- Página de Resultados -->
+        <div class="page hidden" id="results-page">
+            <header>
+                <h1>Análise Ultra-Detalhada Concluída</h1>
+                <p>Sua análise de avatar foi processada com sucesso usando IA avançada e pesquisa em tempo real na internet.</p>
+            </header>
+            <div class="button-group">
+                <button id="download-pdf-btn" class="btn">Baixar Relatório PDF</button>
+                <button id="generate-dashboard-btn" class="btn" style="display: none;">Gerar Dashboard</button>
             </div>
-            
-            <div class="login-visual">
-                <div class="floating-elements">
-                    <div class="floating-card">
-                        <i class="fas fa-user-circle"></i>
-                        <h3>Avatar Detalhado</h3>
-                        <p>Persona completa com psicografia profunda</p>
-                    </div>
-                    <div class="floating-card">
-                        <i class="fas fa-target"></i>
-                        <h3>Dores Mapeadas</h3>
-                        <p>3 níveis de dores com intensidade</p>
-                    </div>
-                    <div class="floating-card">
-                        <i class="fas fa-chess"></i>
-                        <h3>Análise Competitiva</h3>
-                        <p>Concorrentes e gaps de mercado</p>
-                    </div>
-                    <div class="floating-card">
-                        <i class="fas fa-rocket"></i>
-                        <h3>Plano de Ação</h3>
-                        <p>Estratégia detalhada por fases</p>
-                    </div>
-                </div>
+            <div id="analysis-results" class="results-content">
+                <!-- O conteúdo da análise será inserido aqui -->
             </div>
         </div>
-    </section>
 
-    <!-- Header -->
-    <header class="neo-header" id="header" style="display: none;">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-section">
-                    <img src="logo.png" alt="UP Lançamentos" class="neo-logo">
-                    <div class="logo-text">
-                        <h1>UP LANÇAMENTOS</h1>
-                        <p>Arqueologia do Avatar</p>
-                    </div>
-                </div>
-                
-                <nav class="neo-nav">
-                    <a href="#home" class="neo-nav-link active">
-                        <i class="fas fa-home"></i>
-                        <span>Início</span>
-                    </a>
-                    <a href="#analyzer" class="neo-nav-link">
-                        <i class="fas fa-brain"></i>
-                        <span>Analisador IA</span>
-                    </a>
-                    <a href="#dashboard" class="neo-nav-link">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Resultados</span>
-                    </a>
-                </nav>
-                
-                <div class="user-menu">
-                    <div class="user-profile" onclick="toggleUserMenu()">
-                        <img id="userAvatar" src="" alt="User" class="user-avatar">
-                        <span id="userName">Usuário</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-user"></i>
-                            <span>Perfil</span>
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-history"></i>
-                            <span>Histórico</span>
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-cog"></i>
-                            <span>Configurações</span>
-                        </a>
-                        <hr class="dropdown-divider">
-                        <a href="#" class="dropdown-item" onclick="signOut()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Sair</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main id="mainContent" style="display: none;">
-        <!-- Home Section -->
-        <section id="home" class="neo-hero">
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <h1 class="neo-hero-title">Desvende o DNA do Seu Avatar</h1>
-                        <p class="neo-hero-subtitle">
-                            Utilize a mais avançada inteligência artificial para análises ultra-detalhadas de mercado. 
-                            Nossa plataforma combina IA, pesquisa em tempo real na internet, neurociência e 
-                            psicologia comportamental para criar o perfil mais preciso e acionável do seu cliente ideal.
-                        </p>
-                        
-                        <div class="neo-hero-stats">
-                            <div class="neo-stat-item">
-                                <span class="neo-stat-number">99.9%</span>
-                                <span class="neo-stat-label">Precisão IA</span>
-                            </div>
-                            <div class="neo-stat-item">
-                                <span class="neo-stat-number">Real-Time</span>
-                                <span class="neo-stat-label">Pesquisa Web</span>
-                            </div>
-                            <div class="neo-stat-item">
-                                <span class="neo-stat-number">25+</span>
-                                <span class="neo-stat-label">Frameworks</span>
-                            </div>
-                            <div class="neo-stat-item">
-                                <span class="neo-stat-number">Ultra</span>
-                                <span class="neo-stat-label">Detalhado</span>
-                            </div>
-                        </div>
-                        
-                        <button class="neo-cta-button" onclick="showAnalyzer()">
-                            <i class="fas fa-rocket"></i>
-                            <span>Começar Análise Ultra-Detalhada</span>
-                        </button>
-                    </div>
-                    
-                    <div class="neo-hero-visual">
-                        <div class="neo-floating-card">
-                            <i class="fas fa-brain"></i>
-                            <h3>Gemini Pro 2.5</h3>
-                            <p>IA mais avançada do Google</p>
-                        </div>
-                        <div class="neo-floating-card">
-                            <i class="fas fa-globe"></i>
-                            <h3>Pesquisa Real-Time</h3>
-                            <p>Dados atualizados da internet</p>
-                        </div>
-                        <div class="neo-floating-card">
-                            <i class="fas fa-microscope"></i>
-                            <h3>Neurociência</h3>
-                            <p>Insights baseados em ciência</p>
-                        </div>
-                        <div class="neo-floating-card">
-                            <i class="fas fa-chart-network"></i>
-                            <h3>Ultra-Detalhado</h3>
-                            <p>Análise em 25+ dimensões</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- Container para o Dashboard -->
+    <div id="dashboard-view" class="hidden">
+        <button id="close-dashboard-btn" title="Fechar Dashboard">&times;</button>
+        <iframe id="dashboard-iframe"></iframe>
+    </div>
 
-        <!-- Analyzer Section -->
-        <section id="analyzer" class="neo-section" style="display: none;">
-            <div class="container">
-                <h2 class="neo-section-title">Analisador Ultra-Avançado</h2>
-                
-                <div class="neo-analyzer-container">
-                    <div class="neo-enhanced-card analyzer-form">
-                        <div class="neo-card-header">
-                            <div class="neo-card-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h3 class="neo-card-title">Configure Sua Análise Ultra-Detalhada</h3>
-                        </div>
-                        
-                        <div class="neo-card-content">
-                            <form id="analyzerForm">
-                                <div class="form-group">
-                                    <label for="segmento">Segmento de Atuação *</label>
-                                    <input type="text" id="segmento" name="segmento" required 
-                                           placeholder="Ex: Neuroeducação, Marketing Digital, Fitness, E-commerce...">
-                                    <small class="form-help">A IA pesquisará dados atualizados sobre este segmento</small>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="produto">Nome do Produto/Serviço</label>
-                                    <input type="text" id="produto" name="produto" 
-                                           placeholder="Ex: Pais Líderes, Filhos Vencedores">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="descricao">Descrição do Produto</label>
-                                    <textarea id="descricao" name="descricao" rows="4" 
-                                              placeholder="Descreva brevemente seu produto ou serviço..."></textarea>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="preco">Preço (R$)</label>
-                                        <input type="number" id="preco" name="preco" 
-                                               placeholder="997" min="0" step="0.01">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="publico">Público-Alvo</label>
-                                        <input type="text" id="publico" name="publico" 
-                                               placeholder="Ex: Pais de 30-45 anos">
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="objetivoReceita">Objetivo de Receita (R$)</label>
-                                        <input type="number" id="objetivoReceita" name="objetivoReceita" 
-                                               placeholder="100000" min="0" step="1000">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="orcamentoMarketing">Orçamento Marketing (R$)</label>
-                                        <input type="number" id="orcamentoMarketing" name="orcamentoMarketing" 
-                                               placeholder="50000" min="0" step="1000">
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="prazoLancamento">Prazo para Lançamento</label>
-                                    <select id="prazoLancamento" name="prazoLancamento">
-                                        <option value="">Selecione o prazo</option>
-                                        <option value="30 dias">30 dias</option>
-                                        <option value="60 dias">60 dias</option>
-                                        <option value="90 dias">90 dias</option>
-                                        <option value="6 meses">6 meses</option>
-                                        <option value="1 ano">1 ano</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="concorrentes">Principais Concorrentes</label>
-                                    <textarea id="concorrentes" name="concorrentes" rows="3" 
-                                              placeholder="Liste os principais concorrentes separados por vírgula..."></textarea>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="dadosAdicionais">Dados Adicionais</label>
-                                    <textarea id="dadosAdicionais" name="dadosAdicionais" rows="4" 
-                                              placeholder="Qualquer informação adicional relevante sobre seu mercado, pesquisas realizadas, etc..."></textarea>
-                                </div>
-                                
-                                <button type="submit" class="neo-cta-button full-width" id="analyzeBtn">
-                                    <i class="fas fa-brain"></i>
-                                    <span>Iniciar Análise Ultra-Detalhada</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <div class="neo-enhanced-card analyzer-preview">
-                        <div class="neo-card-header">
-                            <div class="neo-card-icon">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                            <h3 class="neo-card-title">O Que Você Receberá</h3>
-                        </div>
-                        
-                        <div class="neo-card-content">
-                            <div class="preview-items">
-                                <div class="preview-item">
-                                    <i class="fas fa-bullseye"></i>
-                                    <div>
-                                        <h4>Escopo Ultra-Detalhado</h4>
-                                        <p>Segmento, subsegmentos e tamanho de mercado real</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-user-circle"></i>
-                                    <div>
-                                        <h4>Avatar Ultra-Detalhado</h4>
-                                        <p>Persona, demografia, psicografia e comportamento digital</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-heart-broken"></i>
-                                    <div>
-                                        <h4>Mapeamento de Dores Profundo</h4>
-                                        <p>3 níveis de dores com intensidade e frequência</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-chess"></i>
-                                    <div>
-                                        <h4>Análise Competitiva Detalhada</h4>
-                                        <p>Concorrentes diretos/indiretos e gaps de mercado</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-chart-pie"></i>
-                                    <div>
-                                        <h4>Inteligência de Mercado</h4>
-                                        <p>Tendências, sazonalidade e tecnologias emergentes</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-search"></i>
-                                    <div>
-                                        <h4>Estratégia de Palavras-Chave</h4>
-                                        <p>Primárias, secundárias e custos por plataforma</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-chart-line"></i>
-                                    <div>
-                                        <h4>Métricas de Performance</h4>
-                                        <p>Benchmarks, KPIs críticos e funil otimizado</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-comments"></i>
-                                    <div>
-                                        <h4>Voz do Mercado</h4>
-                                        <p>Linguagem, objeções e gatilhos mentais</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-chart-bar"></i>
-                                    <div>
-                                        <h4>Projeções de Cenários</h4>
-                                        <p>Conservador, realista e otimista com métricas</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-tasks"></i>
-                                    <div>
-                                        <h4>Plano de Ação Detalhado</h4>
-                                        <p>Fases, ações, responsáveis e métricas de sucesso</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-lightbulb"></i>
-                                    <div>
-                                        <h4>Insights Exclusivos</h4>
-                                        <p>Descobertas únicas baseadas na pesquisa atual</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="preview-item">
-                                    <i class="fas fa-globe"></i>
-                                    <div>
-                                        <h4>Dados de Pesquisa</h4>
-                                        <p>Informações atualizadas coletadas na internet</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dashboard Section -->
-        <section id="dashboard" class="neo-section" style="display: none;">
-            <div class="container">
-                <h2 class="neo-section-title">Análise Ultra-Detalhada</h2>
-                
-                <div id="loadingState" class="loading-container" style="display: none;">
-                    <div class="neo-enhanced-card">
-                        <div class="loading-content">
-                            <div class="loading-spinner"></div>
-                            <h3>Processando com IA...</h3>
-                            <p id="loadingText">Iniciando análise ultra-detalhada...</p>
-                            <div class="loading-progress">
-                                <div class="neo-progress-bar">
-                                    <div class="neo-progress-fill" id="progressBar"></div>
-                                </div>
-                                <span id="progressText">0%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="resultsContainer" style="display: none;">
-                    <!-- Results will be dynamically loaded here -->
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Scripts -->
+    <script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
     <script src="script.js"></script>
 </body>
 </html>
