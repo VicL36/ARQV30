@@ -33,36 +33,49 @@ app.register_blueprint(pdf_bp, url_prefix='/api')
 database_url = os.getenv('DATABASE_URL')
 if database_url:
     try:
-        # Configuração otimizada para Supabase
+        # Fix connection string format if needed
+        if database_url.startswith('postgresql://'):
+            database_url = database_url.replace('postgresql://', 'postgresql+psycopg2://', 1)
+        
+        # Configuração otimizada para Supabase com timeout aumentado
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
             'pool_pre_ping': True,
             'pool_recycle': 300,
-            'pool_timeout': 60,
-            'pool_size': 3,
-            'max_overflow': 5,
+            'pool_timeout': 120,  # Increased timeout
+            'pool_size': 5,       # Increased pool size
+            'max_overflow': 10,   # Increased overflow
             'connect_args': {
                 'sslmode': 'require',
-                'connect_timeout': 60,
-                'application_name': 'ARQV2_Gemini_App',
+                'connect_timeout': 120,  # Increased connection timeout
+                'application_name': 'UP_Lancamentos_Avatar_App',
                 'keepalives_idle': 600,
                 'keepalives_interval': 30,
-                'keepalives_count': 3
+                'keepalives_count': 3,
+                'options': '-c statement_timeout=300000'  # 5 minute statement timeout
             }
         }
         
         db.init_app(app)
         
-        # Teste de conexão opcional - não bloqueia a aplicação
+        # Teste de conexão com retry logic
         with app.app_context():
-            try:
-                from sqlalchemy import text
-                result = db.session.execute(text('SELECT 1'))
-                logger.info("✅ Conexão com Supabase estabelecida com sucesso!")
-            except Exception as e:
-                logger.warning(f"⚠️ Conexão com banco não disponível no momento: {str(e)[:100]}...")
-                logger.info("📱 Aplicação funcionará com funcionalidades limitadas")
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    from sqlalchemy import text
+                    result = db.session.execute(text('SELECT 1'))
+                    logger.info("✅ Conexão com Supabase estabelecida com sucesso!")
+                    break
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"⚠️ Tentativa {attempt + 1} falhou, tentando novamente... Erro: {str(e)[:100]}...")
+                        import time
+                        time.sleep(2)  # Wait 2 seconds before retry
+                    else:
+                        logger.warning(f"⚠️ Conexão com banco não disponível após {max_retries} tentativas: {str(e)[:100]}...")
+                        logger.info("📱 Aplicação funcionará com funcionalidades limitadas")
                 
     except Exception as e:
         logger.warning(f"⚠️ Erro na configuração do banco de dados: {str(e)[:100]}...")
@@ -86,8 +99,8 @@ def health_check():
                 from sqlalchemy import text
                 db.session.execute(text('SELECT 1'))
                 db_connection = 'connected'
-        except:
-            db_connection = 'error'
+        except Exception as e:
+            db_connection = f'error: {str(e)[:50]}...'
     
     return jsonify({
         'status': 'healthy',
@@ -98,7 +111,7 @@ def health_check():
             'database': database_status,
             'db_connection': db_connection
         },
-        'version': '3.0.0',
+        'version': '3.1.0',
         'features': [
             'Gemini Pro 2.5 Integration',
             'Real-time Internet Research',
@@ -107,7 +120,13 @@ def health_check():
             'Comprehensive Competitor Analysis',
             'PDF Report Generation',
             'Interactive Charts & Infographics'
-        ]
+        ],
+        'environment_vars': {
+            'DATABASE_URL': 'configured' if database_url else 'missing',
+            'GEMINI_API_KEY': 'configured' if os.getenv('GEMINI_API_KEY') else 'missing',
+            'SUPABASE_URL': 'configured' if os.getenv('SUPABASE_URL') else 'missing',
+            'SUPABASE_SERVICE_ROLE_KEY': 'configured' if os.getenv('SUPABASE_SERVICE_ROLE_KEY') else 'missing'
+        }
     })
 
 # Rota para servir arquivos estáticos e SPA
@@ -128,6 +147,25 @@ def not_found(error):
 def internal_error(error):
     logger.error(f"Erro interno: {error}")
     return jsonify({'error': 'Erro interno do servidor'}), 500
+
+# Add database connection test endpoint
+@app.route('/api/test-db')
+def test_database():
+    """Test database connection endpoint"""
+    try:
+        from sqlalchemy import text
+        result = db.session.execute(text('SELECT version()'))
+        version = result.fetchone()[0]
+        return jsonify({
+            'status': 'success',
+            'message': 'Database connection successful',
+            'database_version': version
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Database connection failed: {str(e)}'
+        }), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
