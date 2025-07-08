@@ -597,7 +597,6 @@ INSTRUÇÕES CRÍTICAS:
             preco = float(data.get('preco_float', 0)) if data.get('preco_float') is not None else 997.0
         except (ValueError, TypeError):
             preco = 997.0
-        
         logger.info(f"🔄 Criando análise de fallback para {segmento} - Preço: R$ {preco}")
         
         return {
