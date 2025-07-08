@@ -62,27 +62,27 @@ class PDFReportGenerator:
                 fontName='Helvetica-Bold',
                 spaceBefore=10
             ))
-                    self.styles.add(ParagraphStyle(
-                name=\'CustomBodyText\', 
+            self.styles.add(ParagraphStyle(
+                name='CustomBodyText', 
                 fontSize=10, 
                 leading=14, 
-                textColor=HexColor(\'#333333\'), 
+                textColor=HexColor('#333333'), 
                 spaceAfter=6, 
                 alignment=TA_JUSTIFY,
-                fontName=\'Helvetica\',
-                wordWrap=\'CJK\'
+                fontName='Helvetica',
+                wordWrap='CJK'
             ))
             
             self.styles.add(ParagraphStyle(
-                name=\'BulletText\', 
+                name='BulletText', 
                 fontSize=10, 
                 leading=14, 
-                textColor=HexColor(\'#333333\'), 
+                textColor=HexColor('#333333'), 
                 leftIndent=20, 
                 bulletIndent=10, 
-                bulletFontName=\'Helvetica-Bold\', 
+                bulletFontName='Helvetica-Bold', 
                 bulletFontSize=10, 
-                bulletColor=HexColor(\'#0056b3\'),
+                bulletColor=HexColor('#0056b3'),
                 spaceAfter=3
             ))            
             self.styles.add(ParagraphStyle(
@@ -208,35 +208,50 @@ class PDFReportGenerator:
 
             # Avatar Profile
             if persona:
-                story.append(Paragraph("Perfil do Avatar Principal", self.styles["CustomHeading1"                avatar_info = [persona.get(\'medos_frustracoes\', \'N/A\')}",
-                    f"Influências: {persona.get(\'influencias\', \'N/A\')}",
-                    f"Jornada de Compra: {persona.get(\'jornada_compra\', \'N/A\')}",
-                    f"Conteúdo Preferido: {persona.get(\'conteudo_preferido\', \'N/A\')}",
-                    f"Formato de Conteúdo Preferido: {persona.get(\'formato_conteudo_preferido\', \'N/A\')}",
-                    f"Gatilhos Mentais: {persona.get(\'gatilhos_mentais\', \'N/A\')}",
-                    f"Linguagem e Tom: {persona.get(\'linguagem_tom\', \'N/A\')}",
-                    f"Valores: {persona.get(\'valores\', \'N/A\')}",
-                    f"Crenças: {persona.get(\'crencas\', \'N/A\')}",
-                    f"Hobbies: {persona.get(\'hobbies\', \'N/A\')}",
-                    f"Marcas Preferidas: {persona.get(\'marcas_preferidas\', \'N/A\')}",
-                    f"Eventos que Participa: {persona.get(\'eventos_participa\', \'N/A\')}",
-                    f"Comunidades Online: {persona.get(\'comunidades_online\', \'N/A\')}",
-                    f"Apps e Ferramentas: {persona.get(\'apps_ferramentas\', \'N/A\')}",
-                    f"Fontes de Informação: {persona.get(\'fontes_informacao\', \'N/A\')}",
-                    f"Nível de Engajamento: {persona.get(\'nivel_engajamento\', \'N/A\')}",
-                    f"Disposição para Gastar: {persona.get(\'disposicao_gastar\', \'N/A\')}",
-                    f"Feedback Comum: {persona.get(\'feedback_comum\', \'N/A\')}",
-                    f"Expectativas: {persona.get(\'expectativas\', \'N/A\')}",
-                    f"Frustrações com Soluções Atuais: {persona.get(\'frustracoes_solucoes_atuais\', \'N/A\')}",
-                    f"O que o Motiva: {persona.get(\'o_que_motiva\', \'N/A\')}",
-                    f"O que o Desmotiva: {persona.get(\'o_que_desmotiva\', \'N/A\')}",
-                    f"Como Toma Decisões: {persona.get(\'como_toma_decisoes\', \'N/A\')}",
-                    f"Papel na Decisão de Compra: {persona.get(\'papel_decisao_compra\', \'N/A\')}",
-                    f"Barreiras de Compra: {persona.get(\'barreiras_compra\', \'N/A\')}",
-                    f"Fatores de Sucesso: {persona.get(\'fatores_sucesso\', \'N/A\')}",
-                    f"Métricas de Sucesso: {persona.get(\'metricas_sucesso\', \'N/A\')}",
-                    f"Visão de Futuro: {persona.get(\'visao_futuro\', \'N/A\')}",
-                    f"Legado: {persona.get(\'legado\', \'N/A\')}"                
+                story.append(Paragraph("Perfil do Avatar Principal", self.styles["CustomHeading1"]))
+                avatar_info = [
+                    f"Nome: {persona.get('nome', 'N/A')}",
+                    f"Idade: {persona.get('idade', 'N/A')}",
+                    f"Gênero: {persona.get('genero', 'N/A')}",
+                    f"Localização: {persona.get('localizacao', 'N/A')}",
+                    f"Profissão: {persona.get('profissao', 'N/A')}",
+                    f"Renda: {persona.get('renda', 'N/A')}",
+                    f"Educação: {persona.get('educacao', 'N/A')}",
+                    f"Estado Civil: {persona.get('estado_civil', 'N/A')}",
+                    f"Filhos: {persona.get('filhos', 'N/A')}",
+                    f"Interesses: {persona.get('interesses', 'N/A')}",
+                    f"Objetivos: {persona.get('objetivos', 'N/A')}",
+                    f"Desafios: {persona.get('desafios', 'N/A')}",
+                    f"Medos e Frustrações: {persona.get('medos_frustracoes', 'N/A')}",
+                    f"Influências: {persona.get('influencias', 'N/A')}",
+                    f"Jornada de Compra: {persona.get('jornada_compra', 'N/A')}",
+                    f"Conteúdo Preferido: {persona.get('conteudo_preferido', 'N/A')}",
+                    f"Formato de Conteúdo Preferido: {persona.get('formato_conteudo_preferido', 'N/A')}",
+                    f"Gatilhos Mentais: {persona.get('gatilhos_mentais', 'N/A')}",
+                    f"Linguagem e Tom: {persona.get('linguagem_tom', 'N/A')}",
+                    f"Valores: {persona.get('valores', 'N/A')}",
+                    f"Crenças: {persona.get('crencas', 'N/A')}",
+                    f"Hobbies: {persona.get('hobbies', 'N/A')}",
+                    f"Marcas Preferidas: {persona.get('marcas_preferidas', 'N/A')}",
+                    f"Eventos que Participa: {persona.get('eventos_participa', 'N/A')}",
+                    f"Comunidades Online: {persona.get('comunidades_online', 'N/A')}",
+                    f"Apps e Ferramentas: {persona.get('apps_ferramentas', 'N/A')}",
+                    f"Fontes de Informação: {persona.get('fontes_informacao', 'N/A')}",
+                    f"Nível de Engajamento: {persona.get('nivel_engajamento', 'N/A')}",
+                    f"Disposição para Gastar: {persona.get('disposicao_gastar', 'N/A')}",
+                    f"Feedback Comum: {persona.get('feedback_comum', 'N/A')}",
+                    f"Expectativas: {persona.get('expectativas', 'N/A')}",
+                    f"Frustrações com Soluções Atuais: {persona.get('frustracoes_solucoes_atuais', 'N/A')}",
+                    f"O que o Motiva: {persona.get('o_que_motiva', 'N/A')}",
+                    f"O que o Desmotiva: {persona.get('o_que_desmotiva', 'N/A')}",
+                    f"Como Toma Decisões: {persona.get('como_toma_decisoes', 'N/A')}",
+                    f"Papel na Decisão de Compra: {persona.get('papel_decisao_compra', 'N/A')}",
+                    f"Barreiras de Compra: {persona.get('barreiras_compra', 'N/A')}",
+                    f"Fatores de Sucesso: {persona.get('fatores_sucesso', 'N/A')}",
+                    f"Métricas de Sucesso: {persona.get('metricas_sucesso', 'N/A')}",
+                    f"Visão de Futuro: {persona.get('visao_futuro', 'N/A')}",
+                    f"Legado: {persona.get('legado', 'N/A')}"
+                ]
                 for info in avatar_info:
                     story.append(Paragraph(info, self.styles["CustomBodyText"]))
                 
@@ -264,29 +279,29 @@ class PDFReportGenerator:
             if dores:
                 story.append(Paragraph("Mapeamento de Dores", self.styles["CustomHeading1"]))
                 
-                dores_criticas = dores.get(\'dores_nivel_1_criticas\', [])
+                dores_criticas = dores.get('dores_nivel_1_criticas', [])
                 if dores_criticas:
                     story.append(Paragraph("Dores Críticas (Nível 1):", self.styles["CustomHeading2"]))
                     for i, dor in enumerate(dores_criticas, 1):
                         if isinstance(dor, dict):
-                            story.append(Paragraph(f"{i}. {dor.get(\'dor\', \'N/A\')}", self.styles["CustomListText"]))
-                            story.append(Paragraph(f"   Intensidade: {dor.get(\'intensidade\', \'N/A\')} | Frequência: {dor.get(\'frequencia\', \'N/A\')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"{i}. {dor.get('dor', 'N/A')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"   Intensidade: {dor.get('intensidade', 'N/A')} | Frequência: {dor.get('frequencia', 'N/A')}", self.styles["CustomListText"]))
                 
-                dores_nivel_2 = dores.get(\'dores_nivel_2\', [])
+                dores_nivel_2 = dores.get('dores_nivel_2', [])
                 if dores_nivel_2:
                     story.append(Paragraph("Dores de Nível 2:", self.styles["CustomHeading2"]))
                     for i, dor in enumerate(dores_nivel_2, 1):
                         if isinstance(dor, dict):
-                            story.append(Paragraph(f"{i}. {dor.get(\'dor\', \'N/A\')}", self.styles["CustomListText"]))
-                            story.append(Paragraph(f"   Impacto: {dor.get(\'impacto\', \'N/A\')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"{i}. {dor.get('dor', 'N/A')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"   Impacto: {dor.get('impacto', 'N/A')}", self.styles["CustomListText"]))
                 
-                dores_nivel_3 = dores.get(\'dores_nivel_3\', [])
+                dores_nivel_3 = dores.get('dores_nivel_3', [])
                 if dores_nivel_3:
                     story.append(Paragraph("Dores de Nível 3:", self.styles["CustomHeading2"]))
                     for i, dor in enumerate(dores_nivel_3, 1):
                         if isinstance(dor, dict):
-                            story.append(Paragraph(f"{i}. {dor.get(\'dor\', \'N/A\')}", self.styles["CustomListText"]))
-                            story.append(Paragraph(f"   Causa Raiz: {dor.get(\'causa_raiz\', \'N/A\')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"{i}. {dor.get('dor', 'N/A')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"   Causa Raiz: {dor.get('causa_raiz', 'N/A')}", self.styles["CustomListText"]))
                        
                 story.append(Spacer(1, 0.3 * inch))
 
@@ -470,3 +485,4 @@ def generate_pdf():
 def generate_pdf_legacy():
     """Legacy PDF generation endpoint for backward compatibility"""
     return generate_pdf()
+
