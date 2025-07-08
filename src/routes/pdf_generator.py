@@ -62,17 +62,29 @@ class PDFReportGenerator:
                 fontName='Helvetica-Bold',
                 spaceBefore=10
             ))
-            
-            self.styles.add(ParagraphStyle(
-                name='CustomBodyText', 
+                    self.styles.add(ParagraphStyle(
+                name=\'CustomBodyText\', 
                 fontSize=10, 
                 leading=14, 
-                textColor=HexColor('#333333'), 
+                textColor=HexColor(\'#333333\'), 
                 spaceAfter=6, 
                 alignment=TA_JUSTIFY,
-                fontName='Helvetica'
+                fontName=\'Helvetica\',
+                wordWrap=\'CJK\'
             ))
             
+            self.styles.add(ParagraphStyle(
+                name=\'BulletText\', 
+                fontSize=10, 
+                leading=14, 
+                textColor=HexColor(\'#333333\'), 
+                leftIndent=20, 
+                bulletIndent=10, 
+                bulletFontName=\'Helvetica-Bold\', 
+                bulletFontSize=10, 
+                bulletColor=HexColor(\'#0056b3\'),
+                spaceAfter=3
+            ))            
             self.styles.add(ParagraphStyle(
                 name='CustomCaption', 
                 fontSize=8, 
@@ -150,15 +162,17 @@ class PDFReportGenerator:
         canvas.restoreState()
 
     def _safe_get(self, data, *keys, default="N/A"):
-        """Safely get nested dictionary values"""
+        """Safely get nested dictionary or list values"""
         try:
             result = data
             for key in keys:
                 if isinstance(result, dict):
                     result = result.get(key, {})
+                elif isinstance(result, list) and isinstance(key, int) and key < len(result):
+                    result = result[key]
                 else:
                     return default
-            return result if result else default
+            return result if result not in [{}, [], None] else default
         except:
             return default
 
@@ -194,18 +208,35 @@ class PDFReportGenerator:
 
             # Avatar Profile
             if persona:
-                story.append(Paragraph("Perfil do Avatar Principal", self.styles["CustomHeading1"]))
-                
-                avatar_info = [
-                    f"Nome: {persona.get('nome', 'N/A')}",
-                    f"Idade: {persona.get('idade', 'N/A')}",
-                    f"Profissão: {persona.get('profissao', 'N/A')}",
-                    f"Renda Mensal: {persona.get('renda_mensal', 'N/A')}",
-                    f"Localização: {persona.get('localizacao', 'N/A')}",
-                    f"Estado Civil: {persona.get('estado_civil', 'N/A')}",
-                    f"Escolaridade: {persona.get('escolaridade', 'N/A')}"
-                ]
-                
+                story.append(Paragraph("Perfil do Avatar Principal", self.styles["CustomHeading1"                avatar_info = [persona.get(\'medos_frustracoes\', \'N/A\')}",
+                    f"Influências: {persona.get(\'influencias\', \'N/A\')}",
+                    f"Jornada de Compra: {persona.get(\'jornada_compra\', \'N/A\')}",
+                    f"Conteúdo Preferido: {persona.get(\'conteudo_preferido\', \'N/A\')}",
+                    f"Formato de Conteúdo Preferido: {persona.get(\'formato_conteudo_preferido\', \'N/A\')}",
+                    f"Gatilhos Mentais: {persona.get(\'gatilhos_mentais\', \'N/A\')}",
+                    f"Linguagem e Tom: {persona.get(\'linguagem_tom\', \'N/A\')}",
+                    f"Valores: {persona.get(\'valores\', \'N/A\')}",
+                    f"Crenças: {persona.get(\'crencas\', \'N/A\')}",
+                    f"Hobbies: {persona.get(\'hobbies\', \'N/A\')}",
+                    f"Marcas Preferidas: {persona.get(\'marcas_preferidas\', \'N/A\')}",
+                    f"Eventos que Participa: {persona.get(\'eventos_participa\', \'N/A\')}",
+                    f"Comunidades Online: {persona.get(\'comunidades_online\', \'N/A\')}",
+                    f"Apps e Ferramentas: {persona.get(\'apps_ferramentas\', \'N/A\')}",
+                    f"Fontes de Informação: {persona.get(\'fontes_informacao\', \'N/A\')}",
+                    f"Nível de Engajamento: {persona.get(\'nivel_engajamento\', \'N/A\')}",
+                    f"Disposição para Gastar: {persona.get(\'disposicao_gastar\', \'N/A\')}",
+                    f"Feedback Comum: {persona.get(\'feedback_comum\', \'N/A\')}",
+                    f"Expectativas: {persona.get(\'expectativas\', \'N/A\')}",
+                    f"Frustrações com Soluções Atuais: {persona.get(\'frustracoes_solucoes_atuais\', \'N/A\')}",
+                    f"O que o Motiva: {persona.get(\'o_que_motiva\', \'N/A\')}",
+                    f"O que o Desmotiva: {persona.get(\'o_que_desmotiva\', \'N/A\')}",
+                    f"Como Toma Decisões: {persona.get(\'como_toma_decisoes\', \'N/A\')}",
+                    f"Papel na Decisão de Compra: {persona.get(\'papel_decisao_compra\', \'N/A\')}",
+                    f"Barreiras de Compra: {persona.get(\'barreiras_compra\', \'N/A\')}",
+                    f"Fatores de Sucesso: {persona.get(\'fatores_sucesso\', \'N/A\')}",
+                    f"Métricas de Sucesso: {persona.get(\'metricas_sucesso\', \'N/A\')}",
+                    f"Visão de Futuro: {persona.get(\'visao_futuro\', \'N/A\')}",
+                    f"Legado: {persona.get(\'legado\', \'N/A\')}"                
                 for info in avatar_info:
                     story.append(Paragraph(info, self.styles["CustomBodyText"]))
                 
@@ -233,14 +264,30 @@ class PDFReportGenerator:
             if dores:
                 story.append(Paragraph("Mapeamento de Dores", self.styles["CustomHeading1"]))
                 
-                dores_criticas = dores.get('dores_nivel_1_criticas', [])
+                dores_criticas = dores.get(\'dores_nivel_1_criticas\', [])
                 if dores_criticas:
                     story.append(Paragraph("Dores Críticas (Nível 1):", self.styles["CustomHeading2"]))
-                    for i, dor in enumerate(dores_criticas[:3], 1):  # Limit to top 3
+                    for i, dor in enumerate(dores_criticas, 1):
                         if isinstance(dor, dict):
-                            story.append(Paragraph(f"{i}. {dor.get('dor', 'N/A')}", self.styles["CustomListText"]))
-                            story.append(Paragraph(f"   Intensidade: {dor.get('intensidade', 'N/A')} | Frequência: {dor.get('frequencia', 'N/A')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"{i}. {dor.get(\'dor\', \'N/A\')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"   Intensidade: {dor.get(\'intensidade\', \'N/A\')} | Frequência: {dor.get(\'frequencia\', \'N/A\')}", self.styles["CustomListText"]))
                 
+                dores_nivel_2 = dores.get(\'dores_nivel_2\', [])
+                if dores_nivel_2:
+                    story.append(Paragraph("Dores de Nível 2:", self.styles["CustomHeading2"]))
+                    for i, dor in enumerate(dores_nivel_2, 1):
+                        if isinstance(dor, dict):
+                            story.append(Paragraph(f"{i}. {dor.get(\'dor\', \'N/A\')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"   Impacto: {dor.get(\'impacto\', \'N/A\')}", self.styles["CustomListText"]))
+                
+                dores_nivel_3 = dores.get(\'dores_nivel_3\', [])
+                if dores_nivel_3:
+                    story.append(Paragraph("Dores de Nível 3:", self.styles["CustomHeading2"]))
+                    for i, dor in enumerate(dores_nivel_3, 1):
+                        if isinstance(dor, dict):
+                            story.append(Paragraph(f"{i}. {dor.get(\'dor\', \'N/A\')}", self.styles["CustomListText"]))
+                            story.append(Paragraph(f"   Causa Raiz: {dor.get(\'causa_raiz\', \'N/A\')}", self.styles["CustomListText"]))
+                       
                 story.append(Spacer(1, 0.3 * inch))
 
             # Marketing Strategy
@@ -251,7 +298,7 @@ class PDFReportGenerator:
                 palavras_primarias = marketing.get('palavras_primarias', [])
                 if palavras_primarias:
                     story.append(Paragraph("Palavras-Chave Primárias:", self.styles["CustomHeading2"]))
-                    for i, palavra in enumerate(palavras_primarias[:5], 1):  # Top 5
+                    for i, palavra in enumerate(palavras_primarias, 1):
                         if isinstance(palavra, dict):
                             story.append(Paragraph(
                                 f"{i}. {palavra.get('termo', 'N/A')} - Volume: {palavra.get('volume_mensal', 'N/A')} - CPC: {palavra.get('cpc_estimado', 'N/A')}", 
@@ -268,7 +315,7 @@ class PDFReportGenerator:
                 concorrentes = competicao.get('concorrentes_diretos', [])
                 if concorrentes:
                     story.append(Paragraph("Principais Concorrentes:", self.styles["CustomHeading2"]))
-                    for i, concorrente in enumerate(concorrentes[:3], 1):  # Top 3
+                    for i, concorrente in enumerate(concorrentes, 1):
                         if isinstance(concorrente, dict):
                             story.append(Paragraph(f"{i}. {concorrente.get('nome', 'N/A')}", self.styles["CustomListText"]))
                             story.append(Paragraph(f"   Preço: {concorrente.get('preco_range', 'N/A')}", self.styles["CustomListText"]))
@@ -277,7 +324,7 @@ class PDFReportGenerator:
                 gaps = competicao.get('gaps_oportunidades', [])
                 if gaps:
                     story.append(Paragraph("Oportunidades de Mercado:", self.styles["CustomHeading2"]))
-                    for i, gap in enumerate(gaps[:3], 1):
+                    for i, gap in enumerate(gaps, 1):
                         story.append(Paragraph(f"{i}. {gap}", self.styles["CustomListText"]))
                 
                 story.append(Spacer(1, 0.3 * inch))
@@ -301,14 +348,14 @@ class PDFReportGenerator:
             plano_acao = data.get('plano_acao_detalhado', [])
             if plano_acao:
                 story.append(Paragraph("Plano de Ação", self.styles["CustomHeading1"]))
-                for fase in plano_acao[:3]:  # Top 3 phases
+                for fase in plano_acao:
                     if isinstance(fase, dict):
                         story.append(Paragraph(f"{fase.get('fase', 'Fase')}", self.styles["CustomHeading2"]))
                         story.append(Paragraph(f"Duração: {fase.get('duracao', 'N/A')}", self.styles["CustomBodyText"]))
                         
                         acoes = fase.get('acoes', [])
                         if acoes:
-                            for i, acao in enumerate(acoes[:2], 1):  # Top 2 actions per phase
+                            for i, acao in enumerate(acoes, 1):
                                 if isinstance(acao, dict):
                                     story.append(Paragraph(f"{i}. {acao.get('acao', 'N/A')}", self.styles["CustomListText"]))
                                     story.append(Paragraph(f"   Responsável: {acao.get('responsavel', 'N/A')}", self.styles["CustomListText"]))
