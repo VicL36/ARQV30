@@ -1,0 +1,13 @@
+{
+  "name": "arqueologia-avatar-deepseek",
+  "version": "1.0.0",
+  "description": "Arqueologia Avatar with DeepSeek AI",
+  "scripts": {
+    "dev": "cd src && python main.py",
+    "build": "chmod +x build.sh && ./build.sh",
+    "start": "cd src && gunicorn main:app --bind 0.0.0.0:8000 --workers 1 --timeout 120"
+  },
+  "keywords": ["python", "flask", "ai", "archaeology"],
+  "author": "",
+  "license": "MIT"
+}
