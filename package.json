@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Arqueologia Avatar with DeepSeek AI",
   "scripts": {
-    "dev": "cd src && python main.py",
+    "dev": "python src/main.py"
   },
   "keywords": ["python", "flask", "ai", "archaeology"],
   "author": "",
