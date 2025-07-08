@@ -3,10 +3,31 @@ import logging
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-from database import db
-from routes.user import user_bp
-from routes.analysis import analysis_bp
-from routes.pdf_generator import pdf_bp
+
+# Import with error handling
+try:
+    from database import db
+except ImportError:
+    logger.warning("Database module not available")
+    db = None
+
+try:
+    from routes.user import user_bp
+except ImportError:
+    logger.warning("User routes not available")
+    user_bp = None
+
+try:
+    from routes.analysis import analysis_bp
+except ImportError:
+    logger.warning("Analysis routes not available")
+    analysis_bp = None
+
+try:
+    from routes.pdf_generator import pdf_bp
+except ImportError:
+    logger.warning("PDF routes not available")
+    pdf_bp = None
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -25,13 +46,16 @@ CORS(app, origins=os.getenv('CORS_ORIGINS', '*'))
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-default-secret-key-that-should-be-changed')
 
 # Registrar blueprints
-app.register_blueprint(user_bp, url_prefix='/api')
-app.register_blueprint(analysis_bp, url_prefix='/api')
-app.register_blueprint(pdf_bp, url_prefix='/api')
+if user_bp:
+    app.register_blueprint(user_bp, url_prefix='/api')
+if analysis_bp:
+    app.register_blueprint(analysis_bp, url_prefix='/api')
+if pdf_bp:
+    app.register_blueprint(pdf_bp, url_prefix='/api')
 
 # Configuração do banco de dados usando suas variáveis
 database_url = os.getenv('DATABASE_URL')
-if database_url:
+if database_url and db:
     try:
         # Fix connection string format if needed
         if database_url.startswith('postgresql://'):
@@ -57,7 +81,8 @@ if database_url:
             }
         }
         
-        db.init_app(app)
+        if db:
+            db.init_app(app)
         
         # Teste de conexão com retry logic
         with app.app_context():
@@ -65,7 +90,8 @@ if database_url:
             for attempt in range(max_retries):
                 try:
                     from sqlalchemy import text
-                    result = db.session.execute(text('SELECT 1'))
+                    if db:
+                        result = db.session.execute(text('SELECT 1'))
                     logger.info("✅ Conexão com Supabase estabelecida com sucesso!")
                     break
                 except Exception as e:
@@ -93,11 +119,12 @@ def health_check():
     
     # Teste rápido de conexão com banco
     db_connection = 'disconnected'
-    if database_url:
+    if database_url and db:
         try:
             with app.app_context():
                 from sqlalchemy import text
-                db.session.execute(text('SELECT 1'))
+                if db:
+                    db.session.execute(text('SELECT 1'))
                 db_connection = 'connected'
         except Exception as e:
             db_connection = f'error: {str(e)[:50]}...'
@@ -153,14 +180,20 @@ def internal_error(error):
 def test_database():
     """Test database connection endpoint"""
     try:
-        from sqlalchemy import text
-        result = db.session.execute(text('SELECT version()'))
-        version = result.fetchone()[0]
-        return jsonify({
-            'status': 'success',
-            'message': 'Database connection successful',
-            'database_version': version
-        })
+        if db:
+            from sqlalchemy import text
+            result = db.session.execute(text('SELECT version()'))
+            version = result.fetchone()[0]
+            return jsonify({
+                'status': 'success',
+                'message': 'Database connection successful',
+                'database_version': version
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Database not configured'
+            }), 500
     except Exception as e:
         return jsonify({
             'status': 'error',

@@ -3,13 +3,25 @@ import os
 import json
 from datetime import datetime, timedelta
 import logging
-from supabase import create_client, Client
-from services.gemini_client import GeminiClient
 import requests
 import re
 from typing import Dict, List, Optional, Tuple
 import concurrent.futures
 from functools import lru_cache
+
+# Import with error handling
+try:
+    from supabase import create_client, Client
+except ImportError:
+    logger.warning("Supabase not available")
+    create_client = None
+    Client = None
+
+try:
+    from services.gemini_client import GeminiClient
+except ImportError:
+    logger.warning("GeminiClient not available")
+    GeminiClient = None
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +34,7 @@ supabase_url = os.getenv('SUPABASE_URL')
 supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
 supabase: Client = None
 
-if supabase_url and supabase_key:
+if supabase_url and supabase_key and create_client:
     try:
         supabase = create_client(supabase_url, supabase_key)
         logger.info("✅ Cliente Supabase configurado com sucesso")
@@ -30,12 +42,14 @@ if supabase_url and supabase_key:
         logger.error(f"❌ Erro ao configurar Supabase: {e}")
 
 # Initialize Gemini client
-try:
-    gemini_client = GeminiClient()
-    logger.info("✅ Cliente Gemini Pro 2.5 configurado com sucesso")
-except Exception as e:
-    logger.error(f"❌ Erro ao inicializar Gemini: {e}")
-    gemini_client = None
+gemini_client = None
+if GeminiClient:
+    try:
+        gemini_client = GeminiClient()
+        logger.info("✅ Cliente Gemini Pro configurado com sucesso")
+    except Exception as e:
+        logger.error(f"❌ Erro ao inicializar Gemini: {e}")
+        gemini_client = None
 
 @analysis_bp.route('/analyze', methods=['POST'])
 def analyze_market():

@@ -3,13 +3,23 @@ import os
 import json
 from datetime import datetime, timedelta
 import logging
-from supabase import create_client, Client
-from services.gemini_client import GeminiClient
 import requests
 import re
 from typing import Dict, List, Optional, Tuple
 import concurrent.futures
 from functools import lru_cache
+
+# Import with error handling
+try:
+    from supabase import create_client, Client
+except ImportError:
+    create_client = None
+    Client = None
+
+try:
+    from services.gemini_client import GeminiClient
+except ImportError:
+    GeminiClient = None
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,18 +29,25 @@ analysis_bp = Blueprint("analysis", __name__)
 
 # Configure Supabase
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise ValueError("Supabase URL and Key must be set in environment variables")
+supabase: Client = None
+if SUPABASE_URL and SUPABASE_KEY and create_client:
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        logger.info("✅ Cliente Supabase configurado com sucesso")
+    except Exception as e:
+        logger.error(f"❌ Erro ao configurar Supabase: {e}")
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# Configure Gemini Client
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY must be set in environment variables")
-gemini_client = GeminiClient(GEMINI_API_KEY)
+# Initialize Gemini client
+gemini_client = None
+if GeminiClient:
+    try:
+        gemini_client = GeminiClient()
+        logger.info("✅ Cliente Gemini configurado com sucesso")
+    except Exception as e:
+        logger.error(f"❌ Erro ao inicializar Gemini: {e}")
+        gemini_client = None
 
 # Cache para respostas da API Gemini
 @lru_cache(maxsize=128)
