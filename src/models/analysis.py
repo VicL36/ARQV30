@@ -51,7 +51,7 @@ if GeminiClient:
 
 # Cache para respostas da API Gemini
 @lru_cache(maxsize=128)
-def get_gemini_response_cached(prompt: str, temperature: float = 0.7, max_tokens: int = 1500):
+def get_gemini_response_cached(prompt: str, temperature: float = 0.9, max_tokens: int = 5500):
     return gemini_client.generate_text(prompt, temperature, max_tokens)
 
 @analysis_bp.route("/archeology", methods=["POST"])
