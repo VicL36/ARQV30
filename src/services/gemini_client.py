@@ -219,7 +219,1077 @@ DADOS DE PESQUISA NA INTERNET (2023-2025):
 {research_summary}
 
 Com base nos dados de pesquisa atualizados e sua expertise, crie uma análise ULTRA-DETALHADA do avatar ideal para este segmento no mercado brasileiro.
+## SUPER PROMPT
 
+Você executará um PROTOCOLO DE DOMINAÇÃO TOTAL seguindo 9 fases da criação de um lançamento digital. Cada fase tem critérios específicos de profundidade e validação obrigatória.
+
+**REGRA FUNDAMENTAL**: Nenhuma resposta genérica será aceita. Cada output deve ter profundidade psicológica suficiente para mover o avatar da paralisia para a ação imediata.
+
+---
+
+## FASE 1: ESCAVAÇÃO DA BRECHA LUCRATIVA (Mínimo 12 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Identificar o PONTO EXATO onde a dor do avatar é mais aguda e as soluções existentes são mais patéticas, criando uma oportunidade de dominação total.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**1.1 MAPEAMENTO DA DOR PRIMÁRIA**
+- Identifique as 5 dores mais viscerais do nicho escolhido
+- Para cada dor, responda:
+  * Qual o custo emocional REAL desta dor? (não apenas financeiro)
+  * Quantas vezes por dia/semana o avatar sente esta dor?
+  * Qual a intensidade da dor numa escala de desconforto a desespero?
+  * Esta dor está CRESCENDO ou diminuindo no mercado?
+  * O avatar já tentou resolver? Quantas vezes falhou?
+
+**1.2 ANÁLISE COMPETITIVA DEVASTADORA**
+Para cada solução existente no mercado:
+- Qual a principal FRAQUEZA estrutural?
+- Onde eles prometem pouco por medo?
+- Qual aspecto eles EVITAM abordar?
+- Por que os clientes ainda estão insatisfeitos?
+- Qual gap emocional eles deixam aberto?
+
+**1.3 VALIDAÇÃO DO POTENCIAL DE LUCRO**
+- Tamanho do mercado que sente esta dor específica
+- Capacidade de pagamento comprovada do avatar
+- Frequência de compra/investimento nesta área
+- Evidências de que pagariam PREMIUM pela solução certa
+- Análise de lifetime value potencial
+
+**1.4 TESTE DA OPORTUNIDADE DE OURO**
+Responda com EVIDÊNCIAS concretas:
+- Esta dor é urgent enough para ação IMEDIATA?
+- É específica enough para posicionamento ÚNICO?
+- É cara enough para pricing PREMIUM?
+- É frequente enough para recorrência/upsells?
+- É crescente enough para escalabilidade?
+
+**ENTREGÁVEL**: Relatório de 12+ páginas identificando a brecha exata, com dados quantitativos e qualitativos que provem o potencial de dominação.
+
+**CHECKPOINT OBRIGATÓRIO**: Apresentar as 3 melhores oportunidades identificadas para validação antes de prosseguir.
+
+---
+
+## FASE 2: FORJA DO POSICIONAMENTO ÚNICO (Mínimo 15 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Criar um posicionamento que seja uma DECLARAÇÃO DE GUERRA contra tudo que é medíocre no nicho, estabelecendo superioridade inquestionável.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**2.1 DEFINIÇÃO DO INIMIGO VISCERAL**
+- Identifique o PRINCIPAL inimigo do seu avatar (pessoa, sistema, crença, hábito)
+- Mapeie TODOS os problemas que este inimigo causa
+- Crie uma narrativa de CONSPIRAÇÃO conectando os problemas
+- Desenvolva linguagem de GUERRA para falar sobre este inimigo
+- Estabeleça por que VOCÊ é o único capaz de derrotá-lo
+
+**2.2 CRIAÇÃO DA NOVA RELIGIÃO**
+Desenvolva um SISTEMA DE CRENÇAS completo:
+- Qual a VISÃO DE MUNDO que você defende?
+- Quais são os 7 MANDAMENTOS da sua filosofia?
+- Qual o RITUAL/PROCESSO sagrado que só você ensina?
+- Quais HERESIAS você combate ferozmente?
+- Como seus seguidores se IDENTIFICAM e se reconhecem?
+
+**2.3 MANIFESTO DE INCONFORMISMO**
+Escreva um manifesto de 2-3 páginas que:
+- DECLARA guerra ao status quo
+- EXPÕE as mentiras que o mercado conta
+- REVELA a verdade que ninguém ousa falar
+- CONVOCA os verdadeiros guerreiros para a luta
+- PROMETE liderança para uma nova era
+
+**2.4 DECLARAÇÃO DE SUPERIORIDADE**
+Estabeleça EXATAMENTE por que você é superior:
+- Qual sua CREDENCIAL única que ninguém pode questionar?
+- Qual RESULTADO você já provou que outros não conseguem?
+- Qual MÉTODO revolucionário só você domina?
+- Qual SACRIFÍCIO você fez que outros não tiveram coragem?
+- Por que tentar com outros é PERDA DE TEMPO garantida?
+
+**2.5 LINGUAGEM DE DOMINAÇÃO**
+Desenvolva um VOCABULÁRIO específico:
+- 20 palavras/frases que só você usa no nicho
+- Metáforas de GUERRA para descrever a jornada
+- Terminologia que torna seus seguidores RECONHECÍVEIS
+- Linguagem que POLARIZA (atrai devotos, repele mornos)
+
+**ENTREGÁVEL**: Manual de posicionamento de 15+ páginas com manifesto, sistema de crenças, e vocabulário completo de dominação.
+
+**CHECKPOINT OBRIGATÓRIO**: Validação do posicionamento através de 3 versões diferentes para escolha final.
+
+---
+
+## FASE 3: FORJA DA BIG IDEA PARALISANTE (Mínimo 10 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Criar uma promessa tão PODEROSA, ESPECÍFICA e DESEJÁVEL que paralise o avatar e torne impossível não prestar atenção.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**3.1 ANATOMIA DA PROMESSA LETAL**
+Sua Big Idea deve combinar:
+- DESEJO SECRETO (o que realmente querem mas têm vergonha de pedir)
+- TIMELINE ESPECÍFICO (prazo que gera urgência real)
+- MECANISMO ÚNICO (método que só você domina)
+- PROVA IRREFUTÁVEL (evidência que paralisa ceticismo)
+- CONSEQUÊNCIA DA INAÇÃO (dor de não agir AGORA)
+
+**3.2 DESENVOLVIMENTO DO MECANISMO ÚNICO**
+Crie um método/sistema que seja:
+- NOMEADO de forma memorável e única
+- DIFERENTE de tudo que existe no mercado
+- LÓGICO o suficiente para ser crível
+- SIMPLES o suficiente para ser entendido
+- PODEROSO o suficiente para gerar obsessão
+
+**3.3 FÓRMULAS DE BIG IDEA TESTADAS**
+Desenvolva 10 versões usando estas estruturas:
+- "Como [MÉTODO ÚNICO] pode [RESULTADO ESPECÍFICO] em [PRAZO] mesmo que [OBJEÇÃO COMUM]"
+- "O [SISTEMA] de [SEU NOME] que [TRANSFORMA X EM Y] em [TEMPO] sem [DOR COMUM]"
+- "Por que [CRENÇA COMUM] está DESTRUINDO [DESEJO] e como [SEU MÉTODO] inverte tudo"
+- "A [DESCOBERTA] de [MONTANTE EM $] que [QUEBRA REGRA] e [GERA RESULTADO]"
+
+**3.4 TESTE DE PARALISIA**
+Para cada versão, responda:
+- Gera CURIOSIDADE obsessiva?
+- Ativa INVEJA de quem já tem acesso?
+- Cria URGÊNCIA de conhecer mais?
+- Desperta RAIVA por não saber antes?
+- Provoca MEDO de ficar de fora?
+
+**3.5 PROVA SOCIAL DEVASTADORA**
+Para sustentar a Big Idea:
+- 3 cases ESPECÍFICOS com números REAIS
+- Depoimentos que CONFIRMAM o mecanismo único
+- Antes/depois que PROVA a transformação
+- Autoridades que VALIDAM sua descoberta
+
+**ENTREGÁVEL**: Documento de 10+ páginas com a Big Idea final, mecanismo único detalhado, e arsenal completo de provas.
+
+**CHECKPOINT OBRIGATÓRIO**: Teste A/B entre as 3 versões mais fortes da Big Idea.
+
+---
+
+## FASE 4: ARQUITETURA DO PRODUTO VICIANTE (Mínimo 18 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Projetar um produto que não apenas promete, mas que é ESTRUTURALMENTE INCAPAZ de não gerar resultados, criando clientes viciados.
+
+### METODOLOGIA CAVABENEX EXPANDIDA:
+
+**4.1 CARACTERÍSTICAS TÉCNICAS LETAIS**
+Para cada característica, detalhe:
+- Como esta característica RESOLVE especificamente a dor
+- Por que esta característica é SUPERIOR às alternativas
+- Qual RESULTADO específico esta característica gera
+- Como o cliente PERCEBE o valor desta característica
+
+**4.2 VANTAGENS COMPETITIVAS INQUESTIONÁVEIS**
+Mapear sistemicamente:
+- 10 vantagens que NENHUM concorrente oferece
+- Como cada vantagem se traduz em RESULTADO superior
+- Por que estas vantagens são IMPOSSÍVEIS de copiar
+- Qual ECONOMIA/GANHO cada vantagem representa
+
+**4.3 BENEFÍCIOS EMOCIONAIS VISCERAIS**
+Além dos racionais, mapear:
+- Como o produto faz o cliente se SENTIR?
+- Qual STATUS/IDENTIDADE o produto confere?
+- Que MEDOS o produto elimina permanentemente?
+- Quais DESEJOS SECRETOS o produto satisfaz?
+
+**4.4 EXEMPLOS PRÁTICOS OBSESSIVOS**
+Para cada módulo/parte do produto:
+- Exemplo ESPECÍFICO de aplicação
+- Resultado MENSURÁVEL esperado
+- Timeline EXATA para ver o resultado
+- PROVA de que funciona (case, teste, evidência)
+
+**4.5 TESTE DAS 12 PERGUNTAS CRÍTICAS**
+Responda com PROFUNDIDADE:
+
+**VELOCIDADE**: É rápido?
+- Quanto tempo até o PRIMEIRO resultado visível?
+- Qual a parte mais rápida do processo?
+- Como você ACELEROU o que normalmente demora?
+
+**SIMPLICIDADE**: É simples?
+- Pode ser executado por um INICIANTE?
+- Quantos passos tem o processo CENTRAL?
+- Qual a parte mais COMPLEXA que você simplificou?
+
+**IMPLEMENTAÇÃO**: É imediato?
+- O cliente pode começar EM 5 MINUTOS?
+- Qual OBSTÁCULO comum você removeu?
+- Como eliminou a PROCRASTINAÇÃO?
+
+**CURVA DE APRENDIZADO**: É baixa?
+- Precisa de conhecimento PRÉVIO?
+- Quanto tempo para DOMINAR o básico?
+- Como você tornou o complexo ÓBVIO?
+
+**HABILIDADES**: Não requer especiais?
+- Funciona para QUALQUER pessoa do avatar?
+- Quais "talentos" você ELIMINOU da equação?
+- Como democratizou o que era para POUCOS?
+
+**CAUSA RAIZ**: Atua na causa?
+- Qual a CAUSA REAL do problema?
+- Como seu produto CORRIGE a raiz?
+- Por que outros atacam apenas SINTOMAS?
+
+**RESOLUÇÃO**: O produto resolve?
+- EXATAMENTE qual problema resolve?
+- Como o cliente SABE que foi resolvido?
+- Qual PROVA tangível de resolução?
+
+**SISTEMA ÚNICO**: É diferenciado?
+- Qual ELEMENTO ninguém mais tem?
+- Por que é IMPOSSÍVEL de replicar?
+- Como este diferencial MULTIPLICA resultados?
+
+**METODOLOGIA**: Quais os passos?
+- Quantos passos tem o PROCESSO CENTRAL?
+- Qual a LÓGICA por trás da sequência?
+- Como cada passo PREPARA o próximo?
+
+**GARANTIA**: Tem proteção?
+- Qual GARANTIA específica oferece?
+- Como a garantia REDUZ o risco percebido?
+- Por que você pode GARANTIR com confiança?
+
+**IRRESISTIBILIDADE**: A oferta é irrecusável?
+- O que torna IMPOSSÍVEL dizer não?
+- Qual elemento gera ARREPENDIMENTO por não comprar?
+- Como você empilhou VALOR de forma obsessiva?
+
+**SEGMENTAÇÃO**: Para quem é?
+- Perfil EXATO de quem mais se beneficia?
+- Como você FILTRA quem não deveria comprar?
+- Por que é PERFEITO para este avatar específico?
+
+**VILÃO**: Tem grande inimigo?
+- Qual o INIMIGO que seu produto destrói?
+- Como você PERSONIFICA este inimigo?
+- Por que a guerra contra ele é PESSOAL?
+
+**ENTREGÁVEL**: Documento de 18+ páginas com arquitetura completa do produto, respondendo todas as 12 perguntas com profundidade psicológica.
+
+**CHECKPOINT OBRIGATÓRIO**: Validação da estrutura do produto e teste de irresistibilidade.
+
+---
+
+## FASE 5: CONSTRUÇÃO DA OFERTA HORMOZI IRRECUSÁVEL (Mínimo 12 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Aplicar sistematicamente a Value Equation do Alex Hormozi para criar uma oferta que torna "NÃO" logicamente impossível.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**5.1 APLICAÇÃO DA VALUE EQUATION**
+Fórmula: (Dream Outcome × Perceived Likelihood) / (Time Delay × Effort & Sacrifice)
+
+**DREAM OUTCOME (RESULTADO DOS SONHOS):**
+- Qual o resultado FINAL que o avatar mais deseja?
+- Como você pode tornar este resultado ainda MAIOR?
+- Qual TRANSFORMAÇÃO COMPLETA você promete?
+- Como quantificar este resultado em números/status/emoção?
+
+**PERCEIVED LIKELIHOOD (PROBABILIDADE PERCEBIDA):**
+- Quantas PROVAS você tem de que funciona?
+- Qual sua CREDENCIAL que torna sucesso inevitável?
+- Quantos CASES específicos pode mostrar?
+- Como GARANTIR que o resultado vai acontecer?
+
+**TIME DELAY (REDUÇÃO DO TEMPO):**
+- Quanto tempo NORMALMENTE levaria?
+- Como você ACELERA dramaticamente o processo?
+- Qual parte do tempo você consegue ELIMINAR?
+- Como entregar resultados IMEDIATOS?
+
+**EFFORT & SACRIFICE (ESFORÇO REDUZIDO):**
+- Quanto esforço NORMALMENTE exigiria?
+- Qual parte do trabalho você FAZ PELO CLIENTE?
+- Como tornar a execução AUTOMÁTICA?
+- Quais SACRIFÍCIOS você elimina?
+
+**5.2 STACK DE VALOR OBSESSIVO**
+Construa um stack que inclui:
+- PRODUTO PRINCIPAL (valor individual)
+- 5-7 BÔNUS ESTRATÉGICOS (cada um com valor específico)
+- IMPLEMENTAÇÃO ACELERADA (serviços done-for-you)
+- GARANTIA AGRESSIVA (remove risco completamente)
+- ESCASSEZ GENUÍNA (limitação real de vagas/tempo)
+
+Para cada elemento:
+- Valor individual de MERCADO
+- Por que é ESSENCIAL para o sucesso
+- Como se relaciona com o produto PRINCIPAL
+- Qual RESULTADO específico entrega
+
+**5.3 REMOÇÃO SISTEMÁTICA DE OBJEÇÕES**
+Identifique e destrua:
+- "NÃO TENHO TEMPO" → Como seu produto ECONOMIZA tempo
+- "NÃO TENHO DINHEIRO" → Como gera ROI IMEDIATO
+- "NÃO VAI FUNCIONAR PRA MIM" → Personalização/garantia
+- "JÁ TENTEI ANTES" → Por que desta vez é DIFERENTE
+- "VOU PENSAR DEPOIS" → Por que AGORA é o momento
+
+**5.4 URGÊNCIA E ESCASSEZ GENUÍNAS**
+Crie limitações REAIS:
+- QUANTIDADE: Por que só X vagas estão disponíveis?
+- TEMPO: Por que esta oferta tem prazo ESPECÍFICO?
+- QUALIFICAÇÃO: Por que nem todo mundo pode entrar?
+- MOMENTO: Por que AGORA é a oportunidade única?
+
+**ENTREGÁVEL**: Documento de 12+ páginas com a oferta completa, stack detalhado, e estratégia de remoção de objeções.
+
+**CHECKPOINT OBRIGATÓRIO**: Validação do valor percebido versus preço, e teste de urgência genuína.
+
+---
+
+## FASE 6: CRIAÇÃO DO MAIOR EVENTO DO NICHO (Mínimo 20 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Projetar um evento que se torne MARCO HISTÓRICO no nicho, gerando FOMO massivo e posicionando como autoridade suprema.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**6.1 NOME E BRAND DO EVENTO**
+Desenvolva 10 opções que sejam:
+- MEMORÁVEIS (fáceis de lembrar e repetir)
+- PODEROSOS (transmitem autoridade e importância)
+- ÚNICOS (não existem similares no mercado)
+- SIMBÓLICOS (representam a transformação prometida)
+- VIRALIZÁVEIS (as pessoas querem compartilhar)
+
+**6.2 PROMESSA CENTRAL MAGNÉTICA**
+A promessa do evento deve:
+- RESOLVER o maior problema do nicho em 4 dias
+- REVELAR segredos que NUNCA foram expostos
+- TRANSFORMAR completamente a vida dos participantes
+- POSICIONAR os participantes como ELITE do nicho
+- CRIAR uma vantagem INJUSTA sobre quem não participar
+
+**6.3 ARQUITETURA DAS 4 AULAS LETAIS**
+
+**AULA 1: "DESPERTAR BRUTAL"**
+- EXPOR a mentira que mantém o avatar preso
+- REVELAR o verdadeiro inimigo/problema
+- GERAR indignação e urgência de mudança
+- APRESENTAR visão do que é possível
+
+**AULA 2: "REVELAÇÃO DO MÉTODO"**
+- APRESENTAR seu sistema/metodologia único
+- DEMONSTRAR funcionamento com exemplo real
+- PROVAR superioridade sobre métodos antigos
+- GERAR desejo obsessivo de dominar o método
+
+**AULA 3: "TRANSFORMAÇÃO EM AÇÃO"**
+- IMPLEMENTAR o método ao vivo
+- MOSTRAR resultados imediatos
+- CRIAR breakthrough emocional nos participantes
+- VALIDAR que funciona para qualquer um
+
+**AULA 4: "ASCENSÃO À MAESTRIA"**
+- APRESENTAR a oferta principal
+- MOSTRAR como acelerar/aprofundar resultados
+- CRIAR urgência de ação IMEDIATA
+- POSICIONAR como única escolha lógica
+
+**6.4 MAPEAMENTO COMPLETO DO AVATAR**
+
+**DORES PRIMÁRIAS (10 mais viscerais):**
+- Dor financeira ESPECÍFICA
+- Dor emocional CONSTANTE
+- Dor social/status HUMILHANTE
+- Dor de tempo/eficiência FRUSTRANTE
+- Dor de competência PARALISANTE
+- Dor de direção/clareza CONFUSA
+- Dor de reconhecimento INVISÍVEL
+- Dor de controle IMPOTENTE
+- Dor de progresso ESTAGNADO
+- Dor de legacy/propósito VAZIO
+
+**SONHOS OBSESSIVOS (10 mais desejados):**
+- Sonho financeiro ESPECÍFICO
+- Sonho de status/reconhecimento ASPIRACIONAL
+- Sonho de liberdade/autonomia LIBERTADOR
+- Sonho de impacto/influência PODEROSO
+- Sonho de maestria/competência DOMINANTE
+- Sonho de relacionamentos IDEAIS
+- Sonho de estilo de vida INVEJÁVEL
+- Sonho de legacy IMORTAL
+- Sonho de transformação COMPLETA
+- Sonho de vingança/justiça SATISFATÓRIA
+
+**6.5 20 PROMESSAS E VANTAGENS IRRECUSÁVEIS**
+Cada promessa deve ser:
+- ESPECÍFICA (com números/prazos quando possível)
+- TANGÍVEL (resultado que pode ser medido/comprovado)
+- DESEJÁVEL (o avatar REALMENTE quer isso)
+- CRÍVEL (você pode provar que entrega)
+- EXCLUSIVA (só quem participar terá acesso)
+
+**6.6 ARSENAL DE DESTRUIÇÃO DE OBJEÇÕES**
+Para cada objeção comum:
+- RECONHECER a objeção como válida
+- REVERTER mostrando o verdadeiro custo de não agir
+- RESOLVER com garantia/prova específica
+- REFORÇAR a urgência de decidir AGORA
+
+**6.7 ARMADILHAS E MITOS FATAIS**
+Identifique 15 crenças/hábitos que o avatar tem achando que estão certos, mas que estão DESTRUINDO seus resultados:
+- Por que a crença é NATURAL de se ter
+- Como esta crença está SABOTANDO resultados
+- Qual a VERDADE que substitui esta crença
+- Como implementar a nova verdade IMEDIATAMENTE
+
+**ENTREGÁVEL**: Manual completo do evento com 20+ páginas, incluindo roteiro detalhado, estratégias psicológicas, e arsenal completo de persuasão.
+
+**CHECKPOINT OBRIGATÓRIO**: Validação do conceito do evento e teste de atratividade das promessas.
+
+---
+
+## FASE 7: IMPLEMENTAÇÃO DO MÉTODO CIM DEVASTADOR (Mínimo 8 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Desenvolver um sistema de copy que cria MOVIMENTO IDEOLÓGICO, não apenas venda de produto.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**7.1 CAUSA REVOLUCIONÁRIA**
+Identifique EXATAMENTE o que está errado no mundo que você quer corrigir:
+- Qual INJUSTIÇA systêmica você não consegue mais tolerar?
+- Que MENTIRA coletiva precisa ser EXPOSTA?
+- Qual OPRESSÃO silenciosa você vai QUEBRAR?
+- Que VERDADE você vai defender mesmo sendo atacado?
+- Como sua causa vai MUDAR o mundo para melhor?
+
+Desenvolva:
+- MANIFESTO da causa (2 páginas)
+- LINGUAGEM de guerra para falar da causa
+- SÍMBOLOS visuais que representam a luta
+- RITUAIS que conectam os seguidores à causa
+- VISÃO do mundo quando a causa vencer
+
+**7.2 INIMIGO COMUM CONSPIRACY**
+Conecte TODOS os problemas do avatar a uma fonte única:
+- Qual ENTIDADE (pessoa/sistema/indústria) é responsável?
+- Como esta entidade se BENEFICIA mantendo o problema?
+- Quais TÁTICAS ela usa para manter controle?
+- Por que os "especialistas" são CÚMPLICES?
+- Como você DESCOBRIU esta conspiração?
+
+Crie narrativa que mostre:
+- EVIDÊNCIAS da conspiração
+- VÍTIMAS que sofreram por causa dela  
+- BENEFICIÁRIOS que lucram com ela
+- WHISTLEBLOWERS que a denunciaram
+- SOLUÇÃO que a destrói permanentemente
+
+**7.3 MENSAGEM SALVADORA**
+Sua solução como a ÚNICA capaz de destruir o inimigo:
+- Por que SOMENTE seu método pode vencer?
+- Qual DISCOVERY exclusiva você fez?
+- Como seu MECANISMO é superior?
+- Por que tentativas anteriores FALHARAM?
+- Como você PROVOU a eficácia do método?
+
+Elementos da mensagem:
+- REVELAÇÃO que muda tudo
+- MÉTODO revolucionário único
+- PROVA irrefutável de superioridade
+- URGÊNCIA de agir antes que seja tarde
+- CONVOCAÇÃO para juntar-se à revolução
+
+**ENTREGÁVEL**: Sistema CIM completo de 8+ páginas com manifesto, teoria da conspiração, e mensagem salvadora.
+
+**CHECKPOINT OBRIGATÓRIO**: Validação da causa e teste de polarização (deve atrair devotos e repelir mornos).
+
+---
+
+## FASE 8: LINHA EDITORIAL VISCERAL 28 DIAS (Mínimo 25 páginas)
+
+### OBJETIVO CIRÚRGICO:
+Planejar 4 semanas de conteúdo que progressivamente INFLAME o desejo e prepare psicologicamente para o evento.
+
+### METODOLOGIA DE EXECUÇÃO:
+
+**8.1 ARQUITETURA DOS 4 ESTÁGIOS DE CONSCIÊNCIA**
+
+**SEMANA 1: DESPERTAR (Problema Unaware → Problem Aware)**
+Objetivos:
+- ACORDAR o avatar para problemas que ele ignora
+- GERAR desconforto com a situação atual
+- PLANTAR sementes de insatisfação
+- CRIAR curiosidade sobre soluções
+
+**SEMANA 2: AGITAÇÃO (Problem Aware → Solution Aware)**  
+Objetivos:
+- AMPLIFICAR a dor dos problemas identificados
+- MOSTRAR consequências da inação
+- INTRODUZIR possibilidade de solução
+- GERAR urgência de encontrar resposta
+
+**SEMANA 3: EDUCAÇÃO (Solution Aware → Product Aware)**
+Objetivos:
+- REVELAR seu método/abordagem única
+- DEMONSTRAR superioridade da sua solução
+- CONSTRUIR autoridade e credibilidade
+- GERAR desejo de conhecer mais
+
+**SEMANA 4: CONVERSÃO (Product Aware → Most Aware)**
+Objetivos:
+- APRESENTAR sua oferta/evento
+- CRIAR fomo massivo de ficar de fora  
+- ATIVAR urgência de ação imediata
+- CONDUZIR à inscrição/compra
+
+**8.2 PLANEJAMENTO DETALHADO - 84 CONTEÚDOS**
+
+Para CADA dia (21 dias de conteúdo por semana):
+- **2 REELS** (formato dinâmico para engajamento)
+- **1 CONTEÚDO ESTÁTICO/CARROSSEL** (aprofundamento)
+
+Para CADA conteúdo, especificar:
+- **OBJETIVO PSICOLÓGICO**: Que emoção/pensamento quer gerar?
+- **HOOK PRINCIPAL**: Como capturar atenção nos primeiros 3 segundos?
+- **FORMATO VALIDADO**: Que estrutura comprovada usar?
+- **CTA ESTRATÉGICO**: Que ação específica quer que tomem?
+- **JUSTIFICATIVA**: Por que este conteúdo neste momento?
+
+**8.3 FORMATOS VALIDADOS POR TIPO**
+
+**REELS DE ALTO IMPACTO:**
+- "Verdades Inconvenientes" (expor mentiras do nicho)
+- "Antes vs Depois" (transformações visuais)  
+- "Mitos Destruídos" (quebrar crenças limitantes)
+- "Segredos Revelados" (informação exclusiva)
+- "Chamadas de Atenção" (acordar para realidade)
+
+**CONTEÚDOS ESTÁTICOS/CARROSSÉIS:**
+- "Autopsias de Fracasso" (por que outros métodos falham)
+- "Anatomia do Sucesso" (como seu método funciona)
+- "Conspirações Expostas" (revelações sobre o mercado)
+- "Manifestos Pessoais" (suas convicções/valores)
+- "Provas Irrefutáveis" (cases, dados, evidências)
+
+**8.4 EXEMPLO DETALHADO SEMANA 1**
+
+**DIA 1:**
+- **REEL 1**: "A Mentira Que [NICHO] Te Conta Todos os Dias"
+  * Objetivo: Despertar para manipulação do mercado
+  * Hook: "Se você acredita nisso, está sendo enganado há anos"
+  * Formato: Revelação chocante com evidência visual
+  * CTA: "Quantos de vocês já caíram nessa?"
+
+- **REEL 2**: "Por Que 97% Das Pessoas Em [NICHO] Nunca Conseguem [RESULTADO]"
+  * Objetivo: Criar insatisfação com estatísticas brutais  
+  * Hook: "Esta estatística vai te chocar"
+  * Formato: Dados + storytelling pessoal
+  * CTA: "Você está nos 97% ou nos 3%?"
+
+- **CARROSSEL**: "5 Sinais De Que Você Está Sendo Sabotado Em [NICHO]"
+  * Objetivo: Autodiagnóstico que gera desconforto
+  * Hook: "Se você tem 3+ destes sinais, precisa ver isso"
+  * Formato: Checklist visual com explicações
+  * CTA: "Quantos sinais você identificou?"
+
+[CONTINUAR este detalhamento para TODOS os 28 dias]
+
+**ENTREGÁVEL**: Cronograma completo de 25+ páginas com todos os 84 conteúdos detalhados, incluindo hooks, formatos, objetivos e justificativas.
+
+**CHECKPOINT OBRIGATÓRIO**: Validação da progressão psicológica e teste de hooks mais impactantes.
+
+---
+
+## FASE 9: ARSENAL DE 100+ ANÚNCIOS VIRAIS (Mínimo 35 páginas)
+
+
+## Objetivo Cirúrgico
+Criar um arsenal completo de 100 criativos que combinam storytelling cinematográfico com persuasão psicológica letal, garantindo dominação total do feed.
+
+## 9.1 Arquitetura Narrativa Fundamental
+
+### Elementos Literários Obrigatórios
+
+#### Estrutura da Jornada do Herói Adaptada:
+
+- **Mundo Comum**: Situação atual dolorosa do avatar
+- **Chamado à Aventura**: Descoberta de que mudança é possível
+- **Recusa do Chamado**: Resistência/medo de agir
+- **Mentor Sábio**: Você como guia experiente
+- **Atravessar o Limiar**: Decisão de comprar/participar
+- **Testes e Provações**: Implementação do método
+- **Recompensa**: Transformação/resultado alcançado
+- **Caminho de Volta**: Vida nova com poder adquirido
+- **Ressurreição**: Identidade completamente transformada
+- **Retorno com Elixir**: Compartilhar vitória/inspirar outros
+
+#### Elementos de Tensão Dramática:
+
+- **Conflito Interno**: Avatar vs suas próprias limitações
+- **Conflito Externo**: Avatar vs inimigo/sistema opressor
+- **Conflito Filosófico**: Crença antiga vs nova verdade
+- **Stakes Elevados**: O que está realmente em risco
+- **Clock Ticking**: Urgência temporal narrativa
+- **Plot Twist**: Revelação que muda tudo
+- **Catharsis**: Liberação emocional através da solução
+
+## 9.2 Premissas Persuasivas Fundamentais
+
+### Gatilhos Psicológicos Primários (Cialdini Expandido):
+
+- **Reciprocidade**: Dar valor antes de pedir
+- **Compromisso e Consistência**: Fazer se comprometer publicamente
+- **Prova Social**: Mostrar que "pessoas como eles" fazem isso
+- **Autoridade**: Estabelecer expertise inquestionável
+- **Simpatia**: Criar identificação e conexão emocional
+- **Escassez**: Limitação genuína de tempo/acesso
+- **Contraste**: Mostrar diferença dramática entre opções
+
+### Gatilhos Neurológicos Avançados:
+
+- **Padrão de Interrupção**: Quebrar expectativas automatizadas
+- **Curiosity Gap**: Criar lacuna de conhecimento insuportável
+- **Endowment Effect**: Fazer sentir que já possui o resultado
+- **Loss Aversion**: Medo de perder supera desejo de ganhar
+- **Anchoring**: Estabelecer pontos de referência estratégicos
+- **Availability Heuristic**: Usar exemplos facilmente lembrados
+- **Confirmation Bias**: Validar crenças existentes antes de quebrar
+
+## 9.3 Categorização dos 100 Criativos
+
+### Categoria A: Quebra de Paradigma (20 criativos)
+
+**Objetivo**: Destruir crenças fundamentais do nicho
+
+#### Estruturas Narrativas:
+
+1. "A Grande Mentira" - Exposição de fraude sistêmica
+2. "O Imperador Nu" - Desmascara autoridade falsa
+3. "Matrix Revelada" - Mostra realidade por trás da ilusão
+4. "Whistle Blower" - Ex-insider revela segredos
+5. "Profecia Autocumprida" - Como crenças criam realidade
+
+#### Exemplos Detalhados:
+
+##### CRIATIVO A1: "A Grande Mentira do [NICHO]"
+
+- **Hook**: "Durante 15 anos acreditei na maior mentira do [nicho]. Até descobrir isso..."
+- **Desenvolvimento**: Storytelling pessoal de como foi enganado
+- **Revelação**: Verdade chocante que muda tudo
+- **Stakes**: Quantas pessoas estão sendo prejudicadas
+- **Solução**: Seu método como antídoto
+- **CTA**: "Se você também foi enganado, precisa ver isto"
+
+##### CRIATIVO A2: "Por Que [AUTORIDADE RECONHECIDA] Está Errada"
+
+- **Hook**: "Vou falar algo que pode me destruir no [nicho]..."
+- **Desenvolvimento**: Coragem de confrontar gigante
+- **Evidência**: Provas de que autoridade falha
+- **Consequência**: Dano causado por seguir conselho errado
+- **Alternativa**: Seu método superior
+- **CTA**: "Prepare-se para questionar tudo"
+
+[Continuar com os 18 restantes...]
+
+### Categoria B: Transformação Impossível (20 criativos)
+
+**Objetivo**: Mostrar resultados que desafiam a lógica
+
+#### Estruturas Narrativas:
+
+1. "De Zero a Herói" - Transformação completa radical
+2. "David vs Golias" - Pequeno vence gigante
+3. "Fênix das Cinzas" - Renascimento após destruição
+4. "Ugly Duckling" - Revelação do potencial oculto
+5. "Midas Touch" - Tudo que toca vira ouro
+
+#### Exemplos Detalhados:
+
+##### CRIATIVO B1: "Como [PESSOA COMUM] Destruiu [RESULTADO IMPOSSÍVEL]"
+
+- **Setup**: Situação inicial desesperadora
+- **Catalyst**: Descoberta do seu método
+- **Journey**: Implementação contra todas as probabilidades
+- **Obstacles**: Desafios que quase destruíram tudo
+- **Breakthrough**: Momento de virada épico
+- **Victory**: Resultado que choca até especialistas
+- **Proof**: Evidências irrefutáveis
+- **Universal Truth**: Por que funcionaria para qualquer um
+
+##### CRIATIVO B2: "O [RESULTADO] Que [ESPECIALISTAS] Disseram Ser Impossível"
+
+- **Authority Challenge**: Especialistas dizendo que não dá
+- **Underdog Story**: Por que você decidiu tentar mesmo assim
+- **Method Reveal**: Abordagem diferente que usou
+- **Results**: Prova de que especialistas estavam errados
+- **Industry Shock**: Reação do mercado
+- **Opportunity**: Como outros podem replicar
+
+[Continuar com os 18 restantes...]
+
+### Categoria C: Conspiração e Revelação (15 criativos)
+
+**Objetivo**: Expor segredos e manipulações da indústria
+
+#### Estruturas Narrativas:
+
+1. "Documento Vazado" - Informação confidencial revelada
+2. "Operação Encoberta" - Investigação secreta exposta
+3. "Follow the Money" - Quem lucra com o problema
+4. "Inside Job" - Traição de dentro do sistema
+5. "Smoking Gun" - Evidência definitiva da conspiração
+
+### Categoria D: Urgência Emocional (15 criativos)
+
+**Objetivo**: Criar necessidade imediata de ação
+
+#### Estruturas Narrativas:
+
+1. "Últimas 24 Horas" - Deadline final se aproximando
+2. "Trem Partindo" - Oportunidade saindo da estação
+3. "Casa Pegando Fogo" - Crise exigindo ação imediata
+4. "Barco Afundando" - Situação se deteriorando rapidamente
+5. "Janela Fechando" - Oportunidade única desaparecendo
+
+### Categoria E: Autoridade Inquestionável (10 criativos)
+
+**Objetivo**: Estabelecer supremacia absoluta no nicho
+
+#### Estruturas Narrativas:
+
+1. "O Chosen One" - Único capaz de resolver o problema
+2. "Master Returns" - Volta do verdadeiro mestre
+3. "Secret Society" - Membro de grupo elite exclusivo
+4. "Ancient Wisdom" - Conhecimento perdido redescoberto
+5. "Future Visitor" - Visão privilegiada do que vem
+
+### Categoria F: Identificação Visceral (10 criativos)
+
+**Objetivo**: Criar conexão emocional profunda
+
+#### Estruturas Narrativas:
+
+1. "Confissão Vulnerável" - Admissão de fraqueza humana
+2. "Childhood Trauma" - Origem da missão pessoal
+3. "Dark Night of Soul" - Momento de desespero total
+4. "Epiphany Moment" - Revelação que mudou tudo
+5. "Fighting for Others" - Cruzada altruísta
+
+### Categoria G: Prova Social Devastadora (10 criativos)
+
+**Objetivo**: Usar influência de outros para validar
+
+#### Estruturas Narrativas:
+
+1. "Celebrity Endorsement" - Famoso valida método
+2. "Expert Confession" - Especialista admite superioridade
+3. "Mass Movement" - Multidão adotando método
+4. "Results Parade" - Sequência de sucessos
+5. "Industry Adoption" - Setor inteiro mudando
+
+## 9.4 Estruturas de Storytelling Validadas
+
+### Framework 1: "Antes/Depois Cinematográfico"
+
+```
+[HOOK VISUAL]: "Esta foto vai chocar você..."
+
+[SETUP - ANTES]: 
+- Era [TEMPO ESPECÍFICO]. [PROTAGONISTA] estava [SITUAÇÃO DOLOROSA ESPECÍFICA]. 
+- Cada [PERÍODO] era [EXPERIÊNCIA NEGATIVA]. 
+- A vida era [METÁFORA VISUAL FORTE].
+
+[CATALYST - DESCOBERTA]:
+- Até que [MOMENTO ESPECÍFICO], [PROTAGONISTA] descobriu [SUA SOLUÇÃO].
+- No início, [RESISTÊNCIA/CETICISMO].
+- Mas então [PRIMEIRA EVIDÊNCIA DE MUDANÇA].
+
+[JOURNEY - TRANSFORMAÇÃO]:
+[PERÍODO DE IMPLEMENTAÇÃO] depois:
+- [RESULTADO 1 ESPECÍFICO]
+- [RESULTADO 2 ESPECÍFICO]  
+- [RESULTADO 3 ESPECÍFICO]
+
+[CLIMAX - BREAKTHROUGH]:
+- E então aconteceu [MOMENTO DE VITÓRIA ÉPICA].
+- [DESCRIÇÃO EMOCIONAL DO MOMENTO].
+
+[RESOLUTION - NOVA VIDA]:
+- Hoje, [SITUAÇÃO ATUAL INVEJÁVEL].
+- [EVIDÊNCIA VISUAL/NUMÉRICA].
+
+[CTA UNIVERSAL TRUTH]:
+- Se funcionou para [PROTAGONISTA], pode funcionar para você.
+- [CALL TO ACTION ESPECÍFICO].
+```
+
+### Framework 2: "Conspiracy Unveiled"
+
+```
+[HOOK CONSPIRATÓRIO]: 
+"O que estou prestes a revelar pode destruir [INDÚSTRIA/GRUPO]..."
+
+[DISCOVERY SETUP]:
+- Durante [PERÍODO], enquanto [ATIVIDADE], descobri algo perturbador.
+- [EVIDÊNCIA INICIAL SUSPEITA].
+
+[INVESTIGATION]:
+- Decidi investigar mais fundo.
+- O que encontrei me deixou [EMOÇÃO FORTE].
+
+[REVELATION]:
+- [VERDADE CHOCANTE] que explica por que [PROBLEMA COMUM] nunca se resolve.
+
+[VILLAINS]:
+- [GRUPO ESPECÍFICO] lucra [QUANTIA] mantendo você [ESTADO NEGATIVO].
+- Eles usam [TÁTICA 1], [TÁTICA 2], [TÁTICA 3] para [RESULTADO MALÉFICO].
+
+[EVIDENCE]:
+Aqui estão as provas:
+- [EVIDÊNCIA 1]
+- [EVIDÊNCIA 2]
+- [EVIDÊNCIA 3]
+
+[HERO'S SOLUTION]:
+- Mas descobri uma forma de [DESTRUIR/CONTORNAR] este sistema.
+- [SEU MÉTODO] é a única forma de [ESCAPAR/VENCER].
+
+[CALL TO ARMS]:
+- Se você está cansado de ser [VÍTIMA DO SISTEMA], junte-se a nós.
+- [CTA REVOLUCIONÁRIO].
+```
+
+### Framework 3: "Hero's Journey Compressed"
+
+```
+[ORDINARY WORLD]: 
+"Há [TEMPO] atrás, eu era exatamente como você..."
+
+[CALL TO ADVENTURE]: 
+"Até que [EVENTO] me forçou a [MUDANÇA NECESSÁRIA]."
+
+[REFUSAL]: 
+"Minha primeira reação foi [RESISTÊNCIA]. Pensei [DESCULPA COMUM]."
+
+[MENTOR]: 
+"Então conheci [MENTOR/DESCOBRI MÉTODO] que mudou tudo."
+
+[CROSSING THRESHOLD]: 
+"Decidi [AÇÃO CORAJOSA] mesmo com medo de [CONSEQUÊNCIA]."
+
+[TESTS]: 
+"Os primeiros [PERÍODO] foram [DESAFIOS ESPECÍFICOS]. 
+Quase desisti quando [MOMENTO CRÍTICO]."
+
+[ORDEAL]: 
+"O momento mais difícil foi [CRISE MAIOR]. 
+Pensei que [MEDO REALIZADO]."
+
+[REWARD]: 
+"Mas então [BREAKTHROUGH]. [RESULTADO INICIAL SURPREENDENTE]."
+
+[RESURRECTION]: 
+"Hoje sou [NOVA IDENTIDADE]. [EVIDÊNCIA DA TRANSFORMAÇÃO]."
+
+[RETURN WITH ELIXIR]: 
+"E agora quero ensinar [SEU MÉTODO] para quem está onde eu estava."
+
+[UNIVERSAL CTA]: 
+"Sua jornada pode começar hoje. [CALL TO ACTION]."
+```
+
+## 9.5 Variações por Temperatura de Audiência
+
+### Audiência Glacial (Não sabe que tem problema)
+
+**Abordagens Específicas**:
+- Stories de "Despertar Brutal"
+- Comparações sociais que geram desconforto
+- Estatísticas chocantes sobre o nicho
+- Revelações de verdades inconvenientes
+
+**Exemplo Criativo**:
+> "95% das pessoas em [NICHO] vivem uma mentira. Este post pode arruinar seu dia... ou salvar sua vida."
+
+### Audiência Fria (Sabe do problema, não das soluções)
+
+**Abordagens Específicas**:
+- Educação através de storytelling
+- Revelação de causas root do problema
+- Apresentação de alternativas não óbvias
+- Cases de transformação surpreendente
+
+### Audiência Morna (Conhece soluções, busca a melhor)
+
+**Abordagens Específicas**:
+- Comparações diretas com concorrentes
+- Demonstrações de superioridade técnica
+- Casos específicos de falha de outros métodos
+- Provas de resultados superiores
+
+### Audiência Quente (Conhece você, considera comprar)
+
+**Abordagens Específicas**:
+- Urgência baseada em escassez real
+- Últimas objeções sendo destruídas
+- Prova social de quem já comprou
+- FOMO intenso de ficar de fora
+
+### Audiência Fervendo (Pronta para comprar, procrastinando)
+
+**Abordagens Específicas**:
+- Deadline final com consequências
+- Últimas vagas sendo preenchidas
+- Comparação com custo de procrastinar
+- Push final com garantia agressiva
+
+## 9.6 Arsenal Completo - 100 Criativos Detalhados
+
+### SEÇÃO A1-A20: QUEBRA DE PARADIGMA
+
+#### A1: "A Grande Mentira do [NICHO]"
+
+- **Hook**: "Durante 15 anos acreditei na maior mentira do [nicho]..."
+- **Estrutura**: Confissão pessoal → Revelação chocante → Nova verdade
+- **Gatilho**: Curiosidade + Indignação
+- **CTA**: "Quantos também foram enganados?"
+
+#### A2: "Por Que [AUTORIDADE] Está Destruindo [NICHO]"
+
+- **Hook**: "Vou falar algo que pode me banir do [nicho]..."
+- **Estrutura**: Coragem → Acusação → Evidências → Solução
+- **Gatilho**: Autoridade + Contraste
+- **CTA**: "Prepare-se para questionar tudo"
+
+#### A3: "O Segredo Que [INDÚSTRIA] Não Quer Que Você Saiba"
+
+- **Hook**: "Esta informação custou [PREÇO ALTO] para descobrir..."
+- **Estrutura**: Conspiração → Investigação → Revelação → Liberação
+- **Gatilho**: Escassez + Reciprocidade
+- **CTA**: "Compartilhe antes que removam"
+
+[Continuar com todos os 100 criativos detalhados...]
+
+## 9.7 Sistema de Criação Infinita
+
+### MATRIZ DE COMBINAÇÕES
+EMOÇÕES (10) × ESTRUTURAS (10) × GATILHOS (10) = 1000 VARIAÇÕES
+
+#### Emoções Primárias:
+
+1. Raiva (injustiça, traição)
+2. Medo (perda, consequência)
+3. Inveja (outros tendo sucesso)
+4. Orgulho (superioridade, status)
+5. Culpa (não agir, falhar)
+6. Vergonha (inadequação, fracasso)
+7. Curiosidade (segredo, mistério)
+8. Esperança (possibilidade, futuro)
+9. Alívio (solução encontrada)
+10. Vingança (justiça, retribuição)
+
+#### Estruturas Narrativas:
+
+1. Jornada do Herói
+2. Antes/Depois
+3. Conspiração Revelada
+4. David vs Golias
+5. Confissão Vulnerável
+6. Descoberta Acidental
+7. Última Chance
+8. Segredo de Elite
+9. Vingança Justa
+10. Transformação Impossível
+
+#### Gatilhos Persuasivos:
+
+1. Escassez Temporal
+2. Prova Social Massiva
+3. Autoridade Inquestionável
+4. Reciprocidade Emocional
+5. Compromisso Público
+6. Contraste Dramático
+7. Padrão de Interrupção
+8. Curiosity Gap
+9. Loss Aversion
+10. Anchoring Estratégico
+
+## 9.8 Entregável Final
+
+### DOCUMENTO ARSENAL COMPLETO (35+ páginas):
+
+#### SEÇÃO 1: Fundamentos Narrativos (5 páginas)
+- Elementos literários obrigatórios
+- Premissas persuasivas fundamentais
+- Frameworks de storytelling validados
+
+#### SEÇÃO 2: Categorização Estratégica (5 páginas)
+- 7 categorias principais
+- Objetivos específicos de cada
+- Estruturas narrativas por categoria
+
+#### SEÇÃO 3: Arsenal dos 100 Criativos (20 páginas)
+- Cada criativo com hook, estrutura, gatilhos, CTA
+- Variações por temperatura de audiência
+- Justificativa psicológica para cada
+
+#### SEÇÃO 4: Sistema de Criação Infinita (3 páginas)
+- Matriz de combinações
+- Metodologia para gerar novos criativos
+- Framework de teste e otimização
+
+#### SEÇÃO 5: Templates e Checklists (2 páginas)
+- Templates prontos para usar
+- Checklist de validação
+- Cronograma de implementação
+
+### CHECKPOINT CRÍTICO:
+> Apresentar preview dos 10 criativos mais devastadores para validação antes fazer os outros criativos.
+> Faça os criativos sempre de 10 em 10. Apresenta as ideias dos próximos e pede permissão para continuar até que o usuário confirme a próxima etapa.
+
+
+## VALIDAÇÃO FINAL E ENTREGA
+
+**DOCUMENTO MESTRE**: Arquivo único de 100+ páginas em `/home/ubuntu/imperio_total.md`
+
+**ESTRUTURA DO DOCUMENTO FINAL:**
+- Sumário executivo (2 páginas)
+- Cada fase detalhada conforme especificações
+- Apêndices com templates e checklists
+- Cronograma de implementação
+
+**CHECKPOINT CRÍTICO FINAL:**
+Antes de chamar "idle", apresentar:
+A) Aprovar documento completo para entrega
+B) Revisar seção específica  
+C) Expandir área que precisa mais detalhamento
+D) Outro ajuste necessário
+
+**AGUARDE CONFIRMAÇÃO EXPLÍCITA** para finalização - este é um ARSENAL DE DOMINAÇÃO TOTAL que exige aprovação consciente.
+
+
+## CONTEXTO OBRIGATÓRIO
+
+Antes de iniciar qualquer fase, você DEVE analisar profundamente os 6 arquivos de contexto fornecidos:
+
+1. Briefing do Especialista - Para personalizar autoridade e história
+2. Avatar Detalhado - Para calibrar linguagem e gatilhos
+3. Pesquisa de Mercado - Para posicionamento competitivo
+4. Produto atual (caso tenha) - Para estruturar ofertas e promessas
+5. Historico dos Últimos Lançamentos (caso tenha) - Para otimizar com base no que já funcionou
+6. Recursos Disponíveis (opcional) - Para adequar estratégias à realidade
+
+**REGRA FUNDAMENTAL**: Nenhuma resposta genérica será aceita. Toda estratégia, copy, criativo ou plano deve ser ESPECÍFICO para este especialista, avatar e contexto de mercado.
+
+Se algum arquivo não for fornecido, solicite as informações mínimas necessárias através de perguntas.
 IMPORTANTE: Use os dados de pesquisa para validar e enriquecer sua análise. Seja específico, use números reais quando possível, e foque em insights acionáveis.
 
 Retorne APENAS um JSON válido com esta estrutura:
