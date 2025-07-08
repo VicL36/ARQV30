@@ -6,13 +6,17 @@ echo "Iniciando build do projeto ARQV1..."
 # Garante que o Python está no PATH
 export PATH="/usr/local/bin:$PATH"
 
+# Garante que o pip está instalado
+echo "Garantindo que pip está instalado..."
+python -m ensurepip --upgrade
+
 # Atualiza o pip
 echo "Atualizando pip..."
-pip install --upgrade pip
+python -m pip install --upgrade pip
 
 # Instala as dependências Python
 echo "Instalando dependências..."
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # Verifica se as dependências foram instaladas corretamente
 echo "Verificando instalação..."
