@@ -14,55 +14,48 @@ logger = logging.getLogger(__name__)
 
 class GeminiClient:
     """Cliente avançado para Gemini Pro 2.5 com pesquisa na internet e análise ultra-detalhada"""
-    
+
     def __init__(self):
-        self.api_key = os.getenv('GEMINI_API_KEY')
-        
+        self.api_key = os.getenv("GEMINI_API_KEY")
+
         if not self.api_key:
             logger.warning("⚠️ GEMINI_API_KEY não encontrada - usando análise de fallback")
             self.client = None
             return
-        
+
         try:
-            # Configurar Gemini Pro 2.5
             genai.configure(api_key=self.api_key)
-            
-            # Usar o modelo mais avançado disponível
+
             self.model = genai.GenerativeModel(
                 model_name="gemini-2.0-flash-exp",
                 generation_config={
-                    "temperature": 0.6,
-                    "top_p": 0.8,
-                    "top_k": 40,
-                    "max_output_tokens": 18192,
-                    "response_mime_type": "application/json"
+                    "temperature": 0.7,
+                    "top_p": 0.9,
+                    "top_k": 50,
+                    "max_output_tokens": 20480,
+                    "response_mime_type": "application/json",
                 },
                 safety_settings=[
                     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
                     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
                     {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
                 ]
             )
-            
-            logger.info(f"🤖 Gemini Pro 2.5 Client inicializado com sucesso")
+            logger.info("🤖 Gemini Pro 2.5 Client inicializado com sucesso")
         except Exception as e:
             logger.error(f"❌ Erro ao inicializar cliente Gemini: {e}")
             self.client = None
-    
+
     def search_internet(self, query: str, num_results: int = 10) -> List[Dict]:
         """Pesquisa na internet usando múltiplas fontes"""
         try:
-            # Usar DuckDuckGo para pesquisa (não requer API key)
             search_url = f"https://html.duckduckgo.com/html/?q={quote_plus(query)}"
-            
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
-            
             response = requests.get(search_url, headers=headers, timeout=10)
             soup = BeautifulSoup(response.content, 'html.parser')
-            
             results = []
             for result in soup.find_all('a', class_='result__a')[:num_results]:
                 title = result.get_text(strip=True)
@@ -73,14 +66,12 @@ class GeminiClient:
                         'url': url,
                         'snippet': self._extract_snippet(url)
                     })
-            
             logger.info(f"🔍 Encontrados {len(results)} resultados para: {query}")
             return results
-            
         except Exception as e:
             logger.warning(f"⚠️ Erro na pesquisa: {e}")
             return []
-    
+
     def _extract_snippet(self, url: str) -> str:
         """Extrai snippet de uma URL"""
         try:
@@ -89,23 +80,16 @@ class GeminiClient:
             }
             response = requests.get(url, headers=headers, timeout=5)
             soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Remover scripts e styles
             for script in soup(["script", "style"]):
                 script.decompose()
-            
-            # Extrair texto
             text = soup.get_text()
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
             text = ' '.join(chunk for chunk in chunks if chunk)
-            
-            # Retornar primeiros 500 caracteres
             return text[:500] + "..." if len(text) > 500 else text
-            
         except Exception:
             return ""
-    
+
     def research_segment_comprehensive(self, segmento: str) -> Dict:
         """Pesquisa abrangente sobre o segmento"""
         research_queries = [
@@ -120,15 +104,12 @@ class GeminiClient:
             f"{segmento} problemas dores clientes",
             f"{segmento} oportunidades negócio"
         ]
-        
         research_data = {}
-        
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
             future_to_query = {
-                executor.submit(self.search_internet, query, 5): query 
+                executor.submit(self.search_internet, query, 5): query
                 for query in research_queries
             }
-            
             for future in concurrent.futures.as_completed(future_to_query):
                 query = future_to_query[future]
                 try:
@@ -137,74 +118,375 @@ class GeminiClient:
                 except Exception as e:
                     logger.warning(f"Erro na pesquisa '{query}': {e}")
                     research_data[query] = []
-        
         return research_data
-    
-    def analyze_avatar_ultra_detailed(self, data: Dict) -> Dict:
-        """Análise ultra-detalhada do avatar com Gemini Pro 2.5 e pesquisa na internet"""
-        
-        if not self.model:
-            logger.info("🔄 Gemini não disponível, usando análise de fallback")
-            return self._create_fallback_analysis(data)
-        
-        segmento = data.get('segmento', data.get('nicho', ''))
-        
+
+    def _create_fallback_analysis(self, data: Dict) -> Dict:
+        """Cria análise de fallback quando Gemini falha"""
+        segmento = data.get('segmento', data.get('nicho', 'Produto Digital'))
+        produto = data.get('produto', 'Produto Digital')
         try:
-            logger.info(f"🔍 Iniciando pesquisa abrangente para segmento: {segmento}")
-            
-            # Pesquisa abrangente na internet
-            research_data = self.research_segment_comprehensive(segmento)
-            
-            # Criar prompt ultra-detalhado com dados da pesquisa
-            prompt = self._create_ultra_detailed_prompt(data, research_data)
-            
-            logger.info("🤖 Processando análise com Gemini Pro 2.5...")
-            
-            # Gerar análise com Gemini
-            response = self.model.generate_content(prompt)
-            
-            if not response.text:
-                logger.warning("⚠️ Resposta vazia do Gemini, usando fallback")
-                return self._create_fallback_analysis(data)
-            
-            # Parse da resposta JSON
-            try:
-                analysis = json.loads(response.text)
-                logger.info("✅ Análise ultra-detalhada concluída com sucesso")
-                
-                # Adicionar dados de pesquisa à análise
-                analysis['research_data'] = research_data
-                analysis['generated_at'] = time.time()
-                
-                return analysis
-                
-            except json.JSONDecodeError as e:
-                logger.error(f"❌ Erro ao parsear JSON do Gemini: {e}")
-                return self._create_fallback_analysis(data)
-                
-        except Exception as e:
-            logger.error(f"❌ Erro na análise Gemini: {str(e)}")
-            return self._create_fallback_analysis(data)
-    
-    def _create_ultra_detailed_prompt(self, data: Dict, research_data: Dict) -> str:
-        """Cria prompt ultra-detalhado com dados de pesquisa"""
-        
-        segmento = data.get('segmento', data.get('nicho', ''))
-        produto = data.get('produto', '')
-        preco = data.get('preco', '')
-        publico = data.get('publico', '')
-        objetivo_receita = data.get('objetivo_receita', '')
-        orcamento_marketing = data.get('orcamento_marketing', '')
-        
-        # Compilar dados de pesquisa
-        research_summary = ""
-        for query, results in research_data.items():
-            if results:
-                research_summary += f"\n\n**{query}:**\n"
-                for result in results[:3]:  # Top 3 resultados por query
-                    research_summary += f"- {result['title']}: {result['snippet'][:200]}...\n"
-        
-        return f"""
+            preco = float(data.get('preco_float', 0)) if data.get('preco_float') is not None else 997.0
+        except (ValueError, TypeError):
+            preco = 997.0
+        logger.info(f"🔄 Criando análise de fallback para {segmento} - Preço: R$ {preco}")
+        return {
+            "escopo": {
+                "segmento_principal": segmento,
+                "subsegmentos": [f"{segmento} para iniciantes", f"{segmento} avançado", f"{segmento} empresarial"],
+                "produto_ideal": produto,
+                "proposta_valor": f"A metodologia mais completa e prática para dominar {segmento} no mercado brasileiro",
+                "tamanho_mercado": {
+                    "tam": "R$ 3,2 bilhões",
+                    "sam": "R$ 480 milhões",
+                    "som": "R$ 24 milhões"
+                }
+            },
+            "avatar_ultra_detalhado": {
+                "persona_principal": {
+                    "nome": "Carlos Eduardo Silva",
+                    "idade": "38 anos",
+                    "profissao": f"Especialista em {segmento}",
+                    "renda_mensal": "R$ 15.000 - R$ 35.000",
+                    "localizacao": "São Paulo, SP",
+                    "estado_civil": "Casado, 2 filhos",
+                    "escolaridade": "Superior completo com pós-graduação"
+                },
+                "demografia_detalhada": {
+                    "faixa_etaria_primaria": "32-45 anos (65%)",
+                    "faixa_etaria_secundaria": "25-32 anos (25%)",
+                    "distribuicao_genero": "65% mulheres, 35% homens",
+                    "distribuicao_geografica": "Sudeste (45%), Sul (25%), Nordeste (20%), Centro-Oeste (10%)",
+                    "classes_sociais": "Classe A (30%), Classe B (60%), Classe C (10%)",
+                    "nivel_educacional": "Superior completo (80%), Pós-graduação (45%)",
+                    "situacao_profissional": "Empreendedores (40%), Profissionais liberais (35%), Executivos (25%)"
+                },
+                "psicografia_profunda": {
+                    "valores_fundamentais": ["Crescimento pessoal", "Independência financeira", "Reconhecimento profissional", "Qualidade de vida", "Impacto social"],
+                    "estilo_vida_detalhado": "Vida acelerada com foco em produtividade, busca constante por conhecimento, valoriza tempo de qualidade com família, investe em desenvolvimento pessoal e profissional",
+                    "personalidade_dominante": "Ambicioso, determinado, analítico, orientado a resultados, perfeccionista",
+                    "aspiracoes_profissionais": ["Ser reconhecido como autoridade no segmento", "Construir negócio escalável", "Ter liberdade geográfica"],
+                    "aspiracoes_pessoais": ["Equilibrar vida pessoal e profissional", "Proporcionar melhor futuro para os filhos", "Viajar pelo mundo"],
+                    "medos_profundos": ["Ficar obsoleto no mercado", "Perder oportunidades por indecisão", "Não conseguir escalar o negócio", "Falhar financeiramente"],
+                    "frustracoes_atuais": ["Excesso de informação sem aplicação prática", "Falta de tempo para implementar estratégias", "Resultados abaixo do esperado"],
+                    "crencas_limitantes": ["Preciso trabalhar mais horas para ganhar mais", "Só quem tem muito dinheiro consegue se destacar", "É muito arriscado investir em marketing"],
+                    "motivadores_principais": ["Reconhecimento profissional", "Segurança financeira", "Liberdade de tempo"]
+                },
+                "comportamento_digital_avancado": {
+                    "plataformas_primarias": ["Instagram (2h/dia)", "LinkedIn (1h/dia)"],
+                    "plataformas_secundarias": ["YouTube", "WhatsApp Business"],
+                    "horarios_pico_detalhados": {
+                        "segunda_sexta": "6h-8h e 19h-22h",
+                        "fins_semana": "9h-11h e 20h-23h",
+                        "dispositivos_preferidos": ["Smartphone", "Notebook"]
+                    },
+                    "conteudo_consumido": {
+                        "formatos_preferidos": ["Vídeos curtos", "Posts educativos", "Lives"],
+                        "temas_interesse": ["Estratégias de negócio", "Cases de sucesso", "Tendências do mercado"],
+                        "influenciadores_seguidos": ["Especialistas reconhecidos", "Empreendedores de sucesso"],
+                        "tempo_medio_consumo": "15-20 minutos por sessão"
+                    },
+                    "comportamento_compra_online": {
+                        "frequencia_compras": "2-3 vezes por mês",
+                        "ticket_medio": f"R$ {int(preco * 0.8):,}".replace(',', '.'),
+                        "fatores_decisao": ["Prova social", "Garantia", "Autoridade do vendedor"],
+                        "canais_preferidos": ["Site próprio", "WhatsApp"]
+                    }
+                }
+            },
+            "mapeamento_dores_ultra_detalhado": {
+                "dores_nivel_1_criticas": [
+                    {
+                        "dor": f"Dificuldade para se posicionar como autoridade em {segmento}",
+                        "intensidade": "Alta",
+                        "frequencia": "Diária",
+                        "impacto_vida": "Baixo reconhecimento profissional e dificuldade para precificar adequadamente",
+                        "tentativas_solucao": ["Cursos online", "Networking"],
+                        "nivel_consciencia": "Consciente"
+                    }
+                ],
+                "dores_nivel_2_importantes": [
+                    {
+                        "dor": "Falta de metodologia estruturada e comprovada",
+                        "intensidade": "Alta",
+                        "frequencia": "Semanal",
+                        "impacto_vida": "Resultados inconsistentes e desperdício de recursos",
+                        "tentativas_solucao": ["Consultoria", "Mentoria"],
+                        "nivel_consciencia": "Consciente"
+                    }
+                ],
+                "dores_nivel_3_latentes": [
+                    {
+                        "dor": "Medo de não conseguir escalar o negócio",
+                        "intensidade": "Média",
+                        "frequencia": "Mensal",
+                        "impacto_vida": "Ansiedade e insegurança sobre o futuro",
+                        "tentativas_solucao": ["Planejamento estratégico"],
+                        "nivel_consciencia": "Semiconsciente"
+                    }
+                ],
+                "jornada_dor": {
+                    "gatilho_inicial": "Percepção de estagnação no crescimento profissional",
+                    "evolucao_dor": "Frustração crescente com resultados abaixo do esperado",
+                    "ponto_insuportavel": "Quando vê concorrentes obtendo melhores resultados",
+                    "busca_solucao": "Pesquisa ativa por metodologias e especialistas"
+                }
+            },
+            "analise_concorrencia_detalhada": {
+                "concorrentes_diretos": [
+                    {
+                        "nome": f"Academia Premium {segmento}",
+                        "preco_range": f"R$ {int(preco * 1.5):,} - R$ {int(preco * 2.5):,}".replace(',', '.'),
+                        "proposta_valor": "Metodologia exclusiva com certificação",
+                        "pontos_fortes": ["Marca estabelecida", "Comunidade ativa", "Conteúdo extenso"],
+                        "pontos_fracos": ["Preço elevado", "Suporte limitado", "Muito teórico"],
+                        "posicionamento": "Premium e exclusivo",
+                        "publico_alvo": "Profissionais experientes",
+                        "canais_marketing": ["Google Ads", "Parcerias"],
+                        "share_mercado_estimado": "15%"
+                    }
+                ],
+                "concorrentes_indiretos": [
+                    {
+                        "categoria": "Cursos gratuitos online",
+                        "exemplos": ["YouTube", "Blogs especializados"],
+                        "ameaca_nivel": "Médio"
+                    }
+                ],
+                "gaps_oportunidades": [
+                    "Falta de metodologia prática com implementação assistida",
+                    "Ausência de suporte contínuo pós-compra",
+                    "Preços inacessíveis para profissionais em início de carreira"
+                ],
+                "barreiras_entrada": ["Investimento em marketing", "Construção de autoridade"],
+                "fatores_diferenciacao": ["Implementação prática", "Suporte personalizado", "Garantia de resultados"]
+            },
+            "inteligencia_mercado": {
+                "tendencias_crescimento": [
+                    {
+                        "tendencia": "Digitalização acelerada pós-pandemia",
+                        "impacto": "Alto",
+                        "timeline": "2023-2026",
+                        "oportunidade": "Maior demanda por soluções digitais"
+                    }
+                ],
+                "tendencias_declinio": [
+                    {
+                        "tendencia": "Métodos tradicionais offline",
+                        "impacto": "Médio",
+                        "timeline": "2023-2025",
+                        "mitigacao": "Hibridização de metodologias"
+                    }
+                ],
+                "sazonalidade_detalhada": {
+                    "picos_demanda": ["Janeiro-Março", "Setembro-Outubro"],
+                    "baixas_demanda": ["Dezembro", "Julho"],
+                    "fatores_sazonais": ["Início de ano", "Volta às aulas"],
+                    "estrategias_sazonais": ["Campanhas de ano novo", "Promoções de volta às aulas"]
+                },
+                "regulamentacoes_impactos": ["LGPD", "Marco Civil da Internet"],
+                "tecnologias_emergentes": ["IA Generativa", "Automação de Marketing"]
+            },
+            "estrategia_palavras_chave": {
+                "palavras_primarias": [
+                    {
+                        "termo": f"curso {segmento}",
+                        "volume_mensal": "12.100",
+                        "dificuldade": "Média",
+                        "cpc_estimado": "R$ 4,20",
+                        "intencao_busca": "Comercial",
+                        "oportunidade": "Alta"
+                    }
+                ],
+                "palavras_secundarias": [
+                    {
+                        "termo": f"como aprender {segmento}",
+                        "volume_mensal": "8.900",
+                        "dificuldade": "Baixa",
+                        "cpc_estimado": "R$ 2,80",
+                        "intencao_busca": "Informacional",
+                        "oportunidade": "Média"
+                    }
+                ],
+                "palavras_long_tail": [
+                    f"melhor curso de {segmento} online",
+                    f"como se tornar especialista em {segmento}",
+                    f"{segmento} para iniciantes passo a passo"
+                ],
+                "custos_aquisicao_canal": {
+                    "google_ads": {
+                        "cpc_medio": "R$ 3,20",
+                        "cpm_medio": "R$ 32",
+                        "ctr_esperado": "3,5%",
+                        "conversao_esperada": "2,8%",
+                        "cpa_estimado": "R$ 420"
+                    },
+                    "facebook_ads": {
+                        "cpc_medio": "R$ 1,45",
+                        "cpm_medio": "R$ 18",
+                        "ctr_esperado": "2,8%",
+                        "conversao_esperada": "2,2%",
+                        "cpa_estimado": "R$ 380"
+                    },
+                    "instagram_ads": {
+                        "cpc_medio": "R$ 1,60",
+                        "cpm_medio": "R$ 20",
+                        "ctr_esperado": "3,2%",
+                        "conversao_esperada": "2,5%",
+                        "cpa_estimado": "R$ 400"
+                    },
+                    "youtube_ads": {
+                        "cpv_medio": "R$ 0,80",
+                        "cpm_medio": "R$ 12",
+                        "view_rate": "65%",
+                        "conversao_esperada": "1,8%",
+                        "cpa_estimado": "R$ 450"
+                    },
+                    "tiktok_ads": {
+                        "cpc_medio": "R$ 0,60",
+                        "cpm_medio": "R$ 8",
+                        "ctr_esperado": "4,2%",
+                        "conversao_esperada": "1,5%",
+                        "cpa_estimado": "R$ 480"
+                    }
+                }
+            },
+            "metricas_performance_detalhadas": {
+                "benchmarks_segmento": {
+                    "cac_medio_segmento": "R$ 420",
+                    "ltv_medio_segmento": "R$ 1.680",
+                    "churn_rate_medio": "15%",
+                    "ticket_medio_segmento": f"R$ {int(preco):,}".replace(',', '.')
+                },
+                "funil_conversao_otimizado": {
+                    "visitantes_leads": "18%",
+                    "leads_oportunidades": "25%",
+                    "oportunidades_vendas": "12%",
+                    "vendas_clientes": "95%"
+                },
+                "kpis_criticos": [
+                    {
+                        "metrica": "CAC (Custo de Aquisição de Cliente)",
+                        "valor_ideal": "R$ 420",
+                        "como_medir": "Investimento total em marketing / número de clientes adquiridos",
+                        "frequencia": "Semanal"
+                    },
+                    {
+                        "metrica": "LTV (Lifetime Value)",
+                        "valor_ideal": "R$ 1.680",
+                        "como_medir": "Receita média por cliente x tempo médio de relacionamento",
+                        "frequencia": "Mensal"
+                    },
+                    {
+                        "metrica": "ROI Marketing",
+                        "valor_ideal": "400%",
+                        "como_medir": "(Receita - Investimento) / Investimento x 100",
+                        "frequencia": "Mensal"
+                    }
+                ]
+            },
+            "voz_mercado_linguagem": {
+                "linguagem_avatar": {
+                    "termos_tecnicos": ["Metodologia", "Framework", "Sistema", "Estratégia"],
+                    "girias_expressoes": ["Game changer", "Next level", "Virada de chave"],
+                    "palavras_poder": ["Resultados", "Comprovado", "Exclusivo", "Garantido"],
+                    "palavras_evitar": ["Fácil", "Rápido", "Milagre", "Segredo"]
+                },
+                "objecoes_principais": [
+                    {
+                        "objecao": "Não tenho tempo para mais um curso",
+                        "frequencia": "Alta",
+                        "momento_surgimento": "Primeira exposição à oferta",
+                        "estrategia_contorno": "Mostrar metodologia de implementação em 15 minutos diários",
+                        "prova_social_necessaria": "Depoimentos de pessoas ocupadas que obtiveram resultados"
+                    }
+                ],
+                "gatilhos_mentais_efetivos": [
+                    {
+                        "gatilho": "Prova Social",
+                        "aplicacao": "Cases de sucesso com números reais",
+                        "efetividade": "Alta",
+                        "exemplos": ["Depoimentos em vídeo", "Resultados mensuráveis"]
+                    }
+                ],
+                "tom_comunicacao": {
+                    "personalidade_marca": "Autoridade confiável e acessível",
+                    "nivel_formalidade": "Profissional mas acessível",
+                    "emocoes_despertar": ["Confiança", "Esperança", "Determinação"],
+                    "storytelling_temas": ["Superação", "Transformação", "Conquista"]
+                }
+            },
+            "projecoes_cenarios": {
+                "cenario_conservador": {
+                    "premissas": ["Mercado estável", "Concorrência moderada"],
+                    "taxa_conversao": "2,0%",
+                    "ticket_medio": f"R$ {int(preco):,}".replace(',', '.'),
+                    "cac": "R$ 450",
+                    "ltv": "R$ 1.500",
+                    "faturamento_mensal": f"R$ {int(preco * 50):,}".replace(',', '.'),
+                    "roi": "240%",
+                    "break_even": "6 meses"
+                },
+                "cenario_realista": {
+                    "premissas": ["Crescimento moderado", "Execução consistente"],
+                    "taxa_conversao": "3,2%",
+                    "ticket_medio": f"R$ {int(preco):,}".replace(',', '.'),
+                    "cac": "R$ 420",
+                    "ltv": "R$ 1.680",
+                    "faturamento_mensal": f"R$ {int(preco * 80):,}".replace(',', '.'),
+                    "roi": "380%",
+                    "break_even": "4 meses"
+                },
+                "cenario_otimista": {
+                    "premissas": ["Crescimento acelerado", "Execução excelente"],
+                    "taxa_conversao": "5,0%",
+                    "ticket_medio": f"R$ {int(preco * 1.2):,}".replace(',', '.'),
+                    "cac": "R$ 380",
+                    "ltv": "R$ 2.100",
+                    "faturamento_mensal": f"R$ {int(preco * 150):,}".replace(',', '.'),
+                    "roi": "580%",
+                    "break_even": "3 meses"
+                }
+            },
+            "plano_acao_detalhado": [
+                {
+                    "fase": "Fase 1: Validação e Pesquisa",
+                    "duracao": "2 semanas",
+                    "acoes": [
+                        {
+                            "acao": "Validar proposta de valor com pesquisa qualitativa",
+                            "responsavel": "Equipe de pesquisa",
+                            "prazo": "10 dias",
+                            "recursos_necessarios": ["Ferramenta de pesquisa", "Lista de contatos"],
+                            "entregaveis": ["Relatório de pesquisa", "Personas validadas"],
+                            "metricas_sucesso": ["50 entrevistas realizadas", "Taxa de validação > 70%"]
+                        }
+                    ]
+                },
+                {
+                    "fase": "Fase 2: Desenvolvimento e Preparação",
+                    "duracao": "3 semanas",
+                    "acoes": [
+                        {
+                            "acao": "Criar landing page otimizada,detalhar dobras",
+                            "responsavel": "Equipe de marketing",
+                            "prazo": "7 dias",
+                            "recursos_necessarios": ["Designer", "Copywriter", "Desenvolvedor"],
+                            "entregaveis": ["Landing page responsiva", "Copy otimizado"],
+                            "metricas_sucesso": ["Taxa de conversão > 15%", "Tempo de carregamento < 3s"]
+                        }
+                    ]
+                }
+            ],
+            "insights_exclusivos": [
+                f"O segmento {segmento} está passando por uma transformação digital acelerada",
+                "Há uma lacuna significativa entre oferta premium e básica no mercado",
+                "O público valoriza mais implementação prática do que teoria extensiva"
+                "Maneira ou metodo irresistivel de convencer a compra"
+            ]
+        }
+
+    def _generate_phase_prompt(self, phase_number: int, current_data: Dict, research_summary: str) -> str:
+        base_prompt = """
 Você é um consultor sênior especializado em arqueologia de avatar e análise de mercado no Brasil, com acesso a dados de pesquisa em tempo real.
 
 DADOS DO PRODUTO/SERVIÇO:
@@ -219,7 +501,8 @@ DADOS DE PESQUISA NA INTERNET (2023-2025):
 {research_summary}
 
 Com base nos dados de pesquisa atualizados e sua expertise, crie uma análise ULTRA-DETALHADA do avatar ideal para este segmento no mercado brasileiro.
-## SUPER PROMPT
+
+## SUPER PROMPT - PROTOCOLO DE DOMINAÇÃO TOTAL
 
 Você executará um PROTOCOLO DE DOMINAÇÃO TOTAL seguindo 9 fases da criação de um lançamento digital. Cada fase tem critérios específicos de profundidade e validação obrigatória.
 
@@ -227,407 +510,13 @@ Você executará um PROTOCOLO DE DOMINAÇÃO TOTAL seguindo 9 fases da criação
 
 ---
 
+"""
+        
+        phase_prompts = {
+            1: """
 ## FASE 1: ESCAVAÇÃO DA BRECHA LUCRATIVA (Mínimo 12 páginas)
 
-### O
-# ANÁLISE DE CPLS, WEBINARS E ETC
-
-Você é um **ARQUEÓLOGO MESTRE DA PERSUASÃO** que escava cada segundo, cada palavra, cada pausa de um CPL até encontrar o **DNA COMPLETO** da conversão. Sua análise é **CIRÚRGICA, OBSESSIVA E IMPLACÁVEL**. Você não foi chamado para agradar.
-
-## PROTOCOLO DE DISSECAÇÃO TOTAL
-
-**SUA MISSÃO**: Transformar qualquer CPL em um **MAPA DETALHADO** de engenharia psicológica com insights claros e relevantes para melhorar e **DOMINAR** qualquer mercado. Use python para fazer análises mais profundas.
-
-## CONTEXTOS OPCIONAIS (Para Maior Precisão)
-
-### 🎯 **CONTEXTO ESTRATÉGICO** 
-- Primeiro contato, pós-aquecimento, relançamento?
-- Objetivo: Educar, qualificar, converter? Primeiro de uma série?
-- Sequência: O que aconteceu antes e depois?
-- Formato: É ao vivo? É gravado?
-
-### 👥 **CONTEXTO DA AUDIÊNCIA**
-- Temperatura: Fria, morna, quente?
-- Tamanho: 100, 1.000, 10.000+?
-- Origem: Pago, orgânico, lista própria?
-- Consciência: Sabem do problema? Sabem da solução?
-
-### 💰 **CONTEXTO DO PRODUTO**
-- Preço e categoria: Infoproduto, curso, consultoria?
-- Novidade: Primeira vez ou já testado?
-
----
-
-## DISSECAÇÃO EM 12 CAMADAS PROFUNDAS
-
-### CAMADA 1: ABERTURA CIRÚRGICA (Primeiros 3 minutos) 🚀
-
-**ANÁLISE ESPECÍFICA:**
-- **Hook dos primeiros 10 segundos**: Palavra por palavra, que emoção ativa?
-- **Promessa inicial**: Como apresenta o que vai entregar?
-- **Credibilidade imediata**: Como se posiciona nos primeiros 60 segundos?
-- **Quebra de padrão**: Que elemento surpresa usa para prender atenção?
-- **Roadmap**: Como apresenta a estrutura do que vem?
-- **Primeira objeção neutralizada**: Qual objeção antecipa de cara?
-
-**PERGUNTAS FORENSES:**
-- Quantos segundos para primeira promessa específica?
-- Que emoção predomina: curiosidade, medo, desejo, urgência?
-- Como cria separação dos "outros" que fazem diferente?
-- Usa estatística, história pessoal ou afirmação polêmica na abertura?
-
-### CAMADA 2: ARQUITETURA NARRATIVA COMPLETA 📖
-
-**MAPEAMENTO DETALHADO:**
-- **Estrutura temporal**: Minuto a minuto, como divide o conteúdo?
-- **Arcos narrativos**: Quantas histórias conta e onde posiciona cada uma?
-- **Protagonistas**: Quem são os "personagens" (ele, clientes, inimigos)?
-- **Conflitos apresentados**: Problema vs solução, antes vs depois, certo vs errado?
-- **Momentos de tensão**: Quando cria picos emocionais?
-- **Pontos de alívio**: Como dá "respiro" antes do próximo pico?
-
-**ANÁLISE DE STORYTELLING:**
-- Usa a estrutura clássica: contexto → conflito → clímax → resolução?
-- As histórias são pessoais (dele) ou de terceiros (clientes)?
-- Como conecta histórias individuais com o problema universal?
-- Que emoções específicas cada história deve despertar?
-
-### CAMADA 3: CONSTRUÇÃO DE AUTORIDADE PROGRESSIVA 👑
-
-**ELEMENTOS RASTREADOS:**
-- **Credenciais diretas**: Como apresenta qualificações/resultados?
-- **Credenciais indiretas**: Histórias que "provam" competência?
-- **Prova social estratégica**: Quando e como usa depoimentos/casos?
-- **Demonstração de conhecimento**: Como prova que "sabe mais"?
-- **Vulnerabilidade calculada**: Que "fraquezas" revela para humanizar?
-- **Superioridade sutil**: Como se posiciona acima dos concorrentes?
-
-**TIMING DE AUTORIDADE:**
-- Em que minuto estabelece primeira credencial forte?
-- Como distribui elementos de autoridade ao longo da apresentação?
-- Usa autoridade emprestada (mentores, parceiros, mídia)?
-- Como equilibra autoridade com proximidade/afinidade?
-
-### CAMADA 4: GESTÃO DE OBJEÇÕES MICROSCÓPICA 🛡️
-
-**MAPEAMENTO COMPLETO:**
-- **Objeções de credibilidade**: "Será que funciona?" - Como neutraliza?
-- **Objeções de tempo**: "Não tenho tempo" - Quando aborda?
-- **Objeções de dinheiro**: "É caro" - Como justifica valor?
-- **Objeções de capacidade**: "Não vou conseguir" - Como encoraja?
-- **Objeções de timing**: "Não é o momento" - Como cria urgência?
-- **Objeções de diferenciação**: "Já tentei antes" - Como se separa?
-
-**TÉCNICAS ESPECÍFICAS:**
-- Neutraliza antes de apresentar (preemptiva) ou depois (reativa)?
-- Usa terceiros para neutralizar ("cliente perguntou isso...")?
-- Que linguagem específica usa para cada objeção?
-- Como transforma objeção em benefício?
-
-### CAMADA 5: CONSTRUÇÃO DE DESEJO SISTEMÁTICA 🔥
-
-**ELEMENTOS DE AMPLIFICAÇÃO:**
-- **Pintura da dor**: Como intensifica o problema atual?
-- **Contraposição do prazer**: Como apresenta a vida pós-solução?
-- **Urgência do problema**: Como mostra que piora com tempo?
-- **Escassez da oportunidade**: Como limita acesso/tempo?
-- **Prova social de resultados**: Como mostra outros já conseguindo?
-- **Medo de ficar para trás**: Como ativa FOMO específico?
-
-**PROGRESSÃO EMOCIONAL:**
-- Como escalona a intensidade do desejo?
-- Que gatilhos específicos usa em cada fase?
-- Como alterna entre dor e prazer para manter tensão?
-- Quando atinge o pico de desejo antes da oferta?
-
-### CAMADA 6: EDUCAÇÃO ESTRATÉGICA VS REVELAÇÃO 🧠
-
-**BALANCEAMENTO ANALISADO:**
-- **Quanto ensina vs quanto retém**: Proporção específica?
-- **Profundidade do conteúdo**: Superficial, médio ou profundo?
-- **Tipo de educação**: Conceitual, prática, mindset?
-- **Cliffhangers educacionais**: Como usa conhecimento para "fisgar"?
-- **Revelações parciais**: Como dosa informação para manter interesse?
-- **Método vs tática**: Foca no sistema ou em técnicas específicas?
-
-**ESTRATÉGIA DE INFORMAÇÃO:**
-- A educação é o gancho ou o método é o gancho?
-- Como usa educação para construir autoridade?
-- Que informação específica guarda para o produto pago?
-- Como diferencia "amostra grátis" de "produto completo"?
-
-### CAMADA 7: APRESENTAÇÃO DA OFERTA DETALHADA - VERIFICAR SE EXISTE. 
-Se existir, executar análise. Se não, pular. 💰
-
-**CASO EXISTE, EXTRAIA A ANATOMIA COMPLETA:**
-- **Timing da primeira menção**: Em que minuto aparece?
-- **Estrutura de apresentação**: Como constrói a oferta progressivamente?
-- **Elementos incluídos**: Produto principal + bônus + garantia?
-- **Justificativa de valor**: Como explica/defende o preço?
-- **Ancoragem de preço**: Usa comparações, custos alternativos?
-- **Urgência e escassez**: Reais ou artificiais? Como apresenta?
-
-**TÉCNICAS DE FECHAMENTO:**
-- Usa ordem assumida ("quando você começar...")?
-- Oferece opções múltiplas ou oferta única?
-- Como lida com a transição educação → venda?
-- Que linguagem específica usa no momento da oferta?
-
-
-### CAMADA 8: LINGUAGEM E PADRÕES VERBAIS 🗣️
-
-**ANÁLISE LINGUÍSTICA:**
-- **Palavras de poder**: Que termos específicos usa repetidamente?
-- **Frames linguísticos**: Como enquadra conceitos/problemas?
-- **Padrões de repetição**: Que frases/conceitos reforça?
-- **Linguagem sensorial**: Como ativa os 5 sentidos?
-- **Comandos embutidos**: Usa hipnose conversacional?
-- **Pressuposições**: Que premissas implanta sem questionar?
-
-**RITMO E CADÊNCIA:**
-- Como varia velocidade de fala para impacto?
-- Onde usa pausas estratégicas?
-- Como enfatiza pontos cruciais?
-- Que tom emocional predomina em cada seção?
-
-### CAMADA 9: GESTÃO DE TEMPO E RITMO ⏰
-
-**CRONOMETRAGEM PRECISA:**
-- **Abertura**: Quantos minutos para hook + promessa + credibilidade?
-- **Educação**: Quanto tempo de conteúdo vs quanto de venda?
-- **Oferta**: Duração específica da apresentação de venda?
-- **Fechamento**: Tempo dedicado a urgência/escassez/CTA?
-- **Transições**: Como conecta seções sem perder momentum?
-
-**ANÁLISE DE PACING:**
-- Quando acelera vs quando desacelera?
-- Como mantém atenção em momentos "chatos"?
-- Que recursos usa para quebrar monotonia?
-- Como gerencia energia da audiência?
-
-### CAMADA 10: PONTOS DE MAIOR IMPACTO 💥
-
-**MOMENTOS CRÍTICOS:**
-- **Maior pico emocional**: Que momento gera mais impacto?
-- **Revelação principal**: Qual o "segredo" mais poderoso?
-- **Virada de chave**: Quando a audiência "entende" de verdade?
-- **Momento de conversão**: Quando a decisão realmente acontece?
-- **Clímax da apresentação**: Ponto de maior tensão/interesse?
-
-**TÉCNICAS DE INTENSIFICAÇÃO:**
-- Como amplifica momentos importantes?
-- Que recursos usa para marcar momentos críticos?
-- Como cria "antes e depois" mental na audiência?
-
-### CAMADA 11: VAZAMENTOS E OTIMIZAÇÕES 🔧
-- SE NECESSÁRIO, PEÇA AO USUÁRIO DADOS DE ENGAJAMENTO P/ CONFIRMAR ANÁLISE
-
-**PONTOS FRACOS IDENTIFICADOS:**
-- **Vazamentos de atenção**: Momentos específicos de perda de interesse?
-- **Inconsistências**: Contradições na mensagem/posicionamento?
-- **Timing ruim**: Elementos fora de sequência lógica?
-- **Oportunidades perdidas**: Gatilhos que poderia ter usado?
-- **Elementos desnecessários**: O que poderia cortar?
-- **Melhorias óbvias**: Mudanças que aumentariam conversão?
-
-## CAMADA 12: MÉTRICAS FORENSES OBJETIVAS 🔬
-
-### ANÁLISE LINGUÍSTICA QUANTITATIVA
-
-**FOCO COMUNICACIONAL:**
-- **Ratio "EU" vs "VOCÊ"**: Contagem exata e percentual
-  - Quantas vezes fala "eu/meu/minha" vs "você/seu/sua"?
-  - Em que momentos usa mais "eu" (autoridade) vs "você" (foco no cliente)?
-  - Qual seção tem maior ego vs maior foco na audiência?
-
-**ESTRUTURA DE CREDIBILIDADE:**
-- **Promessas vs Provas**: Contagem e proporção
-  - Quantas promessas específicas faz ao longo da apresentação?
-  - Quantas provas oferece para cada promessa?
-  - Qual o ratio promessa/prova (ideal: 1:1 ou mais provas)?
-  - Que tipo de prova usa: dados, casos, demonstrações, lógica?
-
-**DENSIDADE PERSUASIVA:**
-- **Argumentos utilizados**: Contagem total e categorização
-  - Quantos argumentos lógicos vs emocionais?
-  - Argumentos por autoridade, analogia, causa-efeito, social?
-  - Densidade de argumentos por minuto?
-
-### ANÁLISE DE PROVA SOCIAL DETALHADA
-
-**DEPOIMENTOS E CASOS:**
-- **Quantidade total**: Número exato de depoimentos/casos apresentados
-- **Tipos de prova social**: 
-  - Depoimentos em texto vs vídeo vs áudio?
-  - Casos completos vs menções rápidas?
-  - Nomes reais vs primeiros nomes vs anônimos?
-- **Posicionamento estratégico**: Em que momentos usa cada tipo?
-- **Especificidade**: Resultados vagos ("muito dinheiro") vs específicos ("R$47.832")?
-
-**AUTORIDADE E ENDOSSOS:**
-- **Menções de autoridade**: Quantas vezes cita especialistas/influenciadores?
-- **Credenciais apresentadas**: Número e tipo de qualificações mencionadas
-- **Mídia e reconhecimento**: Quantas menções de imprensa/premiações?
-
-### ESTRUTURA LÓGICA VS EMOCIONAL
-
-**SEQUENCIAMENTO ARGUMENTATIVO:**
-- **Premissas estabelecidas**: Quantas "verdades" implanta como base?
-  - Lista específica de cada premissa
-  - Como constrói aceitação de cada uma?
-  - Premissas questionáveis vs inquestionáveis?
-
-**PRINCÍPIOS UTILIZADOS:**
-- **Princípios de persuasão de Cialdini**: Contagem específica
-  - Reciprocidade: quantas vezes e como?
-  - Compromisso: que micro-compromissos gera?
-  - Prova social: densidade e variedade?
-  - Afinidade: que pontos de conexão cria?
-  - Autoridade: como estabelece e reforça?
-  - Escassez: real vs artificial, intensidade?
-
-**ARQUITETURA LÓGICA:**
-- **Sequência lógica**: A → B → C faz sentido?
-- **Gaps lógicos**: Onde pula etapas do raciocínio?
-- **Falácias utilizadas**: Usa argumentos logicamente falsos mas persuasivos?
-- **Silogismos**: Estruturas de "se...então" identificadas?
-
-### ANÁLISE EMOCIONAL QUANTIFICADA
-
-**GATILHOS EMOCIONAIS:**
-- **Medo**: Quantas vezes ativa medo específico?
-- **Desejo**: Densidade de ativação de desejo por minuto?
-- **Urgência**: Número de elementos de pressão temporal?
-- **Culpa/Vergonha**: Quantas vezes usa para motivar?
-- **Orgulho/Aspiração**: Frequency de ativação de ego positivo?
-
-**INTENSIDADE EMOCIONAL:**
-- **Palavras de alta carga emocional**: Contagem de termos como "devastador", "revolucionário", "secreto"
-- **Superlativativos**: "Melhor", "único", "jamais visto" - quantos e onde?
-- **Linguagem sensorial**: Palavras que ativam os 5 sentidos?
-
-### MÉTRICAS DE ESTRUTURA PERSUASIVA
-
-**PADRÕES DE REPETIÇÃO:**
-- **Conceitos-chave**: Quantas vezes repete ideias principais?
-- **Frases de efeito**: Bordões ou frases marcantes repetidas?
-- **CTAs**: Número total de chamadas para ação (diretas e indiretas)?
-
-**ANCORAGEM E CONTRASTE:**
-- **Pontos de ancoragem**: Quantos "marcos" de referência estabelece?
-- **Contrastes criados**: "Antes vs depois", "certo vs errado" - quantos?
-- **Comparações**: Com concorrentes, métodos alternativos, situação atual?
-
-**QUEBRAS DE PADRÃO:**
-- **Pattern interrupts**: Quantos momentos de quebra de expectativa?
-- **Revelações chocantes**: Número de "plot twists" na narrativa?
-- **Momentos de vulnerabilidade**: Quando baixa a guarda estrategicamente?
-
-### ANÁLISE DE TIMING PSICOLÓGICO
-
-**DISTRIBUIÇÃO TEMPORAL:**
-- **Densidade informacional**: Informações por minuto em cada seção?
-- **Picos de intensidade**: Cronometragem exata dos momentos de maior impacto?
-- **Vales de relaxamento**: Quanto tempo de "respiro" entre picos?
-- **Crescimento de tensão**: A intensidade é progressiva ou em ondas?
-
----
-
-## ENTREGÁVEL: ANÁLISE FORENSE COMPLETA
-
-**Arquivo de 15 páginas** com dissecação minuto a minuto, incluindo:
-
-```markdown
-# ANÁLISE FORENSE DEVASTADORA: [NOME DO CPL]
-
-## 🎯 RESUMO EXECUTIVO
-### Veredicto Geral (1-10)
-### Top 3 Pontos Mais Fortes
-### Estratégia Principal Identificada
-
-## 🕐 CRONOMETRAGEM DETALHADA
-### Minuto 00-03: Abertura
-### Minuto 03-XX: Educação/Conteúdo
-### Minuto XX-XX: Transição para Venda
-### Minuto XX-XX: Apresentação da Oferta
-### Minuto XX-XX: Toda Estrutura
-### Minuto XX-Final: Fechamento/CTA
-
-## 🧬 DNA DA CONVERSÃO
-### Fórmula Estrutural Extraída
-### Sequência de Gatilhos Psicológicos
-### Padrões de Linguagem Identificados
-### Timing Ótimo de Cada Elemento
-
-## 📊 MÉTRICAS OBJETIVAS GERAIS
-- **Duração total**: X minutos
-- **Palavras faladas**: ~X palavras (estimativa)
-- **Densidade informacional**: X informações/minuto
-- **Ratio EU/VOCÊ**: X% vs X%
-- **Promessas totais**: X
-- **Provas oferecidas**: X
-- **Ratio Promessa/Prova**: 1:X
-
-## 🔬 ANÁLISE QUANTITATIVA DETALHADA
-
-### CREDIBILIDADE (Peso: /100)
-- Depoimentos específicos: X
-- Casos detalhados: X  
-- Dados/estatísticas: X
-- Credenciais mencionadas: X
-- **Score de credibilidade**: X/100
-
-### LÓGICA VS EMOÇÃO (Proporção)
-- Argumentos lógicos: X%
-- Apelos emocionais: X%
-- **Equilíbrio lógico-emocional**: Ideal/Muito lógico/Muito emocional
-
-### GATILHOS DE CIALDINI (Frequência)
-- Reciprocidade: X vezes
-- Compromisso: X momentos
-- Prova social: X elementos
-- Afinidade: X pontos
-- Autoridade: X estabelecimentos
-- Escassez: X aplicações
-
-### INTENSIDADE EMOCIONAL (/10)
-- Medo: X/10 (Y menções)
-- Desejo: X/10 (Y ativações)
-- Urgência: X/10 (Y elementos)
-- Aspiração: X/10 (Y momentos)
-
-## 🧮 PREMISSAS ESTABELECIDAS
-1. [Premissa 1] - Como estabelece
-2. [Premissa 2] - Como estabelece
-3. [Premissa 3] - Como estabelece
-[...] - Análise de aceitação
-
-## 🔗 SEQUÊNCIA LÓGICA
-- **Gap lógico 1**: [Onde pula etapa]
-- **Gap lógico 2**: [Inconsistência]
-- **Silogismo principal**: Se A, então B, então C
-- **Falácias utilizadas**: [Lista específica]
-
-## 📈 CURVA DE PERSUASÃO (Minuto a minuto)
-Min 0-5: Intensidade X/10 (Abertura)
-Min 5-10: Intensidade X/10 (Educação)
-[...continua detalhadamente]
-
-## 🎯 PONTUAÇÃO CIENTÍFICA GERAL
-- **Credibilidade**: X/100
-- **Lógica**: X/100  
-- **Impacto emocional**: X/100
-- **Estrutura persuasiva**: X/100
-- **Timing psicológico**: X/100
-- **SCORE TOTAL**: X/500
-
-Após o envio do relatório, pergunte se o usuário gostaria de receber agora a análise microscópica de alguma das 12 fases de forma detalhada.
-
-Por último, pergunte se o usuário gostaria que você expandisse a análise de alguma fase ou se gostaria de ver uma análise completa sobre os principais pontos cegos identificados e sugestões.
-
-```
-
-BJETIVO CIRÚRGICO:
+### OBJETIVO CIRÚRGICO:
 Identificar o PONTO EXATO onde a dor do avatar é mais aguda e as soluções existentes são mais patéticas, criando uma oportunidade de dominação total.
 
 ### METODOLOGIA DE EXECUÇÃO:
@@ -668,8 +557,52 @@ Responda com EVIDÊNCIAS concretas:
 
 **CHECKPOINT OBRIGATÓRIO**: Apresentar as 3 melhores oportunidades identificadas para validação antes de prosseguir.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 1:
+{{
+  "fase_1_escavacao_brecha_lucrativa": {{
+    "dores_primarias": [
+      {{
+        "dor": "Dor específica e detalhada",
+        "custo_emocional": "Custo emocional real",
+        "frequencia": "Diária/Semanal/Mensal",
+        "intensidade": "Desconforto/Desespero",
+        "crescimento": "Crescendo/Diminuindo",
+        "tentativas_falhas": "Número de tentativas e falhas"
+      }}
+    ],
+    "analise_competitiva_devastadora": [
+      {{
+        "solucao_existente": "Nome da solução",
+        "fraqueza_estrutural": "Principal fraqueza",
+        "promessas_evitadas": "Onde prometem pouco",
+        "aspectos_evitados": "Aspectos que evitam abordar",
+        "insatisfacao_clientes": "Por que clientes insatisfeitos",
+        "gap_emocional": "Gap emocional aberto"
+      }}
+    ],
+    "validacao_potencial_lucro": {{
+      "tamanho_mercado_dor": "Tamanho do mercado que sente esta dor",
+      "capacidade_pagamento": "Capacidade de pagamento comprovada",
+      "frequencia_compra_investimento": "Frequência de compra/investimento",
+      "evidencias_premium": "Evidências de que pagariam PREMIUM",
+      "lifetime_value_potencial": "Análise de lifetime value potencial"
+    }},
+    "teste_oportunidade_ouro": {{
+      "urgencia_imediata": "Sim/Não, com evidências",
+      "especificidade_unica": "Sim/Não, com evidências",
+      "pricing_premium": "Sim/Não, com evidências",
+      "recorrencia_upsells": "Sim/Não, com evidências",
+      "escalabilidade": "Sim/Não, com evidências"
+    }},
+    "melhores_oportunidades_identificadas": [
+      "Oportunidade 1",
+      "Oportunidade 2",
+      "Oportunidade 3"
+    ]
+  }}
+}}
+""",
+            2: """
 ## FASE 2: FORJA DO POSICIONAMENTO ÚNICO (Mínimo 15 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -719,8 +652,46 @@ Desenvolva um VOCABULÁRIO específico:
 
 **CHECKPOINT OBRIGATÓRIO**: Validação do posicionamento através de 3 versões diferentes para escolha final.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 2:
+{{
+  "fase_2_forja_posicionamento_unico": {{
+    "definicao_inimigo_visceral": {{
+      "inimigo_principal": "Principal inimigo do avatar",
+      "problemas_causados": ["Problema 1", "Problema 2"],
+      "narrativa_conspiracao": "Narrativa de conspiração",
+      "linguagem_guerra": "Linguagem de guerra para o inimigo",
+      "capacidade_derrotar": "Por que você é o único capaz de derrotá-lo"
+    }},
+    "criacao_nova_religiao": {{
+      "visao_mundo": "Visão de mundo defendida",
+      "mandamentos": ["Mandamento 1", "Mandamento 2", "Mandamento 3", "Mandamento 4", "Mandamento 5", "Mandamento 6", "Mandamento 7"],
+      "ritual_processo_sagrado": "Ritual/processo sagrado",
+      "heresias_combatidas": ["Heresia 1", "Heresia 2"],
+      "identificacao_seguidores": "Como seguidores se identificam"
+    }},
+    "manifesto_inconformismo": "Manifesto de 2-3 páginas",
+    "declaracao_superioridade": {{
+      "credencial_unica": "Credencial única",
+      "resultado_comprovado": "Resultado já provado",
+      "metodo_revolucionario": "Método revolucionário",
+      "sacrificio_feito": "Sacrifício feito",
+      "perda_tempo_outros": "Por que tentar com outros é perda de tempo"
+    }},
+    "linguagem_dominacao": {{
+      "palavras_frases_unicas": ["Palavra/frase 1", "Palavra/frase 2"],
+      "metaforas_guerra": "Metáforas de guerra",
+      "terminologia_reconhecivel": "Terminologia reconhecível",
+      "linguagem_polarizacao": "Linguagem que polariza"
+    }},
+    "versoes_posicionamento": [
+      "Versão 1",
+      "Versão 2",
+      "Versão 3"
+    ]
+  }}
+}}
+""",
+            3: """
 ## FASE 3: FORJA DA BIG IDEA PARALISANTE (Mínimo 10 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -770,8 +741,71 @@ Para sustentar a Big Idea:
 
 **CHECKPOINT OBRIGATÓRIO**: Teste A/B entre as 3 versões mais fortes da Big Idea.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 3:
+{{
+  "fase_3_forja_big_idea_paralisante": {{
+    "anatomia_promessa_letal": {{
+      "desejo_secreto": "Desejo secreto do avatar",
+      "timeline_especifico": "Timeline específico",
+      "mecanismo_unico": "Mecanismo único",
+      "prova_irrefutavel": "Prova irrefutável",
+      "consequencia_inacao": "Consequência da inação"
+    }},
+    "desenvolvimento_mecanismo_unico": {{
+      "nome_memoravel": "Nome memorável e único",
+      "diferente_mercado": "Diferente de tudo no mercado",
+      "logico_credibilidade": "Lógico o suficiente para ser crível",
+      "simples_entendimento": "Simples o suficiente para ser entendido",
+      "poderoso_obsessao": "Poderoso o suficiente para gerar obsessão"
+    }},
+    "formulas_big_idea_testadas": [
+      "Versão 1",
+      "Versão 2",
+      "Versão 3",
+      "Versão 4",
+      "Versão 5",
+      "Versão 6",
+      "Versão 7",
+      "Versão 8",
+      "Versão 9",
+      "Versão 10"
+    ],
+    "teste_paralisia": [
+      {{
+        "versao": "Versão da Big Idea",
+        "curiosidade_obsessiva": "Sim/Não",
+        "inveja_acesso": "Sim/Não",
+        "urgencia_conhecer": "Sim/Não",
+        "raiva_nao_saber": "Sim/Não",
+        "medo_ficar_fora": "Sim/Não"
+      }}
+    ],
+    "prova_social_devastadora": {{
+      "cases_especificos": [
+        {{
+          "titulo": "Título do Case 1",
+          "numeros_reais": "Números reais do case"
+        }}
+      ],
+      "depoimentos_confirmam": [
+        "Depoimento 1",
+        "Depoimento 2"
+      ],
+      "antes_depois_prova": "Descrição do antes/depois",
+      "autoridades_validam": [
+        "Autoridade 1",
+        "Autoridade 2"
+      ]
+    }},
+    "versoes_mais_fortes_ab_test": [
+      "Versão A",
+      "Versão B",
+      "Versão C"
+    ]
+  }}
+}}
+""",
+            4: """
 ## FASE 4: ARQUITETURA DO PRODUTO VICIANTE (Mínimo 18 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -879,8 +913,112 @@ Responda com PROFUNDIDADE:
 
 **CHECKPOINT OBRIGATÓRIO**: Validação da estrutura do produto e teste de irresistibilidade.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 4:
+{{
+  "fase_4_arquitetura_produto_viciante": {{
+    "caracteristicas_tecnicas_letais": [
+      {{
+        "caracteristica": "Característica específica",
+        "resolve_dor": "Como resolve a dor",
+        "superior_alternativas": "Por que é superior",
+        "resultado_especifico": "Resultado específico que gera",
+        "percepcao_valor": "Como o cliente percebe o valor"
+      }}
+    ],
+    "vantagens_competitivas_inquestionaveis": [
+      {{
+        "vantagem": "Vantagem específica",
+        "resultado_superior": "Como se traduz em resultado superior",
+        "impossivel_copiar": "Por que é impossível de copiar",
+        "economia_ganho": "Qual economia/ganho representa"
+      }}
+    ],
+    "beneficios_emocionais_viscerais": {{
+      "sentimento_cliente": "Como o produto faz o cliente se sentir",
+      "status_identidade": "Qual status/identidade confere",
+      "medos_eliminados": ["Medo 1", "Medo 2"],
+      "desejos_secretos_satisfeitos": ["Desejo 1", "Desejo 2"]
+    }},
+    "exemplos_praticos_obsessivos": [
+      {{
+        "modulo_parte": "Módulo/parte do produto",
+        "exemplo_aplicacao": "Exemplo específico de aplicação",
+        "resultado_mensuravel": "Resultado mensurável esperado",
+        "timeline_exata": "Timeline exata para ver o resultado",
+        "prova_funcionamento": "Prova de que funciona"
+      }}
+    ],
+    "teste_12_perguntas_criticas": {{
+      "velocidade": {{
+        "primeiro_resultado": "Tempo até o primeiro resultado visível",
+        "parte_mais_rapida": "Parte mais rápida do processo",
+        "aceleracao": "Como acelerou o que normalmente demora"
+      }},
+      "simplicidade": {{
+        "executavel_iniciante": "Sim/Não, pode ser executado por iniciante",
+        "passos_processo_central": "Quantos passos tem o processo central",
+        "complexo_simplificado": "Qual parte complexa foi simplificada"
+      }},
+      "implementacao": {{
+        "comecar_5_minutos": "Sim/Não, pode começar em 5 minutos",
+        "obstaculo_removido": "Qual obstáculo comum foi removido",
+        "eliminacao_procrastinacao": "Como eliminou a procrastinação"
+      }},
+      "curva_aprendizado": {{
+        "conhecimento_previo": "Sim/Não, precisa de conhecimento prévio",
+        "tempo_dominar_basico": "Tempo para dominar o básico",
+        "complexo_obvio": "Como tornou o complexo óbvio"
+      }},
+      "habilidades": {{
+        "funciona_qualquer_avatar": "Sim/Não, funciona para qualquer pessoa do avatar",
+        "talentos_eliminados": "Quais 'talentos' foram eliminados",
+        "democratizacao": "Como democratizou o que era para poucos"
+      }},
+      "causa_raiz": {{
+        "causa_real_problema": "Qual a causa real do problema",
+        "corrige_raiz": "Como seu produto corrige a raiz",
+        "outros_sintomas": "Por que outros atacam apenas sintomas"
+      }},
+      "resolucao": {{
+        "problema_resolvido": "Exatamente qual problema resolve",
+        "cliente_sabe_resolvido": "Como o cliente sabe que foi resolvido",
+        "prova_tangivel_resolucao": "Qual prova tangível de resolução"
+      }},
+      "sistema_unico": {{
+        "elemento_ninguem_mais": "Qual elemento ninguém mais tem",
+        "impossivel_replicar": "Por que é impossível de replicar",
+        "multiplica_resultados": "Como este diferencial multiplica resultados"
+      }},
+      "metodologia": {{
+        "passos_processo_central": "Quantos passos tem o processo central",
+        "logica_sequencia": "Qual a lógica por trás da sequência",
+        "prepara_proximo_passo": "Como cada passo prepara o próximo"
+      }},
+      "garantia": {{
+        "garantia_especifica": "Qual garantia específica oferece",
+        "reduz_risco_percebido": "Como a garantia reduz o risco percebido",
+        "garantir_confianca": "Por que pode garantir com confiança"
+      }},
+      "irresistibilidade": {{
+        "impossivel_dizer_nao": "O que torna impossível dizer não",
+        "arrependimento_nao_comprar": "Qual elemento gera arrependimento por não comprar",
+        "empilhou_valor": "Como empilhou valor de forma obsessiva"
+      }},
+      "segmentacao": {{
+        "perfil_exato": "Perfil exato de quem mais se beneficia",
+        "filtra_nao_comprar": "Como filtra quem não deveria comprar",
+        "perfeito_avatar": "Por que é perfeito para este avatar específico"
+      }},
+      "vilao": {{
+        "inimigo_destroi": "Qual o inimigo que seu produto destrói",
+        "personifica_inimigo": "Como personifica este inimigo",
+        "guerra_pessoal": "Por que a guerra contra ele é pessoal"
+      }}
+    }}
+  }}
+}}
+""",
+            5: """
 ## FASE 5: CONSTRUÇÃO DA OFERTA HORMOZI IRRECUSÁVEL (Mínimo 12 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -948,8 +1086,60 @@ Crie limitações REAIS:
 
 **CHECKPOINT OBRIGATÓRIO**: Validação do valor percebido versus preço, e teste de urgência genuína.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 5:
+{{
+  "fase_5_construcao_oferta_hormozi_irrecusavel": {{
+    "aplicacao_value_equation": {{
+      "dream_outcome": {{
+        "resultado_final": "Resultado final que o avatar mais deseja",
+        "tornar_maior": "Como tornar este resultado ainda MAIOR",
+        "transformacao_completa": "Qual transformação completa promete",
+        "quantificar_resultado": "Como quantificar este resultado"
+      }},
+      "perceived_likelihood": {{
+        "provas_funcionamento": "Quantas provas tem de que funciona",
+        "credencial_sucesso": "Qual sua credencial que torna sucesso inevitável",
+        "cases_especificos": "Quantos cases específicos pode mostrar",
+        "garantir_resultado": "Como garantir que o resultado vai acontecer"
+      }},
+      "time_delay": {{
+        "tempo_normalmente": "Quanto tempo normalmente levaria",
+        "aceleracao_dramatica": "Como acelera dramaticamente o processo",
+        "parte_tempo_eliminada": "Qual parte do tempo consegue eliminar",
+        "resultados_imediatos": "Como entregar resultados imediatos"
+      }},
+      "effort_sacrifice": {{
+        "esforco_normalmente": "Quanto esforço normalmente exigiria",
+        "trabalho_cliente": "Qual parte do trabalho faz pelo cliente",
+        "execucao_automatica": "Como tornar a execução automática",
+        "sacrificios_eliminados": "Quais sacrifícios elimina"
+      }}
+    }},
+    "stack_valor_obsessivo": [
+      {{
+        "elemento": "Nome do elemento (ex: Produto Principal, Bônus X)",
+        "valor_mercado": "Valor individual de mercado",
+        "essencial_sucesso": "Por que é essencial para o sucesso",
+        "relacao_produto_principal": "Como se relaciona com o produto principal",
+        "resultado_especifico_entrega": "Qual resultado específico entrega"
+      }}
+    ],
+    "remocao_sistematica_objecoes": [
+      {{
+        "objecao": "Objeção específica",
+        "estrategia_resposta": "Como responder a esta objeção"
+      }}
+    ],
+    "urgencia_escassez_genuinas": {{
+      "quantidade": "Por que só X vagas estão disponíveis",
+      "tempo": "Por que esta oferta tem prazo específico",
+      "qualificacao": "Por que nem todo mundo pode entrar",
+      "momento": "Por que AGORA é a oportunidade única"
+    }}
+  }}
+}}
+""",
+            6: """
 ## FASE 6: CRIAÇÃO DO MAIOR EVENTO DO NICHO (Mínimo 20 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -1051,8 +1241,73 @@ Identifique 15 crenças/hábitos que o avatar tem achando que estão certos, mas
 
 **CHECKPOINT OBRIGATÓRIO**: Validação do conceito do evento e teste de atratividade das promessas.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 6:
+{{
+  "fase_6_criacao_maior_evento_nicho": {{
+    "nome_brand_evento": [
+      "Opção de nome 1",
+      "Opção de nome 2",
+      "Opção de nome 3"
+    ],
+    "promessa_central_magnetica": {{
+      "resolver_problema": "Como resolve o maior problema do nicho em 4 dias",
+      "revelar_segredos": "Segredos que nunca foram expostos",
+      "transformar_vida": "Como transforma completamente a vida dos participantes",
+      "posicionar_elite": "Como posiciona os participantes como ELITE do nicho",
+      "vantagem_injusta": "Como cria uma vantagem INJUSTA"
+    }},
+    "arquitetura_4_aulas_letais": {{
+      "aula_1_despertar_brutal": "Objetivos e conteúdo da Aula 1",
+      "aula_2_revelacao_metodo": "Objetivos e conteúdo da Aula 2",
+      "aula_3_transformacao_acao": "Objetivos e conteúdo da Aula 3",
+      "aula_4_ascensao_maestria": "Objetivos e conteúdo da Aula 4"
+    }},
+    "mapeamento_completo_avatar": {{
+      "dores_primarias": [
+        {{
+          "dor": "Dor específica",
+          "tipo": "financeira/emocional/social/tempo/competencia/direcao/reconhecimento/controle/progresso/legacy"
+        }}
+      ],
+      "sonhos_obsessivos": [
+        {{
+          "sonho": "Sonho específico",
+          "tipo": "financeiro/status/liberdade/impacto/maestria/relacionamentos/estilo_vida/legacy/transformacao/vinganca"
+        }}
+      ]
+    }},
+    "promessas_vantagens_irrecusaveis": [
+      {{
+        "promessa": "Promessa específica",
+        "especificidade": "Detalhes de especificidade",
+        "tangibilidade": "Como é tangível",
+        "desejavel": "Por que é desejável",
+        "crivel": "Como é crível",
+        "exclusiva": "Por que é exclusiva"
+      }}
+    ],
+    "arsenal_destruicao_objecoes": [
+      {{
+        "objecao": "Objeção comum",
+        "reconhecer": "Como reconhecer",
+        "reverter": "Como reverter",
+        "resolver": "Como resolver",
+        "reforcar_urgencia": "Como reforçar a urgência"
+      }}
+    ],
+    "armadilhas_mitos_fatais": [
+      {{
+        "crenca_habito": "Crença/hábito",
+        "porque_natural": "Por que é natural",
+        "sabotando_resultados": "Como sabota resultados",
+        "verdade_substitui": "Qual verdade substitui",
+        "implementar_nova_verdade": "Como implementar a nova verdade"
+      }}
+    ]
+  }}
+}}
+""",
+            7: """
 ## FASE 7: IMPLEMENTAÇÃO DO MÉTODO CIM DEVASTADOR (Mínimo 8 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -1109,8 +1364,51 @@ Elementos da mensagem:
 
 **CHECKPOINT OBRIGATÓRIO**: Validação da causa e teste de polarização (deve atrair devotos e repelir mornos).
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 7:
+{{
+  "fase_7_implementacao_metodo_cim_devastador": {{
+    "causa_revolucionaria": {{
+      "injustica_sistemica": "Qual injustiça sistêmica você não consegue mais tolerar",
+      "mentira_coletiva": "Que mentira coletiva precisa ser exposta",
+      "opressao_silenciosa": "Qual opressão silenciosa você vai quebrar",
+      "verdade_defender": "Que verdade você vai defender",
+      "mudar_mundo": "Como sua causa vai mudar o mundo para melhor",
+      "manifesto_causa": "Manifesto da causa (2 páginas)",
+      "linguagem_guerra_causa": "Linguagem de guerra para a causa",
+      "simbolos_visuais": ["Símbolo 1", "Símbolo 2"],
+      "rituais_conectam": ["Ritual 1", "Ritual 2"],
+      "visao_mundo_vencer": "Visão do mundo quando a causa vencer"
+    }},
+    "inimigo_comum_conspiracy": {{
+      "entidade_responsavel": "Qual entidade é responsável",
+      "beneficia_problema": "Como esta entidade se beneficia mantendo o problema",
+      "taticas_controle": ["Tática 1", "Tática 2"],
+      "especialistas_cumplices": "Por que os 'especialistas' são cúmplices",
+      "descoberta_conspiracao": "Como você descobriu esta conspiração",
+      "evidencias_conspiracao": ["Evidência 1", "Evidência 2"],
+      "vitimas": ["Vítima 1", "Vítima 2"],
+      "beneficiarios": ["Beneficiário 1", "Beneficiário 2"],
+      "whistleblowers": ["Whistleblower 1", "Whistleblower 2"],
+      "solucao_destroi": "Solução que a destrói permanentemente"
+    }},
+    "mensagem_salvadora": {{
+      "somente_seu_metodo": "Por que SOMENTE seu método pode vencer",
+      "discovery_exclusiva": "Qual discovery exclusiva você fez",
+      "mecanismo_superior": "Como seu mecanismo é superior",
+      "tentativas_anteriores_falharam": "Por que tentativas anteriores falharam",
+      "prova_eficacia_metodo": "Como você provou a eficácia do método",
+      "elementos_mensagem": [
+        "Revelação que muda tudo",
+        "Método revolucionário único",
+        "Prova irrefutável de superioridade",
+        "Urgência de agir antes que seja tarde",
+        "Convocação para juntar-se à revolução"
+      ]
+    }}
+  }}
+}}
+""",
+            8: """
 ## FASE 8: LINHA EDITORIAL VISCERAL 28 DIAS (Mínimo 25 páginas)
 
 ### OBJETIVO CIRÚRGICO:
@@ -1204,12 +1502,59 @@ Para CADA conteúdo, especificar:
 
 **CHECKPOINT OBRIGATÓRIO**: Validação da progressão psicológica e teste de hooks mais impactantes.
 
----
-
+Retorne APENAS um JSON válido com a seguinte estrutura para a FASE 8:
+{{
+  "fase_8_linha_editorial_visceral_28_dias": {{
+    "arquitetura_4_estagios_consciencia": {{
+      "semana_1_despertar": "Objetivos da Semana 1",
+      "semana_2_agitacao": "Objetivos da Semana 2",
+      "semana_3_educacao": "Objetivos da Semana 3",
+      "semana_4_conversao": "Objetivos da Semana 4"
+    }},
+    "planejamento_detalhado_84_conteudos": [
+      {{
+        "dia": "Dia do mês",
+        "tipo_conteudo": "REEL/CONTEUDO_ESTATICO/CARROSSEL",
+        "titulo": "Título do conteúdo",
+        "objetivo_psicologico": "Objetivo psicológico",
+        "hook_principal": "Hook principal",
+        "formato_validado": "Formato validado",
+        "cta_estrategico": "CTA estratégico",
+        "justificativa": "Justificativa"
+      }}
+    ],
+    "formatos_validados_tipo": {{
+      "reels_alto_impacto": [
+        "Tipo de Reel 1",
+        "Tipo de Reel 2"
+      ],
+      "conteudos_estaticos_carrosseis": [
+        "Tipo de Conteúdo Estático 1",
+        "Tipo de Conteúdo Estático 2"
+      ]
+    }},
+    "exemplo_detalhado_semana_1": [
+      {{
+        "dia": "Dia 1",
+        "conteudos": [
+          {{
+            "tipo": "REEL",
+            "titulo": "A Mentira Que [NICHO] Te Conta Todos os Dias",
+            "objetivo": "Despertar para manipulação do mercado",
+            "hook": "Se você acredita nisso, está sendo enganado há anos",
+            "formato": "Revelação chocante com evidência visual",
+            "cta": "Quantos de vocês já caíram nessa?"
+          }}
+        ]
+      }}
+    ]
+  }}
+}}
+""",
+            9: """
 ## FASE 9: ARSENAL DE 100+ ANÚNCIOS VIRAIS (Mínimo 35 páginas)
 
-
-## Objetivo Cirúrgico
+### Objetivo Cirúrgico
 Criar um arsenal completo de 100 criativos que combinam storytelling cinematográfico com persuasão psicológica letal, garantindo dominação total do feed.
 
 ## 9.1 Arquitetura Narrativa Fundamental
@@ -2046,380 +2391,108 @@ Retorne APENAS um JSON válido com esta estrutura:
     "Insight específico 3 baseado na pesquisa atual"
   ]
 }}
-
-INSTRUÇÕES CRÍTICAS:
-1. Use APENAS dados reais e atualizados da pesquisa na internet
-2. Seja extremamente específico em números, percentuais e valores
-3. Substitua TODOS os placeholders por dados reais
-4. Base todas as projeções nos dados de pesquisa e preço informado
-5. Foque em insights acionáveis e práticos para o mercado brasileiro
-6. Use a pesquisa para validar e enriquecer cada seção da análise
 """
-    
-    def _create_fallback_analysis(self, data: Dict) -> Dict:
-        """Cria análise de fallback quando Gemini falha"""
-        segmento = data.get('segmento', data.get('nicho', 'Produto Digital'))
-        produto = data.get('produto', 'Produto Digital')
-        
-        try:
-            preco = float(data.get('preco_float', 0)) if data.get('preco_float') is not None else 997.0
-        except (ValueError, TypeError):
-            preco = 997.0
-        
-        logger.info(f"🔄 Criando análise de fallback para {segmento} - Preço: R$ {preco}")
-        
-        return {
-            "escopo": {
-                "segmento_principal": segmento,
-                "subsegmentos": [f"{segmento} para iniciantes", f"{segmento} avançado", f"{segmento} empresarial"],
-                "produto_ideal": produto,
-                "proposta_valor": f"A metodologia mais completa e prática para dominar {segmento} no mercado brasileiro",
-                "tamanho_mercado": {
-                    "tam": "R$ 3,2 bilhões",
-                    "sam": "R$ 480 milhões",
-                    "som": "R$ 24 milhões"
-                }
-            },
-            "avatar_ultra_detalhado": {
-                "persona_principal": {
-                    "nome": "Carlos Eduardo Silva",
-                    "idade": "38 anos",
-                    "profissao": f"Especialista em {segmento}",
-                    "renda_mensal": "R$ 15.000 - R$ 35.000",
-                    "localizacao": "São Paulo, SP",
-                    "estado_civil": "Casado, 2 filhos",
-                    "escolaridade": "Superior completo com pós-graduação"
-                },
-                "demografia_detalhada": {
-                    "faixa_etaria_primaria": "32-45 anos (65%)",
-                    "faixa_etaria_secundaria": "25-32 anos (25%)",
-                    "distribuicao_genero": "65% mulheres, 35% homens",
-                    "distribuicao_geografica": "Sudeste (45%), Sul (25%), Nordeste (20%), Centro-Oeste (10%)",
-                    "classes_sociais": "Classe A (30%), Classe B (60%), Classe C (10%)",
-                    "nivel_educacional": "Superior completo (80%), Pós-graduação (45%)",
-                    "situacao_profissional": "Empreendedores (40%), Profissionais liberais (35%), Executivos (25%)"
-                },
-                "psicografia_profunda": {
-                    "valores_fundamentais": ["Crescimento pessoal", "Independência financeira", "Reconhecimento profissional", "Qualidade de vida", "Impacto social"],
-                    "estilo_vida_detalhado": "Vida acelerada com foco em produtividade, busca constante por conhecimento, valoriza tempo de qualidade com família, investe em desenvolvimento pessoal e profissional",
-                    "personalidade_dominante": "Ambicioso, determinado, analítico, orientado a resultados, perfeccionista",
-                    "aspiracoes_profissionais": ["Ser reconhecido como autoridade no segmento", "Construir negócio escalável", "Ter liberdade geográfica"],
-                    "aspiracoes_pessoais": ["Equilibrar vida pessoal e profissional", "Proporcionar melhor futuro para os filhos", "Viajar pelo mundo"],
-                    "medos_profundos": ["Ficar obsoleto no mercado", "Perder oportunidades por indecisão", "Não conseguir escalar o negócio", "Falhar financeiramente"],
-                    "frustracoes_atuais": ["Excesso de informação sem aplicação prática", "Falta de tempo para implementar estratégias", "Resultados abaixo do esperado"],
-                    "crencas_limitantes": ["Preciso trabalhar mais horas para ganhar mais", "Só quem tem muito dinheiro consegue se destacar", "É muito arriscado investir em marketing"],
-                    "motivadores_principais": ["Reconhecimento profissional", "Segurança financeira", "Liberdade de tempo"]
-                },
-                "comportamento_digital_avancado": {
-                    "plataformas_primarias": ["Instagram (2h/dia)", "LinkedIn (1h/dia)"],
-                    "plataformas_secundarias": ["YouTube", "WhatsApp Business"],
-                    "horarios_pico_detalhados": {
-                        "segunda_sexta": "6h-8h e 19h-22h",
-                        "fins_semana": "9h-11h e 20h-23h",
-                        "dispositivos_preferidos": ["Smartphone", "Notebook"]
-                    },
-                    "conteudo_consumido": {
-                        "formatos_preferidos": ["Vídeos curtos", "Posts educativos", "Lives"],
-                        "temas_interesse": ["Estratégias de negócio", "Cases de sucesso", "Tendências do mercado"],
-                        "influenciadores_seguidos": ["Especialistas reconhecidos", "Empreendedores de sucesso"],
-                        "tempo_medio_consumo": "15-20 minutos por sessão"
-                    },
-                    "comportamento_compra_online": {
-                        "frequencia_compras": "2-3 vezes por mês",
-                        "ticket_medio": f"R$ {int(preco * 0.8):,}".replace(',', '.'),
-                        "fatores_decisao": ["Prova social", "Garantia", "Autoridade do vendedor"],
-                        "canais_preferidos": ["Site próprio", "WhatsApp"]
-                    }
-                }
-            },
-            "mapeamento_dores_ultra_detalhado": {
-                "dores_nivel_1_criticas": [
-                    {
-                        "dor": f"Dificuldade para se posicionar como autoridade em {segmento}",
-                        "intensidade": "Alta",
-                        "frequencia": "Diária",
-                        "impacto_vida": "Baixo reconhecimento profissional e dificuldade para precificar adequadamente",
-                        "tentativas_solucao": ["Cursos online", "Networking"],
-                        "nivel_consciencia": "Consciente"
-                    }
-                ],
-                "dores_nivel_2_importantes": [
-                    {
-                        "dor": "Falta de metodologia estruturada e comprovada",
-                        "intensidade": "Alta",
-                        "frequencia": "Semanal",
-                        "impacto_vida": "Resultados inconsistentes e desperdício de recursos",
-                        "tentativas_solucao": ["Consultoria", "Mentoria"],
-                        "nivel_consciencia": "Consciente"
-                    }
-                ],
-                "dores_nivel_3_latentes": [
-                    {
-                        "dor": "Medo de não conseguir escalar o negócio",
-                        "intensidade": "Média",
-                        "frequencia": "Mensal",
-                        "impacto_vida": "Ansiedade e insegurança sobre o futuro",
-                        "tentativas_solucao": ["Planejamento estratégico"],
-                        "nivel_consciencia": "Semiconsciente"
-                    }
-                ],
-                "jornada_dor": {
-                    "gatilho_inicial": "Percepção de estagnação no crescimento profissional",
-                    "evolucao_dor": "Frustração crescente com resultados abaixo do esperado",
-                    "ponto_insuportavel": "Quando vê concorrentes obtendo melhores resultados",
-                    "busca_solucao": "Pesquisa ativa por metodologias e especialistas"
-                }
-            },
-            "analise_concorrencia_detalhada": {
-                "concorrentes_diretos": [
-                    {
-                        "nome": f"Academia Premium {segmento}",
-                        "preco_range": f"R$ {int(preco * 1.5):,} - R$ {int(preco * 2.5):,}".replace(',', '.'),
-                        "proposta_valor": "Metodologia exclusiva com certificação",
-                        "pontos_fortes": ["Marca estabelecida", "Comunidade ativa", "Conteúdo extenso"],
-                        "pontos_fracos": ["Preço elevado", "Suporte limitado", "Muito teórico"],
-                        "posicionamento": "Premium e exclusivo",
-                        "publico_alvo": "Profissionais experientes",
-                        "canais_marketing": ["Google Ads", "Parcerias"],
-                        "share_mercado_estimado": "15%"
-                    }
-                ],
-                "concorrentes_indiretos": [
-                    {
-                        "categoria": "Cursos gratuitos online",
-                        "exemplos": ["YouTube", "Blogs especializados"],
-                        "ameaca_nivel": "Médio"
-                    }
-                ],
-                "gaps_oportunidades": [
-                    "Falta de metodologia prática com implementação assistida",
-                    "Ausência de suporte contínuo pós-compra",
-                    "Preços inacessíveis para profissionais em início de carreira"
-                ],
-                "barreiras_entrada": ["Investimento em marketing", "Construção de autoridade"],
-                "fatores_diferenciacao": ["Implementação prática", "Suporte personalizado", "Garantia de resultados"]
-            },
-            "inteligencia_mercado": {
-                "tendencias_crescimento": [
-                    {
-                        "tendencia": "Digitalização acelerada pós-pandemia",
-                        "impacto": "Alto",
-                        "timeline": "2023-2026",
-                        "oportunidade": "Maior demanda por soluções digitais"
-                    }
-                ],
-                "tendencias_declinio": [
-                    {
-                        "tendencia": "Métodos tradicionais offline",
-                        "impacto": "Médio",
-                        "timeline": "2023-2025",
-                        "mitigacao": "Hibridização de metodologias"
-                    }
-                ],
-                "sazonalidade_detalhada": {
-                    "picos_demanda": ["Janeiro-Março", "Setembro-Outubro"],
-                    "baixas_demanda": ["Dezembro", "Julho"],
-                    "fatores_sazonais": ["Início de ano", "Volta às aulas"],
-                    "estrategias_sazonais": ["Campanhas de ano novo", "Promoções de volta às aulas"]
-                },
-                "regulamentacoes_impactos": ["LGPD", "Marco Civil da Internet"],
-                "tecnologias_emergentes": ["IA Generativa", "Automação de Marketing"]
-            },
-            "estrategia_palavras_chave": {
-                "palavras_primarias": [
-                    {
-                        "termo": f"curso {segmento}",
-                        "volume_mensal": "12.100",
-                        "dificuldade": "Média",
-                        "cpc_estimado": "R$ 4,20",
-                        "intencao_busca": "Comercial",
-                        "oportunidade": "Alta"
-                    }
-                ],
-                "palavras_secundarias": [
-                    {
-                        "termo": f"como aprender {segmento}",
-                        "volume_mensal": "8.900",
-                        "dificuldade": "Baixa",
-                        "cpc_estimado": "R$ 2,80",
-                        "intencao_busca": "Informacional",
-                        "oportunidade": "Média"
-                    }
-                ],
-                "palavras_long_tail": [
-                    f"melhor curso de {segmento} online",
-                    f"como se tornar especialista em {segmento}",
-                    f"{segmento} para iniciantes passo a passo"
-                ],
-                "custos_aquisicao_canal": {
-                    "google_ads": {
-                        "cpc_medio": "R$ 3,20",
-                        "cpm_medio": "R$ 32",
-                        "ctr_esperado": "3,5%",
-                        "conversao_esperada": "2,8%",
-                        "cpa_estimado": "R$ 420"
-                    },
-                    "facebook_ads": {
-                        "cpc_medio": "R$ 1,45",
-                        "cpm_medio": "R$ 18",
-                        "ctr_esperado": "2,8%",
-                        "conversao_esperada": "2,2%",
-                        "cpa_estimado": "R$ 380"
-                    },
-                    "instagram_ads": {
-                        "cpc_medio": "R$ 1,60",
-                        "cpm_medio": "R$ 20",
-                        "ctr_esperado": "3,2%",
-                        "conversao_esperada": "2,5%",
-                        "cpa_estimado": "R$ 400"
-                    },
-                    "youtube_ads": {
-                        "cpv_medio": "R$ 0,80",
-                        "cpm_medio": "R$ 12",
-                        "view_rate": "65%",
-                        "conversao_esperada": "1,8%",
-                        "cpa_estimado": "R$ 450"
-                    },
-                    "tiktok_ads": {
-                        "cpc_medio": "R$ 0,60",
-                        "cpm_medio": "R$ 8",
-                        "ctr_esperado": "4,2%",
-                        "conversao_esperada": "1,5%",
-                        "cpa_estimado": "R$ 480"
-                    }
-                }
-            },
-            "metricas_performance_detalhadas": {
-                "benchmarks_segmento": {
-                    "cac_medio_segmento": "R$ 420",
-                    "ltv_medio_segmento": "R$ 1.680",
-                    "churn_rate_medio": "15%",
-                    "ticket_medio_segmento": f"R$ {int(preco):,}".replace(',', '.')
-                },
-                "funil_conversao_otimizado": {
-                    "visitantes_leads": "18%",
-                    "leads_oportunidades": "25%",
-                    "oportunidades_vendas": "12%",
-                    "vendas_clientes": "95%"
-                },
-                "kpis_criticos": [
-                    {
-                        "metrica": "CAC (Custo de Aquisição de Cliente)",
-                        "valor_ideal": "R$ 420",
-                        "como_medir": "Investimento total em marketing / número de clientes adquiridos",
-                        "frequencia": "Semanal"
-                    },
-                    {
-                        "metrica": "LTV (Lifetime Value)",
-                        "valor_ideal": "R$ 1.680",
-                        "como_medir": "Receita média por cliente x tempo médio de relacionamento",
-                        "frequencia": "Mensal"
-                    },
-                    {
-                        "metrica": "ROI Marketing",
-                        "valor_ideal": "400%",
-                        "como_medir": "(Receita - Investimento) / Investimento x 100",
-                        "frequencia": "Mensal"
-                    }
-                ]
-            },
-            "voz_mercado_linguagem": {
-                "linguagem_avatar": {
-                    "termos_tecnicos": ["Metodologia", "Framework", "Sistema", "Estratégia"],
-                    "girias_expressoes": ["Game changer", "Next level", "Virada de chave"],
-                    "palavras_poder": ["Resultados", "Comprovado", "Exclusivo", "Garantido"],
-                    "palavras_evitar": ["Fácil", "Rápido", "Milagre", "Segredo"]
-                },
-                "objecoes_principais": [
-                    {
-                        "objecao": "Não tenho tempo para mais um curso",
-                        "frequencia": "Alta",
-                        "momento_surgimento": "Primeira exposição à oferta",
-                        "estrategia_contorno": "Mostrar metodologia de implementação em 15 minutos diários",
-                        "prova_social_necessaria": "Depoimentos de pessoas ocupadas que obtiveram resultados"
-                    }
-                ],
-                "gatilhos_mentais_efetivos": [
-                    {
-                        "gatilho": "Prova Social",
-                        "aplicacao": "Cases de sucesso com números reais",
-                        "efetividade": "Alta",
-                        "exemplos": ["Depoimentos em vídeo", "Resultados mensuráveis"]
-                    }
-                ],
-                "tom_comunicacao": {
-                    "personalidade_marca": "Autoridade confiável e acessível",
-                    "nivel_formalidade": "Profissional mas acessível",
-                    "emocoes_despertar": ["Confiança", "Esperança", "Determinação"],
-                    "storytelling_temas": ["Superação", "Transformação", "Conquista"]
-                }
-            },
-            "projecoes_cenarios": {
-                "cenario_conservador": {
-                    "premissas": ["Mercado estável", "Concorrência moderada"],
-                    "taxa_conversao": "2,0%",
-                    "ticket_medio": f"R$ {int(preco):,}".replace(',', '.'),
-                    "cac": "R$ 450",
-                    "ltv": "R$ 1.500",
-                    "faturamento_mensal": f"R$ {int(preco * 50):,}".replace(',', '.'),
-                    "roi": "240%",
-                    "break_even": "6 meses"
-                },
-                "cenario_realista": {
-                    "premissas": ["Crescimento moderado", "Execução consistente"],
-                    "taxa_conversao": "3,2%",
-                    "ticket_medio": f"R$ {int(preco):,}".replace(',', '.'),
-                    "cac": "R$ 420",
-                    "ltv": "R$ 1.680",
-                    "faturamento_mensal": f"R$ {int(preco * 80):,}".replace(',', '.'),
-                    "roi": "380%",
-                    "break_even": "4 meses"
-                },
-                "cenario_otimista": {
-                    "premissas": ["Crescimento acelerado", "Execução excelente"],
-                    "taxa_conversao": "5,0%",
-                    "ticket_medio": f"R$ {int(preco * 1.2):,}".replace(',', '.'),
-                    "cac": "R$ 380",
-                    "ltv": "R$ 2.100",
-                    "faturamento_mensal": f"R$ {int(preco * 150):,}".replace(',', '.'),
-                    "roi": "580%",
-                    "break_even": "3 meses"
-                }
-            },
-            "plano_acao_detalhado": [
-                {
-                    "fase": "Fase 1: Validação e Pesquisa",
-                    "duracao": "2 semanas",
-                    "acoes": [
-                        {
-                            "acao": "Validar proposta de valor com pesquisa qualitativa",
-                            "responsavel": "Equipe de pesquisa",
-                            "prazo": "10 dias",
-                            "recursos_necessarios": ["Ferramenta de pesquisa", "Lista de contatos"],
-                            "entregaveis": ["Relatório de pesquisa", "Personas validadas"],
-                            "metricas_sucesso": ["50 entrevistas realizadas", "Taxa de validação > 70%"]
-                        }
-                    ]
-                },
-                {
-                    "fase": "Fase 2: Desenvolvimento e Preparação",
-                    "duracao": "3 semanas",
-                    "acoes": [
-                        {
-                            "acao": "Criar landing page otimizada,detalhar dobras",
-                            "responsavel": "Equipe de marketing",
-                            "prazo": "7 dias",
-                            "recursos_necessarios": ["Designer", "Copywriter", "Desenvolvedor"],
-                            "entregaveis": ["Landing page responsiva", "Copy otimizado"],
-                            "metricas_sucesso": ["Taxa de conversão > 15%", "Tempo de carregamento < 3s"]
-                        }
-                    ]
-                }
-            ],
-            "insights_exclusivos": [
-                f"O segmento {segmento} está passando por uma transformação digital acelerada",
-                "Há uma lacuna significativa entre oferta premium e básica no mercado",
-                "O público valoriza mais implementação prática do que teoria extensiva"
-                "Maneira ou metodo irresistivel de convencer a compra"
-            ]
         }
+
+        prompt_for_phase = phase_prompts.get(phase_number, "")
+        if not prompt_for_phase:
+            raise ValueError(f"Fase {phase_number} não encontrada no super prompt.")
+
+        # Formatar o prompt com os dados iniciais e o resumo da pesquisa
+        formatted_prompt = base_prompt.format(
+            segmento=current_data.get('segmento', ''),
+            produto=current_data.get('produto', ''),
+            preco=current_data.get('preco', ''),
+            publico=current_data.get('publico', ''),
+            objetivo_receita=current_data.get('objetivo_receita', ''),
+            orcamento_marketing=current_data.get('orcamento_marketing', ''),
+            research_summary=research_summary
+        ) + prompt_for_phase
+
+        # Adicionar contexto das fases anteriores, se houver
+        for i in range(1, phase_number):
+            if f'fase_{i}_result' in current_data:
+                formatted_prompt += f"\n\nCONTEXTO DA FASE ANTERIOR {i}:\n{json.dumps(current_data[f'fase_{i}_result'], indent=2)}"
+
+        return formatted_prompt
+
+    def generate_analysis(self, data: Dict) -> Dict[str, Any]:
+        if not self.model:
+            logger.error("Cliente Gemini não inicializado.")
+            return {"error": "Gemini client not initialized."}
+
+        try:
+            # Extrair informações iniciais para o prompt
+            segmento = data.get('segmento', data.get('nicho', ''))
+            produto = data.get('produto', '')
+            preco = data.get('preco', '')
+            publico = data.get('publico', '')
+            objetivo_receita = data.get('objetivo_receita', '')
+            orcamento_marketing = data.get('orcamento_marketing', '')
+
+            full_analysis_results = {}
+
+            # 1. Pesquisa abrangente na internet (executada uma vez no início)
+            logger.info(f"🔍 Iniciando pesquisa abrangente para segmento: {segmento}")
+            research_data = self.research_segment_comprehensive(segmento)
+
+            # Compilar dados de pesquisa para o prompt
+            research_summary = ""
+            for query, results in research_data.items():
+                if results:
+                    research_summary += f"\n\n**{query}:**\n"
+                    for result in results[:3]:
+                        research_summary += f"- {result['title']}: {result['snippet'][:200]}...\n"
+
+            # Iterar sobre as 9 fases
+            for phase_num in range(1, 10):
+                logger.info(f"🚀 Iniciando Fase {phase_num} da análise...")
+                
+                # Gerar prompt específico para a fase
+                phase_prompt = self._generate_phase_prompt(phase_num, data, research_summary)
+
+                response = self.model.generate_content(phase_prompt)
+
+                if not response.text:
+                    logger.warning(f"⚠️ Resposta vazia do Gemini para Fase {phase_num}, usando fallback.")
+                    # Em um cenário real, você pode querer um fallback mais sofisticado por fase
+                    # Por simplicidade, aqui apenas continua ou usa o fallback geral no final
+                    continue 
+
+                try:
+                    # Tenta carregar o JSON diretamente
+                    phase_result = json.loads(response.text)
+                except json.JSONDecodeError:
+                    # Se falhar, tenta extrair de um bloco de código markdown
+                    logger.warning(f"Falha ao decodificar JSON diretamente na Fase {phase_num}. Tentando extrair de bloco de código.")
+                    match = re.search(r"```json\n(.*?)\n```", response.text, re.DOTALL)
+                    if match:
+                        try:
+                            phase_result = json.loads(match.group(1))
+                        except json.JSONDecodeError as e:
+                            logger.error(f"❌ Erro ao decodificar JSON extraído na Fase {phase_num}: {e}")
+                            continue # Pula para a próxima fase se a extração também falhar
+                    else:
+                        logger.error(f"❌ Não foi possível encontrar um bloco JSON válido na resposta da Fase {phase_num}.")
+                        continue # Pula para a próxima fase
+
+                full_analysis_results[f'fase_{phase_num}_result'] = phase_result
+                data[f'fase_{phase_num}_result'] = phase_result 
+                logger.info(f"✅ Fase {phase_num} concluída com sucesso.")
+            
+            if not full_analysis_results:
+                logger.warning("Nenhuma fase da análise foi concluída com sucesso. Retornando fallback.")
+                return self._create_fallback_analysis(data)
+
+            # Adicionar dados de pesquisa e timestamp ao resultado final
+            full_analysis_results['research_data'] = research_data
+            full_analysis_results['generated_at'] = time.time()
+            
+            # Retornar a análise completa com todas as fases
+            return full_analysis_results
+
+        except Exception as e:
+            logger.error(f"❌ Erro geral na análise Gemini: {str(e)}")
+            return self._create_fallback_analysis(data)
+
+
