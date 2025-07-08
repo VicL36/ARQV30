@@ -29,12 +29,12 @@ class GeminiClient:
             
             # Usar o modelo mais avançado disponível
             self.model = genai.GenerativeModel(
-                model_name="gemini-2.0-flash-exp",
+                model_name="gemini-2.5-flash",
                 generation_config={
-                    "temperature": 0.6,
+                    "temperature": 0.96,
                     "top_p": 0.8,
                     "top_k": 40,
-                    "max_output_tokens": 18192,
+                    "max_output_tokens": 38192,
                     "response_mime_type": "application/json"
                 },
                 safety_settings=[
@@ -201,7 +201,7 @@ class GeminiClient:
         for query, results in research_data.items():
             if results:
                 research_summary += f"\n\n**{query}:**\n"
-                for result in results[:3]:  # Top 3 resultados por query
+                for result in results[:5]:  # Top 3 resultados por query
                     research_summary += f"- {result['title']}: {result['snippet'][:200]}...\n"
         
         return f"""
