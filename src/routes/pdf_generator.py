@@ -385,7 +385,7 @@ def generate_pdf():
         
         os.makedirs("/tmp", exist_ok=True)
         
-        success = generator.generate_pdf_report(report_data, temp_path)
+        success = generator.generate_pdf_report(report_data, temp_path) 
 
         if success and os.path.exists(temp_path):
             def remove_file():
