@@ -546,6 +546,13 @@ function generateAvatarCard(avatar) {
                             </div>
                             ` : ''}
                             
+                            ${avatar.psicografia_profunda.personalidade_dominante ? `
+                            <div class="detail-item">
+                                <strong>Personalidade Dominante:</strong>
+                                <p>${avatar.psicografia_profunda.personalidade_dominante}</p>
+                            </div>
+                            ` : ''}
+                            
                             ${avatar.psicografia_profunda.aspiracoes_profissionais ? `
                             <div class="detail-item">
                                 <strong>Aspirações Profissionais:</strong>
@@ -555,11 +562,47 @@ function generateAvatarCard(avatar) {
                             </div>
                             ` : ''}
                             
+                            ${avatar.psicografia_profunda.aspiracoes_pessoais ? `
+                            <div class="detail-item">
+                                <strong>Aspirações Pessoais:</strong>
+                                <ul>
+                                    ${avatar.psicografia_profunda.aspiracoes_pessoais.map(asp => `<li>${asp}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                            
                             ${avatar.psicografia_profunda.medos_profundos ? `
                             <div class="detail-item">
                                 <strong>Medos Profundos:</strong>
                                 <ul>
                                     ${avatar.psicografia_profunda.medos_profundos.map(medo => `<li>${medo}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                            
+                            ${avatar.psicografia_profunda.frustracoes_atuais ? `
+                            <div class="detail-item">
+                                <strong>Frustrações Atuais:</strong>
+                                <ul>
+                                    ${avatar.psicografia_profunda.frustracoes_atuais.map(frust => `<li>${frust}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                            
+                            ${avatar.psicografia_profunda.crencas_limitantes ? `
+                            <div class="detail-item">
+                                <strong>Crenças Limitantes:</strong>
+                                <ul>
+                                    ${avatar.psicografia_profunda.crencas_limitantes.map(crenca => `<li>${crenca}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                            
+                            ${avatar.psicografia_profunda.motivadores_principais ? `
+                            <div class="detail-item">
+                                <strong>Motivadores Principais:</strong>
+                                <ul>
+                                    ${avatar.psicografia_profunda.motivadores_principais.map(motiv => `<li>${motiv}</li>`).join('')}
                                 </ul>
                             </div>
                             ` : ''}
@@ -580,11 +623,61 @@ function generateAvatarCard(avatar) {
                             </div>
                             ` : ''}
                             
+                            ${avatar.comportamento_digital_avancado.plataformas_secundarias ? `
+                            <div class="detail-item">
+                                <strong>Plataformas Secundárias:</strong>
+                                <ul>
+                                    ${avatar.comportamento_digital_avancado.plataformas_secundarias.map(plat => `<li>${plat}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ` : ''}
+                            
+                            ${avatar.comportamento_digital_avancado.horarios_pico_detalhados ? `
+                            <div class="detail-item">
+                                <strong>Horários de Pico:</strong>
+                                <div class="horarios-grid">
+                                    <p><strong>Segunda a Sexta:</strong> ${avatar.comportamento_digital_avancado.horarios_pico_detalhados.segunda_sexta || 'N/A'}</p>
+                                    <p><strong>Fins de Semana:</strong> ${avatar.comportamento_digital_avancado.horarios_pico_detalhados.fins_semana || 'N/A'}</p>
+                                    ${avatar.comportamento_digital_avancado.horarios_pico_detalhados.dispositivos_preferidos ? `
+                                        <p><strong>Dispositivos:</strong> ${avatar.comportamento_digital_avancado.horarios_pico_detalhados.dispositivos_preferidos.join(', ')}</p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                            
                             ${avatar.comportamento_digital_avancado.conteudo_consumido ? `
                             <div class="detail-item">
                                 <strong>Conteúdo Consumido:</strong>
-                                <p><strong>Formatos:</strong> ${avatar.comportamento_digital_avancado.conteudo_consumido.formatos_preferidos?.join(', ') || 'N/A'}</p>
-                                <p><strong>Temas:</strong> ${avatar.comportamento_digital_avancado.conteudo_consumido.temas_interesse?.join(', ') || 'N/A'}</p>
+                                <div class="conteudo-grid">
+                                    ${avatar.comportamento_digital_avancado.conteudo_consumido.formatos_preferidos ? `
+                                        <p><strong>Formatos:</strong> ${avatar.comportamento_digital_avancado.conteudo_consumido.formatos_preferidos.join(', ')}</p>
+                                    ` : ''}
+                                    ${avatar.comportamento_digital_avancado.conteudo_consumido.temas_interesse ? `
+                                        <p><strong>Temas:</strong> ${avatar.comportamento_digital_avancado.conteudo_consumido.temas_interesse.join(', ')}</p>
+                                    ` : ''}
+                                    ${avatar.comportamento_digital_avancado.conteudo_consumido.influenciadores_seguidos ? `
+                                        <p><strong>Influenciadores:</strong> ${avatar.comportamento_digital_avancado.conteudo_consumido.influenciadores_seguidos.join(', ')}</p>
+                                    ` : ''}
+                                    ${avatar.comportamento_digital_avancado.conteudo_consumido.tempo_medio_consumo ? `
+                                        <p><strong>Tempo Médio:</strong> ${avatar.comportamento_digital_avancado.conteudo_consumido.tempo_medio_consumo}</p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            ${avatar.comportamento_digital_avancado.comportamento_compra_online ? `
+                            <div class="detail-item">
+                                <strong>Comportamento de Compra Online:</strong>
+                                <div class="compra-grid">
+                                    <p><strong>Frequência:</strong> ${avatar.comportamento_digital_avancado.comportamento_compra_online.frequencia_compras || 'N/A'}</p>
+                                    <p><strong>Ticket Médio:</strong> ${avatar.comportamento_digital_avancado.comportamento_compra_online.ticket_medio || 'N/A'}</p>
+                                    ${avatar.comportamento_digital_avancado.comportamento_compra_online.fatores_decisao ? `
+                                        <p><strong>Fatores de Decisão:</strong> ${avatar.comportamento_digital_avancado.comportamento_compra_online.fatores_decisao.join(', ')}</p>
+                                    ` : ''}
+                                    ${avatar.comportamento_digital_avancado.comportamento_compra_online.canais_preferidos ? `
+                                        <p><strong>Canais Preferidos:</strong> ${avatar.comportamento_digital_avancado.comportamento_compra_online.canais_preferidos.join(', ')}</p>
+                                    ` : ''}
+                                </div>
                             </div>
                             ` : ''}
                         </div>
@@ -620,6 +713,10 @@ function generatePainCard(dores) {
                                     <p><strong>Intensidade:</strong> ${dor.intensidade || 'N/A'}</p>
                                     <p><strong>Frequência:</strong> ${dor.frequencia || 'N/A'}</p>
                                     <p><strong>Impacto:</strong> ${dor.impacto_vida || 'N/A'}</p>
+                                    ${dor.tentativas_solucao ? `
+                                        <p><strong>Tentativas de Solução:</strong> ${Array.isArray(dor.tentativas_solucao) ? dor.tentativas_solucao.join(', ') : dor.tentativas_solucao}</p>
+                                    ` : ''}
+                                    <p><strong>Nível de Consciência:</strong> ${dor.nivel_consciencia || 'N/A'}</p>
                                 ` : ''}
                             </div>
                         `).join('')}
@@ -638,6 +735,11 @@ function generatePainCard(dores) {
                                 ${typeof dor === 'object' ? `
                                     <p><strong>Intensidade:</strong> ${dor.intensidade || 'N/A'}</p>
                                     <p><strong>Frequência:</strong> ${dor.frequencia || 'N/A'}</p>
+                                    <p><strong>Impacto:</strong> ${dor.impacto_vida || 'N/A'}</p>
+                                    ${dor.tentativas_solucao ? `
+                                        <p><strong>Tentativas de Solução:</strong> ${Array.isArray(dor.tentativas_solucao) ? dor.tentativas_solucao.join(', ') : dor.tentativas_solucao}</p>
+                                    ` : ''}
+                                    <p><strong>Nível de Consciência:</strong> ${dor.nivel_consciencia || 'N/A'}</p>
                                 ` : ''}
                             </div>
                         `).join('')}
@@ -653,6 +755,15 @@ function generatePainCard(dores) {
                             <div class="dor-item nivel-3">
                                 <h5>Dor ${index + 1}</h5>
                                 <p><strong>Dor:</strong> ${typeof dor === 'object' ? dor.dor : dor}</p>
+                                ${typeof dor === 'object' ? `
+                                    <p><strong>Intensidade:</strong> ${dor.intensidade || 'N/A'}</p>
+                                    <p><strong>Frequência:</strong> ${dor.frequencia || 'N/A'}</p>
+                                    <p><strong>Impacto:</strong> ${dor.impacto_vida || 'N/A'}</p>
+                                    ${dor.tentativas_solucao ? `
+                                        <p><strong>Tentativas de Solução:</strong> ${Array.isArray(dor.tentativas_solucao) ? dor.tentativas_solucao.join(', ') : dor.tentativas_solucao}</p>
+                                    ` : ''}
+                                    <p><strong>Nível de Consciência:</strong> ${dor.nivel_consciencia || 'N/A'}</p>
+                                ` : ''}
                             </div>
                         `).join('')}
                     </div>
@@ -679,12 +790,12 @@ function generateCompetitionCard(concorrencia) {
     if (!concorrencia) return '';
     
     return `
-        <div class="neo-enhanced-card result-card half-width">
+        <div class="neo-enhanced-card result-card full-width">
             <div class="neo-card-header">
                 <div class="neo-card-icon">
                     <i class="fas fa-chess"></i>
                 </div>
-                <h3 class="neo-card-title">Análise da Concorrência</h3>
+                <h3 class="neo-card-title">Análise da Concorrência Detalhada</h3>
             </div>
             <div class="neo-card-content">
                 ${concorrencia.concorrentes_diretos ? `
@@ -695,7 +806,12 @@ function generateCompetitionCard(concorrencia) {
                             <h5>${comp.nome || 'Concorrente'}</h5>
                             <p><strong>Preço:</strong> ${comp.preco_range || 'N/A'}</p>
                             <p><strong>Proposta:</strong> ${comp.proposta_valor || 'N/A'}</p>
+                            <p><strong>Posicionamento:</strong> ${comp.posicionamento || 'N/A'}</p>
+                            <p><strong>Público-Alvo:</strong> ${comp.publico_alvo || 'N/A'}</p>
                             <p><strong>Share de Mercado:</strong> ${comp.share_mercado_estimado || 'N/A'}</p>
+                            ${comp.canais_marketing ? `
+                                <p><strong>Canais de Marketing:</strong> ${Array.isArray(comp.canais_marketing) ? comp.canais_marketing.join(', ') : comp.canais_marketing}</p>
+                            ` : ''}
                             ${comp.pontos_fortes ? `
                                 <p><strong>Pontos Fortes:</strong></p>
                                 <ul>
@@ -713,11 +829,35 @@ function generateCompetitionCard(concorrencia) {
                 </div>
                 ` : ''}
                 
+                ${concorrencia.concorrentes_indiretos ? `
+                <div class="detail-item">
+                    <strong>Concorrentes Indiretos:</strong>
+                    ${concorrencia.concorrentes_indiretos.map(indir => `
+                        <div class="indirect-competitor-item">
+                            <h5>${indir.categoria || 'Categoria'}</h5>
+                            ${indir.exemplos ? `
+                                <p><strong>Exemplos:</strong> ${Array.isArray(indir.exemplos) ? indir.exemplos.join(', ') : indir.exemplos}</p>
+                            ` : ''}
+                            <p><strong>Nível de Ameaça:</strong> ${indir.ameaca_nivel || 'N/A'}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+                
                 ${concorrencia.gaps_oportunidades ? `
                 <div class="detail-item">
                     <strong>Gaps e Oportunidades:</strong>
                     <ul>
                         ${concorrencia.gaps_oportunidades.map(gap => `<li>${gap}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+                
+                ${concorrencia.barreiras_entrada ? `
+                <div class="detail-item">
+                    <strong>Barreiras de Entrada:</strong>
+                    <ul>
+                        ${concorrencia.barreiras_entrada.map(barreira => `<li>${barreira}</li>`).join('')}
                     </ul>
                 </div>
                 ` : ''}
@@ -739,7 +879,7 @@ function generateMarketCard(mercado) {
     if (!mercado) return '';
     
     return `
-        <div class="neo-enhanced-card result-card half-width">
+        <div class="neo-enhanced-card result-card full-width">
             <div class="neo-card-header">
                 <div class="neo-card-icon">
                     <i class="fas fa-chart-pie"></i>
@@ -761,9 +901,23 @@ function generateMarketCard(mercado) {
                 </div>
                 ` : ''}
                 
+                ${mercado.tendencias_declinio ? `
+                <div class="detail-item">
+                    <strong>Tendências em Declínio:</strong>
+                    ${mercado.tendencias_declinio.map(tend => `
+                        <div class="tendencia-item declinio">
+                            <h5>${tend.tendencia || 'Tendência'}</h5>
+                            <p><strong>Impacto:</strong> ${tend.impacto || 'N/A'}</p>
+                            <p><strong>Timeline:</strong> ${tend.timeline || 'N/A'}</p>
+                            <p><strong>Mitigação:</strong> ${tend.mitigacao || 'N/A'}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+                
                 ${mercado.sazonalidade_detalhada ? `
                 <div class="detail-item">
-                    <strong>Sazonalidade:</strong>
+                    <strong>Sazonalidade Detalhada:</strong>
                     <div class="sazonalidade-grid">
                         <div class="sazonalidade-item">
                             <h6>Picos de Demanda</h6>
@@ -773,7 +927,28 @@ function generateMarketCard(mercado) {
                             <h6>Baixas de Demanda</h6>
                             <p>${mercado.sazonalidade_detalhada.baixas_demanda?.join(', ') || 'N/A'}</p>
                         </div>
+                        ${mercado.sazonalidade_detalhada.fatores_sazonais ? `
+                        <div class="sazonalidade-item">
+                            <h6>Fatores Sazonais</h6>
+                            <p>${mercado.sazonalidade_detalhada.fatores_sazonais.join(', ')}</p>
+                        </div>
+                        ` : ''}
+                        ${mercado.sazonalidade_detalhada.estrategias_sazonais ? `
+                        <div class="sazonalidade-item">
+                            <h6>Estratégias Sazonais</h6>
+                            <p>${mercado.sazonalidade_detalhada.estrategias_sazonais.join(', ')}</p>
+                        </div>
+                        ` : ''}
                     </div>
+                </div>
+                ` : ''}
+                
+                ${mercado.regulamentacoes_impactos ? `
+                <div class="detail-item">
+                    <strong>Regulamentações e Impactos:</strong>
+                    <ul>
+                        ${mercado.regulamentacoes_impactos.map(reg => `<li>${reg}</li>`).join('')}
+                    </ul>
                 </div>
                 ` : ''}
                 
@@ -806,7 +981,40 @@ function generateKeywordsCard(palavras) {
                 <div class="detail-item">
                     <strong>Palavras-Chave Primárias:</strong>
                     <div class="keywords-table">
+                        <div class="keywords-header">
+                            <span>Termo</span>
+                            <span>Volume</span>
+                            <span>CPC</span>
+                            <span>Dificuldade</span>
+                            <span>Intenção</span>
+                            <span>Oportunidade</span>
+                        </div>
                         ${palavras.palavras_primarias.slice(0, 5).map(kw => `
+                            <div class="keyword-row">
+                                <span class="keyword">${kw.termo || 'N/A'}</span>
+                                <span>${kw.volume_mensal || 'N/A'}</span>
+                                <span>${kw.cpc_estimado || 'N/A'}</span>
+                                <span class="difficulty ${(kw.dificuldade || '').toLowerCase()}">${kw.dificuldade || 'N/A'}</span>
+                                <span class="intent ${(kw.intencao_busca || '').toLowerCase()}">${kw.intencao_busca || 'N/A'}</span>
+                                <span class="opportunity ${(kw.oportunidade || '').toLowerCase()}">${kw.oportunidade || 'N/A'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${palavras.palavras_secundarias ? `
+                <div class="detail-item">
+                    <strong>Palavras-Chave Secundárias:</strong>
+                    <div class="keywords-table">
+                        <div class="keywords-header">
+                            <span>Termo</span>
+                            <span>Volume</span>
+                            <span>CPC</span>
+                            <span>Dificuldade</span>
+                            <span>Oportunidade</span>
+                        </div>
+                        ${palavras.palavras_secundarias.slice(0, 5).map(kw => `
                             <div class="keyword-row">
                                 <span class="keyword">${kw.termo || 'N/A'}</span>
                                 <span>${kw.volume_mensal || 'N/A'}</span>
@@ -834,10 +1042,14 @@ function generateKeywordsCard(palavras) {
                     <div class="platform-costs">
                         ${Object.entries(palavras.custos_aquisicao_canal).map(([platform, costs]) => `
                             <div class="platform-item">
-                                <h5>${platform.replace('_', ' ')}</h5>
+                                <h5>${platform.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h5>
                                 <div class="platform-metrics">
                                     <span>CPC: ${costs.cpc_medio || 'N/A'}</span>
                                     <span>CPM: ${costs.cpm_medio || 'N/A'}</span>
+                                    ${costs.cpv_medio ? `<span>CPV: ${costs.cpv_medio}</span>` : ''}
+                                    ${costs.ctr_esperado ? `<span>CTR: ${costs.ctr_esperado}</span>` : ''}
+                                    ${costs.view_rate ? `<span>View Rate: ${costs.view_rate}</span>` : ''}
+                                    ${costs.conversao_esperada ? `<span>Conv.: ${costs.conversao_esperada}</span>` : ''}
                                     <span>CPA: ${costs.cpa_estimado || 'N/A'}</span>
                                 </div>
                             </div>
@@ -920,38 +1132,45 @@ function generateVoiceCard(voz) {
     if (!voz) return '';
     
     return `
-        <div class="neo-enhanced-card result-card half-width">
+        <div class="neo-enhanced-card result-card full-width">
             <div class="neo-card-header">
                 <div class="neo-card-icon">
                     <i class="fas fa-comments"></i>
                 </div>
-                <h3 class="neo-card-title">Voz do Mercado</h3>
+                <h3 class="neo-card-title">Voz do Mercado e Linguagem</h3>
             </div>
             <div class="neo-card-content">
                 ${voz.linguagem_avatar ? `
                 <div class="detail-item">
                     <strong>Linguagem do Avatar:</strong>
-                    ${voz.linguagem_avatar.termos_tecnicos ? `
-                        <p><strong>Termos Técnicos:</strong> ${voz.linguagem_avatar.termos_tecnicos.join(', ')}</p>
-                    ` : ''}
-                    ${voz.linguagem_avatar.palavras_poder ? `
-                        <p><strong>Palavras de Poder:</strong> ${voz.linguagem_avatar.palavras_poder.join(', ')}</p>
-                    ` : ''}
-                    ${voz.linguagem_avatar.palavras_evitar ? `
-                        <p><strong>Palavras a Evitar:</strong> ${voz.linguagem_avatar.palavras_evitar.join(', ')}</p>
-                    ` : ''}
+                    <div class="linguagem-grid">
+                        ${voz.linguagem_avatar.termos_tecnicos ? `
+                            <p><strong>Termos Técnicos:</strong> ${voz.linguagem_avatar.termos_tecnicos.join(', ')}</p>
+                        ` : ''}
+                        ${voz.linguagem_avatar.girias_expressoes ? `
+                            <p><strong>Gírias e Expressões:</strong> ${voz.linguagem_avatar.girias_expressoes.join(', ')}</p>
+                        ` : ''}
+                        ${voz.linguagem_avatar.palavras_poder ? `
+                            <p><strong>Palavras de Poder:</strong> ${voz.linguagem_avatar.palavras_poder.join(', ')}</p>
+                        ` : ''}
+                        ${voz.linguagem_avatar.palavras_evitar ? `
+                            <p><strong>Palavras a Evitar:</strong> ${voz.linguagem_avatar.palavras_evitar.join(', ')}</p>
+                        ` : ''}
+                    </div>
                 </div>
                 ` : ''}
                 
                 ${voz.objecoes_principais ? `
                 <div class="detail-item">
                     <strong>Principais Objeções:</strong>
-                    ${voz.objecoes_principais.map(obj => `
+                    ${voz.objecoes_principais.map((obj, index) => `
                         <div class="objecao-item">
-                            <h5>Objeção</h5>
+                            <h5>Objeção ${index + 1}</h5>
                             <p><strong>Objeção:</strong> ${obj.objecao || 'N/A'}</p>
-                            <p><strong>Estratégia:</strong> ${obj.estrategia_contorno || 'N/A'}</p>
                             <p><strong>Frequência:</strong> ${obj.frequencia || 'N/A'}</p>
+                            <p><strong>Momento:</strong> ${obj.momento_surgimento || 'N/A'}</p>
+                            <p><strong>Estratégia:</strong> ${obj.estrategia_contorno || 'N/A'}</p>
+                            <p><strong>Prova Social:</strong> ${obj.prova_social_necessaria || 'N/A'}</p>
                         </div>
                     `).join('')}
                 </div>
@@ -965,8 +1184,27 @@ function generateVoiceCard(voz) {
                             <h5>${gatilho.gatilho || 'Gatilho'}</h5>
                             <p><strong>Aplicação:</strong> ${gatilho.aplicacao || 'N/A'}</p>
                             <p><strong>Efetividade:</strong> ${gatilho.efetividade || 'N/A'}</p>
+                            ${gatilho.exemplos ? `
+                                <p><strong>Exemplos:</strong> ${Array.isArray(gatilho.exemplos) ? gatilho.exemplos.join(', ') : gatilho.exemplos}</p>
+                            ` : ''}
                         </div>
                     `).join('')}
+                </div>
+                ` : ''}
+                
+                ${voz.tom_comunicacao ? `
+                <div class="detail-item">
+                    <strong>Tom de Comunicação:</strong>
+                    <div class="tom-grid">
+                        <p><strong>Personalidade da Marca:</strong> ${voz.tom_comunicacao.personalidade_marca || 'N/A'}</p>
+                        <p><strong>Nível de Formalidade:</strong> ${voz.tom_comunicacao.nivel_formalidade || 'N/A'}</p>
+                        ${voz.tom_comunicacao.emocoes_despertar ? `
+                            <p><strong>Emoções a Despertar:</strong> ${voz.tom_comunicacao.emocoes_despertar.join(', ')}</p>
+                        ` : ''}
+                        ${voz.tom_comunicacao.storytelling_temas ? `
+                            <p><strong>Temas de Storytelling:</strong> ${voz.tom_comunicacao.storytelling_temas.join(', ')}</p>
+                        ` : ''}
+                    </div>
                 </div>
                 ` : ''}
             </div>
@@ -992,6 +1230,9 @@ function generateProjectionsCard(projecoes) {
                         <h4>Cenário Conservador</h4>
                         <div class="scenario-metrics">
                             <p><strong>Taxa de Conversão:</strong> ${projecoes.cenario_conservador.taxa_conversao || 'N/A'}</p>
+                            <p><strong>Ticket Médio:</strong> ${projecoes.cenario_conservador.ticket_medio || 'N/A'}</p>
+                            <p><strong>CAC:</strong> ${projecoes.cenario_conservador.cac || 'N/A'}</p>
+                            <p><strong>LTV:</strong> ${projecoes.cenario_conservador.ltv || 'N/A'}</p>
                             <p><strong>Faturamento Mensal:</strong> ${projecoes.cenario_conservador.faturamento_mensal || 'N/A'}</p>
                             <p><strong>ROI:</strong> ${projecoes.cenario_conservador.roi || 'N/A'}</p>
                             <p><strong>Break Even:</strong> ${projecoes.cenario_conservador.break_even || 'N/A'}</p>
@@ -1012,6 +1253,9 @@ function generateProjectionsCard(projecoes) {
                         <h4>Cenário Realista</h4>
                         <div class="scenario-metrics">
                             <p><strong>Taxa de Conversão:</strong> ${projecoes.cenario_realista.taxa_conversao || 'N/A'}</p>
+                            <p><strong>Ticket Médio:</strong> ${projecoes.cenario_realista.ticket_medio || 'N/A'}</p>
+                            <p><strong>CAC:</strong> ${projecoes.cenario_realista.cac || 'N/A'}</p>
+                            <p><strong>LTV:</strong> ${projecoes.cenario_realista.ltv || 'N/A'}</p>
                             <p><strong>Faturamento Mensal:</strong> ${projecoes.cenario_realista.faturamento_mensal || 'N/A'}</p>
                             <p><strong>ROI:</strong> ${projecoes.cenario_realista.roi || 'N/A'}</p>
                             <p><strong>Break Even:</strong> ${projecoes.cenario_realista.break_even || 'N/A'}</p>
@@ -1032,6 +1276,9 @@ function generateProjectionsCard(projecoes) {
                         <h4>Cenário Otimista</h4>
                         <div class="scenario-metrics">
                             <p><strong>Taxa de Conversão:</strong> ${projecoes.cenario_otimista.taxa_conversao || 'N/A'}</p>
+                            <p><strong>Ticket Médio:</strong> ${projecoes.cenario_otimista.ticket_medio || 'N/A'}</p>
+                            <p><strong>CAC:</strong> ${projecoes.cenario_otimista.cac || 'N/A'}</p>
+                            <p><strong>LTV:</strong> ${projecoes.cenario_otimista.ltv || 'N/A'}</p>
                             <p><strong>Faturamento Mensal:</strong> ${projecoes.cenario_otimista.faturamento_mensal || 'N/A'}</p>
                             <p><strong>ROI:</strong> ${projecoes.cenario_otimista.roi || 'N/A'}</p>
                             <p><strong>Break Even:</strong> ${projecoes.cenario_otimista.break_even || 'N/A'}</p>
@@ -1083,10 +1330,13 @@ function generateActionPlanCard(plano) {
                                             <p><strong>Responsável:</strong> ${acao.responsavel || 'N/A'}</p>
                                             <p><strong>Prazo:</strong> ${acao.prazo || 'N/A'}</p>
                                             ${acao.recursos_necessarios ? `
-                                                <p><strong>Recursos:</strong> ${acao.recursos_necessarios.join(', ')}</p>
+                                                <p><strong>Recursos:</strong> ${Array.isArray(acao.recursos_necessarios) ? acao.recursos_necessarios.join(', ') : acao.recursos_necessarios}</p>
+                                            ` : ''}
+                                            ${acao.entregaveis ? `
+                                                <p><strong>Entregáveis:</strong> ${Array.isArray(acao.entregaveis) ? acao.entregaveis.join(', ') : acao.entregaveis}</p>
                                             ` : ''}
                                             ${acao.metricas_sucesso ? `
-                                                <p><strong>Métricas:</strong> ${acao.metricas_sucesso.join(', ')}</p>
+                                                <p><strong>Métricas:</strong> ${Array.isArray(acao.metricas_sucesso) ? acao.metricas_sucesso.join(', ') : acao.metricas_sucesso}</p>
                                             ` : ''}
                                         </div>
                                     </div>
@@ -1226,3 +1476,4 @@ window.addEventListener('error', function(event) {
 window.addEventListener('unhandledrejection', function(event) {
     console.error('Unhandled Promise Rejection:', event.reason);
 });
+
