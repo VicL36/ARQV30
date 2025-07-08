@@ -59,4 +59,3 @@ beautifulsoup4==4.12.3
 lxml==5.1.0
 reportlab==4.4.2
 Pillow==10.4.0
-gunicorn==21.2.0
