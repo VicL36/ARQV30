@@ -15,11 +15,11 @@ from functools import lru_cache
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-analysis_bp = Blueprint('analysis', __name__)
+analysis_bp = Blueprint(\'analysis\', __name__)
 
 # Configure Supabase
-supabase_url = os.getenv('SUPABASE_URL')
-supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+supabase_url = os.getenv(\'SUPABASE_URL\')
+supabase_key = os.getenv(\'SUPABASE_SERVICE_ROLE_KEY\')
 supabase: Client = None
 
 if supabase_url and supabase_key:
@@ -28,255 +28,197 @@ if supabase_url and supabase_key:
         logger.info("✅ Cliente Supabase configurado com sucesso")
     except Exception as e:
         logger.error(f"❌ Erro ao configurar Supabase: {e}")
+        supabase = None
 
 # Initialize Gemini client
-try:
-    gemini_client = GeminiClient()
+gemini_client = GeminiClient()
+if gemini_client.client:
     logger.info("✅ Cliente Gemini Pro 2.5 configurado com sucesso")
-except Exception as e:
-    logger.error(f"❌ Erro ao inicializar Gemini: {e}")
-    gemini_client = None
+else:
+    logger.error("❌ Erro ao inicializar Gemini: Cliente não disponível.")
 
-@analysis_bp.route('/analyze', methods=['POST'])
+@analysis_bp.route(\"/analyze\", methods=[\"POST\"])
 def analyze_market():
     """Análise ultra-detalhada de mercado com Gemini Pro 2.5 e pesquisa na internet"""
     try:
         data = request.get_json()
-        
-        # Aceitar tanto 'segmento' quanto 'nicho' para compatibilidade
-        segmento = data.get('segmento') or data.get('nicho')
+
+        # Aceitar tanto \'segmento\' quanto \'nicho\' para compatibilidade
+        segmento = data.get(\'segmento\') or data.get(\'nicho\')
         if not segmento:
-            return jsonify({'error': 'Segmento é obrigatório'}), 400
-        
-        # Extract and validate form data
-        analysis_data = {
-            'segmento': segmento.strip(),
-            'produto': data.get('produto', '').strip(),
-            'descricao': data.get('descricao', '').strip(),
-            'preco': data.get('preco', ''),
-            'publico': data.get('publico', '').strip(),
-            'concorrentes': data.get('concorrentes', '').strip(),
-            'dados_adicionais': data.get('dadosAdicionais', '').strip(),
-            'objetivo_receita': data.get('objetivoReceita', ''),
-            'prazo_lancamento': data.get('prazoLancamento', ''),
-            'orcamento_marketing': data.get('orcamentoMarketing', '')
+            return jsonify({\'error\': \'Segmento é obrigatório\'}), 400
+
+        # Extrair dados adicionais para o prompt
+        produto = data.get(\'produto\', \'Produto Digital\')
+        preco = data.get(\'preco\', \'997.0\')
+        publico = data.get(\'publico\', \'Empreendedores e Profissionais Liberais\')
+        objetivo_receita = data.get(\'objetivo_receita\', \'100000\')
+        orcamento_marketing = data.get(\'orcamento_marketing\', \'10000\')
+
+        # Preparar os dados para o GeminiClient
+        gemini_data = {
+            "segmento": segmento,
+            "produto": produto,
+            "preco": preco,
+            "publico": publico,
+            "objetivo_receita": objetivo_receita,
+            "orcamento_marketing": orcamento_marketing
         }
+
+        logger.info(f"Iniciando análise para segmento: {segmento}")
         
-        # Safe numeric conversion
-        def safe_float_conversion(value, default=None):
-            if value is None or value == '':
-                return default
+        # Chamar o GeminiClient para gerar a análise completa
+        analysis_result = gemini_client.generate_analysis(gemini_data)
+
+        if "error" in analysis_result:
+            logger.error(f"Erro na geração da análise pelo Gemini: {analysis_result[\"error\"]}")
+            return jsonify({"error": analysis_result["error"]}), 500
+
+        # Salvar a análise no Supabase
+        if supabase:
             try:
-                return float(str(value).replace(',', '.'))
-            except (ValueError, TypeError):
-                return default
-        
-        analysis_data['preco_float'] = safe_float_conversion(analysis_data['preco'], 997.0)
-        analysis_data['objetivo_receita_float'] = safe_float_conversion(analysis_data['objetivo_receita'], 100000.0)
-        analysis_data['orcamento_marketing_float'] = safe_float_conversion(analysis_data['orcamento_marketing'], 50000.0)
-        
-        logger.info(f"🔍 Iniciando análise ultra-detalhada para segmento: {analysis_data['segmento']}")
-        
-        # Save initial analysis record
-        analysis_id = save_initial_analysis(analysis_data)
-        
-        # Generate comprehensive analysis with Gemini Pro 2.5
-        if gemini_client:
-            logger.info("🤖 Usando Gemini Pro 2.5 com pesquisa na internet para análise")
-            analysis_result = gemini_client.analyze_avatar_ultra_detailed(analysis_data)
+                # Inserir a análise completa no Supabase
+                # O Supabase tem um limite de tamanho para colunas JSONB. Se a análise for muito grande,
+                # pode ser necessário armazená-la em um serviço de armazenamento de objetos (ex: S3) e salvar apenas o link.
+                # Por enquanto, vamos tentar salvar diretamente e logar se houver erro de tamanho.
+                response = supabase.table(\'analyses\').insert({
+                    "segmento": segmento,
+                    "produto": produto,
+                    "analysis_data": analysis_result, # Salva o JSON completo aqui
+                    "created_at": datetime.now().isoformat()
+                }).execute()
+                logger.info(f"Análise salva no Supabase: {response.data}")
+            except Exception as e:
+                logger.error(f"❌ Erro ao salvar análise no Supabase: {e}. Pode ser devido ao tamanho do JSON.")
+                # Continua mesmo que não consiga salvar no DB, para não bloquear o usuário
         else:
-            logger.warning("⚠️ Gemini não disponível, usando análise de fallback")
-            analysis_result = create_fallback_analysis(analysis_data)
-        
-        # Update analysis record with results
-        if supabase and analysis_id:
-            update_analysis_record(analysis_id, analysis_result)
-            analysis_result['analysis_id'] = analysis_id
-        
-        logger.info("✅ Análise ultra-detalhada concluída com sucesso")
-        return jsonify(analysis_result)
-        
+            logger.warning("Supabase não configurado, pulando salvamento da análise.")
+
+        # Retornar a análise completa com todas as fases
+        # Se o JSON for muito grande, jsonify pode falhar ou o cliente pode ter problemas para receber.
+        # Uma alternativa seria retornar apenas um ID da análise e o cliente buscar o restante via outra rota.
+        # Por enquanto, retornamos o JSON completo e monitoramos o erro 500.
+        return jsonify(analysis_result), 200
+
     except Exception as e:
-        logger.error(f"❌ Erro na análise: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
+        logger.error(f"❌ Erro na rota /analyze: {e}")
+        # Retorna um erro 500 genérico, mas o log terá mais detalhes.
+        return jsonify({"error": "Ocorreu um erro interno no servidor ao processar a análise."}), 500
 
-def save_initial_analysis(data: Dict) -> Optional[int]:
-    """Salva registro inicial da análise no Supabase"""
-    if not supabase:
-        logger.warning("⚠️ Supabase não configurado, pulando salvamento")
-        return None
-    
-    try:
-        analysis_record = {
-            'nicho': data['segmento'],  # Manter compatibilidade com schema
-            'produto': data['produto'],
-            'descricao': data['descricao'],
-            'preco': data['preco_float'],
-            'publico': data['publico'],
-            'concorrentes': data['concorrentes'],
-            'dados_adicionais': data['dados_adicionais'],
-            'objetivo_receita': data['objetivo_receita_float'],
-            'orcamento_marketing': data['orcamento_marketing_float'],
-            'prazo_lancamento': data['prazo_lancamento'],
-            'status': 'processing',
-            'created_at': datetime.utcnow().isoformat()
-        }
-        
-        result = supabase.table('analyses').insert(analysis_record).execute()
-        if result.data:
-            analysis_id = result.data[0]['id']
-            logger.info(f"💾 Análise salva no Supabase com ID: {analysis_id}")
-            return analysis_id
-    except Exception as e:
-        logger.warning(f"⚠️ Erro ao salvar no Supabase: {str(e)}")
-    
-    return None
-
-def update_analysis_record(analysis_id: int, results: Dict):
-    """Atualiza registro da análise com resultados"""
-    try:
-        update_data = {
-            'avatar_data': results.get('avatar_ultra_detalhado', {}),
-            'positioning_data': results.get('escopo', {}),
-            'competition_data': results.get('analise_concorrencia_detalhada', {}),
-            'marketing_data': results.get('estrategia_palavras_chave', {}),
-            'metrics_data': results.get('metricas_performance_detalhadas', {}),
-            'funnel_data': results.get('projecoes_cenarios', {}),
-            'market_intelligence': results.get('inteligencia_mercado', {}),
-            'action_plan': results.get('plano_acao_detalhado', {}),
-            'comprehensive_analysis': results,  # Análise completa
-            'status': 'completed',
-            'updated_at': datetime.utcnow().isoformat()
-        }
-        
-        supabase.table('analyses').update(update_data).eq('id', analysis_id).execute()
-        logger.info(f"💾 Análise {analysis_id} atualizada no Supabase")
-        
-    except Exception as e:
-        logger.warning(f"⚠️ Erro ao atualizar análise no Supabase: {str(e)}")
-
-def create_fallback_analysis(data: Dict) -> Dict:
-    """Cria análise de fallback quando Gemini falha"""
-    if gemini_client:
-        return gemini_client._create_fallback_analysis(data)
-    
-    # Fallback básico se nem o cliente Gemini estiver disponível
-    segmento = data.get('segmento', 'Produto Digital')
-    return {
-        "escopo": {
-            "segmento_principal": segmento,
-            "subsegmentos": [f"{segmento} básico", f"{segmento} avançado"],
-            "produto_ideal": data.get('produto', 'Produto Digital'),
-            "proposta_valor": f"Solução completa para {segmento}"
-        },
-        "avatar_ultra_detalhado": {
-            "persona_principal": {
-                "nome": "Avatar Padrão",
-                "idade": "35 anos",
-                "profissao": f"Profissional de {segmento}",
-                "renda_mensal": "R$ 10.000 - R$ 20.000",
-                "localizacao": "São Paulo, SP",
-                "estado_civil": "Casado",
-                "escolaridade": "Superior completo"
-            }
-        },
-        "insights_exclusivos": [
-            f"Análise básica para o segmento {segmento}",
-            "Recomenda-se análise mais detalhada com Gemini Pro 2.5"
-        ]
-    }
-
-# Rotas existentes mantidas com adaptações para 'segmento'
-@analysis_bp.route('/analyses', methods=['GET'])
+@analysis_bp.route(\"/analyses\", methods=[\"GET\"])
 def get_analyses():
-    """Get list of recent analyses"""
+    """Retorna todas as análises salvas"""
+    if not supabase:
+        return jsonify({"error": "Supabase não configurado."}), 500
     try:
-        if not supabase:
-            return jsonify({'error': 'Banco de dados não configurado'}), 500
-        
-        limit = request.args.get('limit', 10, type=int)
-        segmento = request.args.get('segmento') or request.args.get('nicho')  # Compatibilidade
-        
-        query = supabase.table('analyses').select('*').order('created_at', desc=True)
-        
-        if segmento:
-            query = query.eq('nicho', segmento)  # Campo no DB ainda é 'nicho'
-        
-        result = query.limit(limit).execute()
-        
-        return jsonify({
-            'analyses': result.data,
-            'count': len(result.data)
-        })
-        
+        response = supabase.table(\'analyses\').select(\'*\').order(\'created_at\', desc=True).execute()
+        return jsonify(response.data), 200
     except Exception as e:
-        logger.error(f"Erro ao buscar análises: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
+        logger.error(f"❌ Erro ao buscar análises no Supabase: {e}")
+        return jsonify({"error": str(e)}), 500
 
-@analysis_bp.route('/analyses/<int:analysis_id>', methods=['GET'])
-def get_analysis(analysis_id):
-    """Get specific analysis by ID"""
+@analysis_bp.route(\"/analysis/<analysis_id>\", methods=[\"GET\"])
+def get_analysis_by_id(analysis_id):
+    """Retorna uma análise específica pelo ID"""
+    if not supabase:
+        return jsonify({"error": "Supabase não configurado."}), 500
     try:
-        if not supabase:
-            return jsonify({'error': 'Banco de dados não configurado'}), 500
+        response = supabase.table(\'analyses\').select(\'*\').eq(\'id\', analysis_id).single().execute()
+        if response.data:
+            return jsonify(response.data), 200
+        else:
+            return jsonify({"error": "Análise não encontrada."}), 404
+    except Exception as e:
+        logger.error(f"❌ Erro ao buscar análise {analysis_id} no Supabase: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@analysis_bp.route(\"/analysis/<analysis_id>\", methods=[\"DELETE\"])
+def delete_analysis(analysis_id):
+    """Deleta uma análise específica pelo ID"""
+    if not supabase:
+        return jsonify({"error": "Supabase não configurado."}), 500
+    try:
+        response = supabase.table(\'analyses\').delete().eq(\'id\', analysis_id).execute()
+        if response.data:
+            return jsonify({"message": "Análise deletada com sucesso."}), 200
+        else:
+            return jsonify({"error": "Análise não encontrada."}), 404
+    except Exception as e:
+        logger.error(f"❌ Erro ao deletar análise {analysis_id} no Supabase: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@analysis_bp.route(\"/analysis/latest\", methods=[\"GET\"])
+def get_latest_analysis():
+    """Retorna a análise mais recente"""
+    if not supabase:
+        return jsonify({"error": "Supabase não configurado."}), 500
+    try:
+        response = supabase.table(\'analyses\').select(\'*\').order(\'created_at\', desc=True).limit(1).single().execute()
+        if response.data:
+            return jsonify(response.data), 200
+        else:
+            return jsonify({"message": "Nenhuma análise encontrada."}), 404
+    except Exception as e:
+        logger.error(f"❌ Erro ao buscar a análise mais recente no Supabase: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@analysis_bp.route(\"/analysis/export-pdf/<analysis_id>\", methods=[\"GET\"])
+def export_analysis_pdf(analysis_id):
+    """Exporta uma análise específica para PDF"""
+    if not supabase:
+        return jsonify({"error": "Supabase não configurado."}), 500
+    try:
+        # Buscar a análise do Supabase
+        response = supabase.table(\'analyses\').select(\'analysis_data\').eq(\'id\', analysis_id).single().execute()
+        analysis_data = response.data.get(\'analysis_data\') if response.data else None
+
+        if not analysis_data:
+            return jsonify({"error": "Análise não encontrada para exportação."}), 404
+
+        # Gerar o PDF (esta parte precisará ser implementada ou integrada com pdf_generator.py)
+        # Por enquanto, apenas um placeholder
+        pdf_path = f"/tmp/analysis_{analysis_id}.pdf"
+        with open(pdf_path, "w") as f:
+            f.write(json.dumps(analysis_data, indent=2))
         
-        result = supabase.table('analyses').select('*').eq('id', analysis_id).execute()
-        
-        if not result.data:
-            return jsonify({'error': 'Análise não encontrada'}), 404
-        
-        analysis = result.data[0]
-        
-        # Retorna análise completa se disponível
-        if analysis.get('comprehensive_analysis'):
-            return jsonify(analysis['comprehensive_analysis'])
-        
-        # Fallback para estrutura antiga
-        structured_analysis = {
-            'id': analysis['id'],
-            'segmento': analysis['nicho'],  # Mapear nicho para segmento
-            'produto': analysis['produto'],
-            'avatar_ultra_detalhado': analysis['avatar_data'],
-            'escopo': analysis['positioning_data'],
-            'analise_concorrencia_detalhada': analysis['competition_data'],
-            'estrategia_palavras_chave': analysis['marketing_data'],
-            'metricas_performance_detalhadas': analysis['metrics_data'],
-            'projecoes_cenarios': analysis['funnel_data'],
-            'inteligencia_mercado': analysis.get('market_intelligence', {}),
-            'plano_acao_detalhado': analysis.get('action_plan', {}),
-            'created_at': analysis['created_at'],
-            'status': analysis['status']
+        # Retornar o PDF como um arquivo para download
+        return send_from_directory(directory=\"/tmp\", path=f"analysis_{analysis_id}.pdf\", as_attachment=True)
+
+    except Exception as e:
+        logger.error(f"❌ Erro ao exportar análise {analysis_id} para PDF: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@analysis_bp.route(\"/analysis/summary\", methods=[\"POST\"])
+def get_analysis_summary():
+    """Gera um resumo da análise para exibição rápida"""
+    try:
+        data = request.get_json()
+        analysis_data = data.get(\'analysis_data\')
+
+        if not analysis_data:
+            return jsonify({"error": "Dados da análise não fornecidos."}), 400
+
+        # Extrair as informações relevantes para o resumo
+        # O resumo agora deve ser mais robusto para lidar com a nova estrutura de fases
+        summary = {
+            "titulo_analise": analysis_data.get(\'fase_1_result\', {}).get(\'fase_1_escavacao_brecha_lucrativa\', {}).get(\'melhores_oportunidades_identificadas\', ["Análise de Mercado"])[0] if analysis_data.get(\'fase_1_result\') and analysis_data.get(\'fase_1_result\').get(\'fase_1_escavacao_brecha_lucrativa\') and analysis_data.get(\'fase_1_result\').get(\'fase_1_escavacao_brecha_lucrativa\').get(\'melhores_oportunidades_identificadas\') else "Análise de Mercado",
+            "resumo_executivo": analysis_data.get(\'fase_1_result\', {}).get(\'fase_1_escavacao_brecha_lucrativa\', {}).get(\'dores_primarias\', [{}])[0].get(\'dor\', \'N/A\') if analysis_data.get(\'fase_1_result\') and analysis_data.get(\'fase_1_result\').get(\'fase_1_escavacao_brecha_lucrativa\') and analysis_data.get(\'fase_1_result\').get(\'fase_1_escavacao_brecha_lucrativa\').get(\'dores_primarias\') and analysis_data.get(\'fase_1_result\').get(\'fase_1_escavacao_brecha_lucrativa\').get(\'dores_primarias\')[0] else "N/A",
+            "pontos_chave": []
         }
-        
-        return jsonify(structured_analysis)
-        
-    except Exception as e:
-        logger.error(f"Erro ao buscar análise: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
 
-@analysis_bp.route('/segmentos', methods=['GET'])
-def get_segmentos():
-    """Get list of unique segments from analyses"""
-    try:
-        if not supabase:
-            return jsonify({'error': 'Banco de dados não configurado'}), 500
-        
-        result = supabase.table('analyses').select('nicho').execute()
-        
-        segmentos = list(set([item['nicho'] for item in result.data if item['nicho']]))
-        segmentos.sort()
-        
-        return jsonify({
-            'segmentos': segmentos,
-            'count': len(segmentos)
-        })
-        
-    except Exception as e:
-        logger.error(f"Erro ao buscar segmentos: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
+        # Adicionar pontos chave de outras fases se existirem
+        if analysis_data.get(\'fase_2_result\') and analysis_data.get(\'fase_2_result\').get(\'fase_2_forja_posicionamento_unico\'):
+            summary["pontos_chave"].append(analysis_data[\'fase_2_result\'].get(\'fase_2_forja_posicionamento_unico\', {}).get(\'inimigo_principal\', \'N/A\'))
+        if analysis_data.get(\'fase_3_result\') and analysis_data.get(\'fase_3_result\').get(\'fase_3_forja_big_idea_paralisante\'):
+            summary["pontos_chave"].append(analysis_data[\'fase_3_result\'].get(\'fase_3_forja_big_idea_paralisante\', {}).get(\'desejo_secreto\', \'N/A\'))
+        if analysis_data.get(\'fase_4_result\') and analysis_data.get(\'fase_4_result\').get(\'fase_4_arquitetura_produto_viciante\') and analysis_data.get(\'fase_4_result\').get(\'fase_4_arquitetura_produto_viciante\').get(\'caracteristicas_tecnicas_letais\') and analysis_data.get(\'fase_4_result\').get(\'fase_4_arquitetura_produto_viciante\').get(\'caracteristicas_tecnicas_letais\')[0]:
+            summary["pontos_chave"].append(analysis_data[\'fase_4_result\'].get(\'fase_4_arquitetura_produto_viciante\', {}).get(\'caracteristicas_tecnicas_letais\', [{}])[0].get(\'caracteristica\', \'N/A\'))
 
-# Manter rota antiga para compatibilidade
-@analysis_bp.route('/nichos', methods=['GET'])
-def get_nichos():
-    """Get list of unique niches (compatibility route)"""
-    return get_segmentos()
+        return jsonify(summary), 200
+
+    except Exception as e:
+        logger.error(f"❌ Erro ao gerar resumo da análise: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+
