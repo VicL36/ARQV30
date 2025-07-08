@@ -27,7 +27,7 @@ class GeminiClient:
             genai.configure(api_key=self.api_key)
 
             self.model = genai.GenerativeModel(
-                model_name="gemini-2.0-flash-exp",
+                model_name="gemini-2.0-flash-001",
                 generation_config={
                     "temperature": 0.7,
                     "top_p": 0.9,
